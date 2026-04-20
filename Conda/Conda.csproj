@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Core\FileSystem\" />
+    <Folder Include="Core\Settings\" />
+    <Folder Include="Config\" />
+    <Folder Include="Engine\Bridges\" />
+    <Folder Include="Engine\Builders\" />
+    <Folder Include="Engine\Runtimes\" />
+    <Folder Include="Logs\" />
+    <Folder Include="Projects\" />
+    <Folder Include="UI\Controls\" />
+    <Folder Include="UI\Services\" />
+    <Folder Include="Utils\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3912.50" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\monaco.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\logo\FirstIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+  </ItemGroup>
+
+</Project>
