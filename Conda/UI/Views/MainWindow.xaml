@@ -19,7 +19,7 @@
         <Border Grid.Row="0" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
             <Grid>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
-                    <Image Source="../../Assets/logo/FirstIcon.png" Width="28" Height="28" Margin="0,0,10,0"/>
+                    <Image Source="/Assets/logo/FirstIcon.png" Width="28" Height="28" Margin="0,0,10,0"/>
                 </StackPanel>
                 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="150,0,0,0">
@@ -150,6 +150,23 @@
                         FontWeight="SemiBold"
                         Style="{StaticResource CommonRoundedButtonStyle}"/>
             </StackPanel>
+        </Grid>
+
+        <!-- Toast Notification Overlay -->
+        <Grid x:Name="ToastOverlay" Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,50" Visibility="Collapsed">
+            <Border Background="#333333" CornerRadius="8" Padding="20,12" BorderBrush="#007acc" BorderThickness="1" SnapsToDevicePixels="True">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Opacity="0.5" Direction="270" ShadowDepth="2"/>
+                </Border.Effect>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Name="ToastIcon" Text="✅" FontSize="18" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ToastMessage" Text="Project created successfully!" Foreground="White" FontSize="14" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+            
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="ToastTranslate" Y="100"/>
+            </Grid.RenderTransform>
         </Grid>
     </Grid>
 </Window>

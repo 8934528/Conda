@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 
 using Color = System.Windows.Media.Color;
 using Brushes = System.Windows.Media.Brushes;
@@ -264,9 +265,21 @@ namespace Conda
                 cancelBtn.IsEnabled = true;
                 progressBar.Visibility = Visibility.Collapsed;
 
-                System.Windows.MessageBox.Show(creationResult, "Conda", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
-                dialog.DialogResult = true;
-                dialog.Close();
+                if (creationResult.StartsWith("Error"))
+                {
+                    System.Windows.MessageBox.Show(creationResult, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                }
+                else
+                {
+                    dialog.DialogResult = true;
+                    dialog.Close();
+                    
+                    ShowToast("Project created successfully!");
+                    
+                    // Delay redirection slightly so user sees the toast
+                    await System.Threading.Tasks.Task.Delay(1500);
+                    OpenProjectEditor(projectPath, projectName);
+                }
             };
 
             cancelBtn.Click += (s, args) => { dialog.DialogResult = false; dialog.Close(); };
@@ -427,20 +440,7 @@ namespace Conda
 
             if (result == true && selectedProject != null)
             {
-                var editorView = new EditorView(selectedProject.Path);
-                var editorWindow = new Window
-                {
-                    Title = $"Conda Editor - {selectedProject.Name}",
-                    Content = editorView,
-                    Width = 1400,
-                    Height = 900,
-                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                    WindowState = WindowState.Maximized,
-                    Icon = new BitmapImage(new Uri("pack://application:../../Assets/logo/FirstIcon.png", UriKind.RelativeOrAbsolute))
-                };
-                editorWindow.Show();
-                this.Hide();
-                editorWindow.Closed += (s, args) => this.Show();
+                OpenProjectEditor(selectedProject.Path, selectedProject.Name);
             }
         }
 
@@ -491,6 +491,73 @@ namespace Conda
                 ResizeMode = ResizeMode.CanResize;
                 isFullScreen = false;
             }
+        }
+
+        private void ShowToast(string message, bool isSuccess = true)
+        {
+            ToastMessage.Text = message;
+            ToastIcon.Text = isSuccess ? "✅" : "❌";
+            ToastOverlay.Visibility = Visibility.Visible;
+
+            DoubleAnimation slideUp = new()
+            {
+                From = 100,
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(400),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            DoubleAnimation fadeIn = new()
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(400)
+            };
+
+            ToastTranslate.BeginAnimation(TranslateTransform.YProperty, slideUp);
+            ToastOverlay.BeginAnimation(OpacityProperty, fadeIn);
+
+            // Hide after delay
+            var timer = new System.Windows.Threading.DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(3)
+            };
+            timer.Tick += (s, args) =>
+            {
+                DoubleAnimation slideDown = new()
+                {
+                    To = 100,
+                    Duration = TimeSpan.FromMilliseconds(400),
+                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+                };
+                DoubleAnimation fadeOut = new()
+                {
+                    To = 0,
+                    Duration = TimeSpan.FromMilliseconds(400)
+                };
+                slideDown.Completed += (s2, args2) => ToastOverlay.Visibility = Visibility.Collapsed;
+                ToastTranslate.BeginAnimation(TranslateTransform.YProperty, slideDown);
+                ToastOverlay.BeginAnimation(OpacityProperty, fadeOut);
+                timer.Stop();
+            };
+            timer.Start();
+        }
+
+        private void OpenProjectEditor(string projectPath, string projectName)
+        {
+            var editorView = new EditorView(projectPath);
+            var editorWindow = new Window
+            {
+                Title = $"Conda Editor - {projectName}",
+                Content = editorView,
+                Width = 1400,
+                Height = 900,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                WindowState = WindowState.Maximized
+            };
+            editorWindow.Show();
+            this.Hide();
+            editorWindow.Closed += (s, args) => this.Show();
         }
     }
 }

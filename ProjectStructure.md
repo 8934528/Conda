@@ -43,6 +43,8 @@
         │   ├── Views/
         │   │   ├── EditorView.xaml
         │   │   ├── EditorView.xaml.cs
+        │   │   ├── MainWindow.xaml
+        │   │   ├── MainWindow.xaml.cs
         │   │   ├── ProjectView.xaml
         │   │   └── ProjectView.xaml.cs
         │   ├── Controls/
@@ -53,8 +55,6 @@
         │   └── logo/
         │       └── FirstIcon.png
         │
-        ├── MainWindow.xaml
-        ├── MainWindow.xaml.cs
         ├── App.xaml
         └── App.xaml.cs
 
