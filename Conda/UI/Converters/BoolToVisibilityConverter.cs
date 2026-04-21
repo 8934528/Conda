@@ -11,6 +11,8 @@ namespace Conda.UI.Converters
         {
             if (value is bool boolValue)
             {
+                if (parameter is string param && param == "Invert")
+                    return boolValue ? Visibility.Collapsed : Visibility.Visible;
                 return boolValue ? Visibility.Visible : Visibility.Collapsed;
             }
             return Visibility.Collapsed;
@@ -20,6 +22,8 @@ namespace Conda.UI.Converters
         {
             if (value is Visibility visibility)
             {
+                if (parameter is string param && param == "Invert")
+                    return visibility != Visibility.Visible;
                 return visibility == Visibility.Visible;
             }
             return false;

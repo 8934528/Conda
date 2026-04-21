@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -6,11 +6,11 @@ namespace Conda.Core.ProjectSystem
 {
     public class ProjectManager
     {
-        private string basePath;
+        private readonly string basePath;
 
         public ProjectManager()
         {
-            basePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            basePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile);
         }
 
         private string GetProjectsPath()
@@ -20,7 +20,7 @@ namespace Conda.Core.ProjectSystem
 
         public List<ProjectModel> GetAllProjects()
         {
-            List<ProjectModel> projects = new List<ProjectModel>();
+            List<ProjectModel> projects = [];
             string projectsPath = GetProjectsPath();
 
             if (!Directory.Exists(projectsPath))
@@ -29,11 +29,15 @@ namespace Conda.Core.ProjectSystem
             var dirs = Directory.GetDirectories(projectsPath);
             foreach (var dir in dirs)
             {
-                projects.Add(new ProjectModel
+                // Check if it's a valid project (has main.py)
+                if (File.Exists(Path.Combine(dir, "main.py")))
                 {
-                    Name = Path.GetFileName(dir),
-                    Path = dir
-                });
+                    projects.Add(new ProjectModel
+                    {
+                        Name = Path.GetFileName(dir),
+                        Path = dir
+                    });
+                }
             }
             return projects;
         }

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using System.Diagnostics;
 
-namespace Conda.Core.Env
+namespace Conda.Core.Environment
 {
     public class PythonService
     {
-        public bool IsPythonInstalled()
+        public static bool IsPythonInstalled()
         {
             try
             {
@@ -36,7 +32,7 @@ namespace Conda.Core.Env
             }
         }
 
-        public string GetPythonVersion()
+        public static string GetPythonVersion()
         {
             try
             {

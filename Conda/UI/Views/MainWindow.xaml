@@ -1,0 +1,155 @@
+<Window x:Class="Conda.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+       d:DesignHeight="900" d:DesignWidth="1400"
+        Title="Conda IDE"
+        Background="#1e1e1e"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title Bar Navs & Tabs -->
+        <Border Grid.Row="0" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
+                    <Image Source="../../Assets/logo/FirstIcon.png" Width="28" Height="28" Margin="0,0,10,0"/>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="150,0,0,0">
+                    <!-- File -->
+                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0">
+                        <MenuItem Header="File" Background="Transparent" Foreground="#cccccc">
+                            <MenuItem Header="New Project" Click="OnNewProjectClicked" Style="{StaticResource MenuItemStyle}"/>
+                            <MenuItem Header="Open Project" Click="OnOpenProjectClicked" Style="{StaticResource MenuItemStyle}"/>
+                            <Separator Background="#3c3c3c"/>
+                            <MenuItem Header="Exit" Click="OnExitClicked" Style="{StaticResource MenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
+                    
+                    <!-- Edit -->
+                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
+                        <MenuItem Header="Edit" Background="Transparent" Foreground="#cccccc">
+                            <MenuItem Header="Preferences" Click="OnPreferencesClicked" Style="{StaticResource MenuItemStyle}"/>
+                            <MenuItem Header="Settings" Click="OnSettingsClicked" Style="{StaticResource MenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
+                    
+                    <!-- View -->
+                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
+                        <MenuItem Header="View" Background="Transparent" Foreground="#cccccc">
+                            <MenuItem Header="Toggle Full Screen" Click="OnToggleFullScreenClicked" Style="{StaticResource MenuItemStyle}"/>
+                            <MenuItem Header="Reset Layout" Click="OnResetLayoutClicked" Style="{StaticResource MenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
+                    
+                    <!-- Project -->
+                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
+                        <MenuItem Header="Project" Background="Transparent" Foreground="#cccccc">
+                            <MenuItem Header="Recent Projects" Click="OnRecentProjectsClicked" Style="{StaticResource MenuItemStyle}"/>
+                            <MenuItem Header="Project Settings" Click="OnProjectSettingsClicked" Style="{StaticResource MenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
+                    
+                    <!-- Build -->
+                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
+                        <MenuItem Header="Build" Background="Transparent" Foreground="#cccccc">
+                            <MenuItem Header="Build Project" Click="OnBuildClicked" Style="{StaticResource MenuItemStyle}"/>
+                            <MenuItem Header="Export Game" Click="OnExportClicked" Style="{StaticResource MenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
+                    
+                    <!-- Tools -->
+                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
+                        <MenuItem Header="Tools" Background="Transparent" Foreground="#cccccc">
+                            <MenuItem Header="Package Manager" Click="OnPackageManagerClicked" Style="{StaticResource MenuItemStyle}"/>
+                            <MenuItem Header="Extensions" Click="OnExtensionsClicked" Style="{StaticResource MenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
+                    
+                    <!-- Terminal -->
+                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
+                        <MenuItem Header="Terminal" Background="Transparent" Foreground="#cccccc">
+                            <MenuItem Header="Open Terminal" Click="OnOpenTerminalClicked" Style="{StaticResource MenuItemStyle}"/>
+                            <MenuItem Header="Run Command" Click="OnRunCommandClicked" Style="{StaticResource MenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
+
+                    <!-- Help -->
+                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
+                        <MenuItem Header="Help" Background="Transparent" Foreground="#cccccc">
+                            <MenuItem Header="Documentation" Click="OnDocumentationClicked" Style="{StaticResource MenuItemStyle}"/>
+                            <MenuItem Header="About" Click="OnAboutClicked" Style="{StaticResource MenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
+                </StackPanel>
+                
+                <!-- Settings -->
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0"
+                        Background="Transparent" BorderThickness="0" Cursor="Hand"
+                        Click="OnSettingsIconClicked">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⚙️" FontSize="18" Foreground="#cccccc"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Welcome -->
+            <StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30">
+                <TextBlock Text="Welcome to Conda IDE" 
+                           FontSize="28" 
+                           Foreground="White" 
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,30"
+                           FontWeight="Bold"/>
+                
+                <TextBlock Text="Create a new game project or open an existing one to get started." 
+                           FontSize="14" 
+                           Foreground="#aaaaaa" 
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,40"
+                           TextWrapping="Wrap"
+                           MaxWidth="400"/>
+                
+                <Button x:Name="NewProjectBtn"
+                        Content="➕ New Project"
+                        Click="OnNewProjectClicked"
+                        Background="#007acc"
+                        Foreground="White"
+                        Width="260"
+                        Height="50"
+                        Margin="0,10"
+                        Cursor="Hand"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Style="{StaticResource CommonRoundedButtonStyle}"/>
+
+                <Button x:Name="OpenProjectBtn"
+                        Content="📂 Open Project"
+                        Click="OnOpenProjectClicked"
+                        Background="#3c3c3c"
+                        Foreground="White"
+                        Width="260"
+                        Height="50"
+                        Margin="0,10"
+                        Cursor="Hand"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Style="{StaticResource CommonRoundedButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
