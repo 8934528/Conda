@@ -23,6 +23,9 @@
         │   └── Settings/                  # App-level settings
         │
         ├── Engine/                        # Python game engine support
+        │   ├── SceneSystem/
+        │   │   ├── Scene.cs
+        │   │   └── SceneObject.cs
         │   ├── Runtimes/                  # Pygame/Arcade runners
         │   ├── Builders/                  # Build/export logic
         │   └── Bridges/                   # C# ↔ Python communication

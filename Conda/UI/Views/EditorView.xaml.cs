@@ -9,6 +9,16 @@ using System.Collections.ObjectModel;
 using System.Windows.Media;
 using System.Linq;
 using System.Windows.Input;
+using Conda.Engine.SceneSystem;
+
+using Point = System.Windows.Point;
+using Color = System.Windows.Media.Color;
+using Brushes = System.Windows.Media.Brushes;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using DragEventArgs = System.Windows.DragEventArgs;
+using DataFormats = System.Windows.DataFormats;
+using Cursors = System.Windows.Input.Cursors;
+
 using Button = System.Windows.Controls.Button;
 
 
@@ -24,6 +34,26 @@ namespace Conda.UI.Views
         private bool isFullScreen = false;
         private WindowState previousState;
         private Window? parentWindow;
+
+
+
+
+        private Scene currentScene = new();
+        private SceneObject? selectedObject;
+        private bool isDragging = false;
+        private Point lastMousePos;
+
+        private FrameworkElement? selectedElement;
+        private readonly List<System.Windows.Shapes.Rectangle> resizeHandles = [];
+        private System.Windows.Shapes.Ellipse? rotationHandle;
+        private bool isResizing = false;
+        private bool isRotating = false;
+        private Point resizeStart;
+        private const int GridSize = 20;
+
+
+
+
 
         public class OpenTab
         {
@@ -43,6 +73,7 @@ namespace Conda.UI.Views
             projectPath = path;
             FileTabs.ItemsSource = openTabs;
             Loaded += EditorView_Loaded;
+            SceneCanvas.Loaded += (s, e) => DrawGrid();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -736,6 +767,458 @@ namespace Conda.UI.Views
                     window.WindowStyle = WindowStyle.SingleBorderWindow;
                     window.WindowState = previousState;
                     isFullScreen = false;
+                }
+            }
+        }
+
+        // --- SCENE EDITOR LOGIC ---
+
+        private void OnShowCodeEditor(object sender, RoutedEventArgs e)
+        {
+            CodeEditorContainer.Visibility = Visibility.Visible;
+            SceneEditorContainer.Visibility = Visibility.Collapsed;
+            ExplorerContainer.Visibility = Visibility.Visible;
+            InspectorContainer.Visibility = Visibility.Collapsed;
+
+            CodeEditorToggle.Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
+            SceneEditorToggle.Background = Brushes.Transparent;
+        }
+
+        private void OnShowSceneEditor(object sender, RoutedEventArgs e)
+        {
+            CodeEditorContainer.Visibility = Visibility.Collapsed;
+            SceneEditorContainer.Visibility = Visibility.Visible;
+            ExplorerContainer.Visibility = Visibility.Collapsed;
+            InspectorContainer.Visibility = Visibility.Visible;
+
+            CodeEditorToggle.Background = Brushes.Transparent;
+            SceneEditorToggle.Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
+
+            RefreshHierarchy();
+        }
+
+        private void OnSceneDrop(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            foreach (var file in files)
+            {
+                var obj = new SceneObject
+                {
+                    Name = System.IO.Path.GetFileName(file),
+                    Type = IsImageFile(file) ? "Image" : "Rectangle",
+                    X = 50,
+                    Y = 50,
+                    Width = 100,
+                    Height = 100,
+                    AssetPath = file
+                };
+
+                currentScene.Objects.Add(obj);
+                DrawObject(obj);
+            }
+
+            RefreshHierarchy();
+        }
+
+        private static bool IsImageFile(string path)
+        {
+            string ext = System.IO.Path.GetExtension(path).ToLower();
+            return ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" || ext == ".gif";
+        }
+
+        private void DrawObject(SceneObject obj)
+        {
+            FrameworkElement element;
+
+            if (obj.Type == "Image" && File.Exists(obj.AssetPath))
+            {
+                try
+                {
+                    element = new System.Windows.Controls.Image
+                    {
+                        Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(obj.AssetPath)),
+                        Width = obj.Width,
+                        Height = obj.Height,
+                        Stretch = Stretch.Fill
+                    };
+                }
+                catch
+                {
+                    element = CreatePlaceholderBorder(obj);
+                }
+            }
+            else
+            {
+                element = CreatePlaceholderBorder(obj);
+            }
+
+            Canvas.SetLeft(element, obj.X);
+            Canvas.SetTop(element, obj.Y);
+
+            element.Tag = obj;
+            element.RenderTransformOrigin = new Point(0.5, 0.5);
+            element.RenderTransform = new RotateTransform(obj.Rotation);
+
+            element.MouseLeftButtonDown += OnObjectSelected;
+            element.MouseMove += OnObjectMouseMove;
+            element.MouseLeftButtonUp += OnObjectMouseUp;
+
+            SceneCanvas.Children.Add(element);
+        }
+
+        private Border CreatePlaceholderBorder(SceneObject obj)
+        {
+            return new Border
+            {
+                Width = obj.Width,
+                Height = obj.Height,
+                Background = Brushes.Blue,
+                BorderBrush = Brushes.White,
+                BorderThickness = new Thickness(1)
+            };
+        }
+
+        private void OnObjectSelected(object sender, MouseButtonEventArgs e)
+        {
+            selectedElement = sender as FrameworkElement;
+            selectedObject = selectedElement?.Tag as SceneObject;
+
+            if (selectedObject == null) return;
+
+            HighlightSelection();
+            RemoveHandles();
+            CreateResizeHandles();
+            CreateRotationHandle();
+            LoadInspector();
+
+            isDragging = true;
+            lastMousePos = e.GetPosition(SceneCanvas);
+
+            selectedElement?.CaptureMouse();
+            e.Handled = true;
+        }
+
+        private void OnObjectMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!isDragging || selectedObject == null || selectedElement == null) return;
+
+            var pos = e.GetPosition(SceneCanvas);
+
+            double dx = pos.X - lastMousePos.X;
+            double dy = pos.Y - lastMousePos.Y;
+
+            selectedObject.X = Snap(selectedObject.X + dx);
+            selectedObject.Y = Snap(selectedObject.Y + dy);
+
+            Canvas.SetLeft(selectedElement, selectedObject.X);
+            Canvas.SetTop(selectedElement, selectedObject.Y);
+
+            lastMousePos = pos;
+            UpdateHandlePositions();
+            UpdateRotationHandle();
+            LoadInspector();
+        }
+
+        private void OnObjectMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            isDragging = false;
+            selectedElement?.ReleaseMouseCapture();
+        }
+
+        private void HighlightSelection()
+        {
+            foreach (UIElement child in SceneCanvas.Children)
+            {
+                if (child is Border b && b.Tag != null)
+                {
+                    b.BorderThickness = new Thickness(1);
+                    b.BorderBrush = Brushes.White;
+                }
+            }
+
+            if (selectedElement is Border border)
+            {
+                border.BorderBrush = Brushes.Yellow;
+                border.BorderThickness = new Thickness(2);
+            }
+        }
+
+        private void RemoveHandles()
+        {
+            foreach (var h in resizeHandles)
+                SceneCanvas.Children.Remove(h);
+
+            resizeHandles.Clear();
+
+            if (rotationHandle != null)
+            {
+                SceneCanvas.Children.Remove(rotationHandle);
+                rotationHandle = null;
+            }
+        }
+
+        private void CreateResizeHandles()
+        {
+            if (selectedElement == null) return;
+
+            double size = 8;
+            var positions = new[] { new Point(0, 0), new Point(1, 0), new Point(0, 1), new Point(1, 1) };
+
+            foreach (var pos in positions)
+            {
+                var handle = new System.Windows.Shapes.Rectangle
+                {
+                    Width = size,
+                    Height = size,
+                    Fill = Brushes.White,
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 1,
+                    Cursor = Cursors.SizeAll,
+                    Tag = pos
+                };
+
+                handle.MouseDown += OnResizeStart;
+                handle.MouseMove += OnResizeMove;
+                handle.MouseUp += OnResizeEnd;
+
+                resizeHandles.Add(handle);
+                SceneCanvas.Children.Add(handle);
+            }
+
+            UpdateHandlePositions();
+        }
+
+        private void UpdateHandlePositions()
+        {
+            if (selectedElement == null) return;
+
+            double x = Canvas.GetLeft(selectedElement);
+            double y = Canvas.GetTop(selectedElement);
+            double w = selectedElement.Width;
+            double h = selectedElement.Height;
+
+            foreach (var handle in resizeHandles)
+            {
+                var pos = (Point)handle.Tag;
+                double hx = x + (pos.X * w);
+                double hy = y + (pos.Y * h);
+
+                Canvas.SetLeft(handle, hx - 4);
+                Canvas.SetTop(handle, hy - 4);
+            }
+        }
+
+        private void OnResizeStart(object sender, MouseButtonEventArgs e)
+        {
+            isResizing = true;
+            resizeStart = e.GetPosition(SceneCanvas);
+            (sender as UIElement)?.CaptureMouse();
+            e.Handled = true;
+        }
+
+        private void OnResizeMove(object sender, MouseEventArgs e)
+        {
+            if (!isResizing || selectedObject == null || selectedElement == null) return;
+
+            var pos = e.GetPosition(SceneCanvas);
+            var handle = sender as FrameworkElement;
+            var handlePos = (Point)handle!.Tag;
+
+            double dx = pos.X - resizeStart.X;
+            double dy = pos.Y - resizeStart.Y;
+
+            if (handlePos.X == 1) selectedObject.Width = Math.Max(10, Snap(selectedObject.Width + dx));
+            if (handlePos.Y == 1) selectedObject.Height = Math.Max(10, Snap(selectedObject.Height + dy));
+
+            selectedElement.Width = selectedObject.Width;
+            selectedElement.Height = selectedObject.Height;
+
+            resizeStart = pos;
+            UpdateHandlePositions();
+            UpdateRotationHandle();
+            LoadInspector();
+        }
+
+        private void OnResizeEnd(object sender, MouseButtonEventArgs e)
+        {
+            isResizing = false;
+            (sender as UIElement)?.ReleaseMouseCapture();
+        }
+
+        private void CreateRotationHandle()
+        {
+            if (selectedElement == null) return;
+
+            rotationHandle = new System.Windows.Shapes.Ellipse
+            {
+                Width = 12,
+                Height = 12,
+                Fill = Brushes.Orange,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1,
+                Cursor = Cursors.Hand
+            };
+
+            rotationHandle.MouseDown += OnRotateStart;
+            rotationHandle.MouseMove += OnRotateMove;
+            rotationHandle.MouseUp += OnRotateEnd;
+
+            SceneCanvas.Children.Add(rotationHandle);
+            UpdateRotationHandle();
+        }
+
+        private void UpdateRotationHandle()
+        {
+            if (selectedElement == null || rotationHandle == null) return;
+
+            double x = Canvas.GetLeft(selectedElement);
+            double y = Canvas.GetTop(selectedElement);
+
+            Canvas.SetLeft(rotationHandle, x + selectedElement.Width / 2 - 6);
+            Canvas.SetTop(rotationHandle, y - 25);
+        }
+
+        private void OnRotateStart(object sender, MouseButtonEventArgs e)
+        {
+            isRotating = true;
+            (sender as UIElement)?.CaptureMouse();
+            e.Handled = true;
+        }
+
+        private void OnRotateMove(object sender, MouseEventArgs e)
+        {
+            if (!isRotating || selectedElement == null || selectedObject == null) return;
+
+            var pos = e.GetPosition(SceneCanvas);
+            double centerX = Canvas.GetLeft(selectedElement) + selectedElement.Width / 2;
+            double centerY = Canvas.GetTop(selectedElement) + selectedElement.Height / 2;
+
+            double angle = Math.Atan2(pos.Y - centerY, pos.X - centerX) * (180 / Math.PI);
+            angle += 90; // Offset to make 0 up
+
+            selectedObject.Rotation = angle;
+            selectedElement.RenderTransform = new RotateTransform(angle);
+            LoadInspector();
+        }
+
+        private void OnRotateEnd(object sender, MouseButtonEventArgs e)
+        {
+            isRotating = false;
+            (sender as UIElement)?.ReleaseMouseCapture();
+        }
+
+        private void DrawGrid()
+        {
+            SceneCanvas.Children.Clear();
+            double width = Math.Max(SceneCanvas.ActualWidth, 2000);
+            double height = Math.Max(SceneCanvas.ActualHeight, 2000);
+
+            for (int x = 0; x < width; x += GridSize)
+            {
+                var line = new System.Windows.Shapes.Line
+                {
+                    X1 = x, Y1 = 0, X2 = x, Y2 = height,
+                    Stroke = new SolidColorBrush(Color.FromRgb(40, 40, 40)),
+                    StrokeThickness = 1
+                };
+                SceneCanvas.Children.Add(line);
+            }
+
+            for (int y = 0; y < height; y += GridSize)
+            {
+                var line = new System.Windows.Shapes.Line
+                {
+                    X1 = 0, Y1 = y, X2 = width, Y2 = y,
+                    Stroke = new SolidColorBrush(Color.FromRgb(40, 40, 40)),
+                    StrokeThickness = 1
+                };
+                SceneCanvas.Children.Add(line);
+            }
+
+            foreach (var obj in currentScene.Objects) DrawObject(obj);
+        }
+
+        private static double Snap(double value) => Math.Round(value / GridSize) * GridSize;
+
+        private void LoadInspector()
+        {
+            if (selectedObject == null) return;
+
+            NameBox.Text = selectedObject.Name;
+            PosXBox.Text = selectedObject.X.ToString();
+            PosYBox.Text = selectedObject.Y.ToString();
+            WidthBox.Text = selectedObject.Width.ToString();
+            HeightBox.Text = selectedObject.Height.ToString();
+            RotationBox.Text = Math.Round(selectedObject.Rotation, 2).ToString();
+        }
+
+        private void OnApplyInspector(object sender, RoutedEventArgs e)
+        {
+            if (selectedObject == null || selectedElement == null) return;
+
+            selectedObject.Name = NameBox.Text;
+
+            if (double.TryParse(PosXBox.Text, out double x)) selectedObject.X = x;
+            if (double.TryParse(PosYBox.Text, out double y)) selectedObject.Y = y;
+            if (double.TryParse(WidthBox.Text, out double w)) selectedObject.Width = w;
+            if (double.TryParse(HeightBox.Text, out double h)) selectedObject.Height = h;
+            if (double.TryParse(RotationBox.Text, out double r)) selectedObject.Rotation = r;
+
+            selectedElement.Width = selectedObject.Width;
+            selectedElement.Height = selectedObject.Height;
+            Canvas.SetLeft(selectedElement, selectedObject.X);
+            Canvas.SetTop(selectedElement, selectedObject.Y);
+            selectedElement.RenderTransform = new RotateTransform(selectedObject.Rotation);
+
+            UpdateHandlePositions();
+            UpdateRotationHandle();
+            RefreshHierarchy();
+        }
+
+        private void RefreshHierarchy()
+        {
+            SceneHierarchy.ItemsSource = null;
+            SceneHierarchy.ItemsSource = currentScene.Objects;
+        }
+
+        private void OnSaveScene(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog { Filter = "Conda Scene (*.conda)|*.conda", InitialDirectory = projectPath };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    currentScene.Save(dialog.FileName);
+                    OutputConsole.Text += $"💾 Scene saved: {System.IO.Path.GetFileName(dialog.FileName)}\n";
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Error saving scene: {ex.Message}", "Error");
+                }
+            }
+        }
+
+        private void OnLoadScene(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "Conda Scene (*.conda)|*.conda", InitialDirectory = projectPath };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    currentScene = Scene.Load(dialog.FileName);
+                    SceneCanvas.Children.Clear();
+                    DrawGrid();
+                    RefreshHierarchy();
+                    OutputConsole.Text += $"📂 Scene loaded: {System.IO.Path.GetFileName(dialog.FileName)}\n";
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Error loading scene: {ex.Message}", "Error");
                 }
             }
         }

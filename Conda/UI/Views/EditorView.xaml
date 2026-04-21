@@ -1,4 +1,4 @@
-﻿<Page x:Class="Conda.UI.Views.EditorView"
+<Page x:Class="Conda.UI.Views.EditorView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
@@ -125,141 +125,251 @@
             </Grid>
         </Border>
 
-        <!-- MAIN CONTENT AREA -->
+        <!-- MAIN CONTENT -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="320"/>
+                <ColumnDefinition Width="50"/> <!-- Sidebar -->
+                <ColumnDefinition Width="*"/>  <!-- Editor Area -->
+                <ColumnDefinition Width="320"/> <!-- Explorer -->
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="200"/>
             </Grid.RowDefinitions>
 
-            <!-- EDITOR AREA -->
-            <Border Grid.Row="0" Grid.Column="0" Background="#1e1e1e">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- Editor Label -->
-                    <TextBlock Grid.Row="0" Text="📝 EDITOR" Style="{StaticResource SectionHeaderStyle}"/>
-
-                    <!-- Tab Control -->
-                    <TabControl x:Name="FileTabs"
-                                Grid.Row="1"
-                                Background="#2d2d30"
-                                BorderThickness="0"
-                                SelectionChanged="OnTabSelectionChanged">
-                        <TabControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Icon}" Margin="5,0,5,0" FontSize="12"/>
-                                    <TextBlock Text="{Binding Name}" Margin="0,0,5,0"/>
-                                    <Button Content="✕" 
-                                            Width="16" 
-                                            Height="16" 
-                                            Background="Transparent"
-                                            BorderThickness="0"
-                                            Foreground="#888"
-                                            Cursor="Hand"
-                                            Click="OnCloseTabClick"
-                                            Tag="{Binding}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </TabControl.ItemTemplate>
-                    </TabControl>
-
-                    <!-- Monaco Editor -->
-                    <Border Grid.Row="2" Background="#1e1e1e">
-                        <wv2:WebView2 x:Name="CodeWebView"/>
-                    </Border>
-                </Grid>
+            <!-- SIDEBAR -->
+            <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Background="#333333" BorderBrush="#3c3c3c" BorderThickness="0,0,1,0">
+                <StackPanel>
+                    <Button x:Name="CodeEditorToggle" ToolTip="Code Editor" Click="OnShowCodeEditor" Height="50" Background="#1e1e1e" BorderThickness="0" Cursor="Hand">
+                        <TextBlock Text="💻" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button x:Name="SceneEditorToggle" ToolTip="Scene Editor" Click="OnShowSceneEditor" Height="50" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                        <TextBlock Text="🎨" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                </StackPanel>
             </Border>
 
-            <!-- FILE EXPLORER -->
-            <Border Grid.Row="0" Grid.Column="1" 
-                    Grid.RowSpan="2"
-                    Background="#252526"
-                    BorderBrush="#3c3c3c"
-                    BorderThickness="1,0,0,0">
-                <DockPanel>
-                    <!-- Explorer Header -->
-                    <Border DockPanel.Dock="Top" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
-                        <TextBlock Text="📁 EXPLORER"
-                                   Foreground="#aaaaaa"
-                                   FontSize="11"
-                                   FontWeight="Bold"
-                                   Margin="10,10,10,10"/>
-                    </Border>
-                    
-                    <!-- Toolbar -->
-                    <Border DockPanel.Dock="Top" Background="#252526" Padding="5">
+            <!-- EDITOR AREA -->
+            <Grid Grid.Row="0" Grid.Column="1">
+                <!-- CODE EDITOR (Monaco) -->
+                <Border x:Name="CodeEditorContainer" Background="#1e1e1e" Visibility="Visible">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Editor Label -->
+                        <TextBlock Grid.Row="0" Text="📝 EDITOR" Style="{StaticResource SectionHeaderStyle}"/>
+
+                        <!-- Tab Control -->
+                        <TabControl x:Name="FileTabs"
+                                    Grid.Row="1"
+                                    Background="#2d2d30"
+                                    BorderThickness="0"
+                                    SelectionChanged="OnTabSelectionChanged">
+                            <TabControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Icon}" Margin="5,0,5,0" FontSize="12"/>
+                                        <TextBlock Text="{Binding Name}" Margin="0,0,5,0"/>
+                                        <Button Content="✕" 
+                                                Width="16" 
+                                                Height="16" 
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Foreground="#888"
+                                                Cursor="Hand"
+                                                Click="OnCloseTabClick"
+                                                Tag="{Binding}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </TabControl.ItemTemplate>
+                        </TabControl>
+
+                        <!-- Monaco Editor -->
+                        <Border Grid.Row="2" Background="#1e1e1e">
+                            <wv2:WebView2 x:Name="CodeWebView"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- SCENE EDITOR -->
+                <Grid x:Name="SceneEditorContainer" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Toolbar -->
+                        <RowDefinition Height="*"/>    <!-- Canvas + Hierarchy -->
+                    </Grid.RowDefinitions>
+
+                    <!-- SCENE TOOLBAR -->
+                    <Border Grid.Row="0" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1" Padding="5">
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="📄 New File" 
-                                    Click="OnNewFileToolbarClick"
-                                    Background="#3c3c3c"
-                                    Foreground="White"
-                                    BorderThickness="0"
-                                    Padding="8,5"
-                                    Margin="0,0,5,0"
-                                    FontSize="11"
-                                    Cursor="Hand"/>
-                            <Button Content="📁 New Folder" 
-                                    Click="OnNewFolderToolbarClick"
-                                    Background="#3c3c3c"
-                                    Foreground="White"
-                                    BorderThickness="0"
-                                    Padding="8,5"
-                                    FontSize="11"
-                                    Cursor="Hand"/>
-                            <Button Content="🔄 Refresh" 
-                                    Click="OnRefreshClicked"
-                                    Background="#3c3c3c"
-                                    Foreground="White"
-                                    BorderThickness="0"
-                                    Padding="8,5"
-                                    Margin="5,0,0,0"
-                                    FontSize="11"
-                                    Cursor="Hand"/>
+                            <Button Content="💾 Save Scene" Click="OnSaveScene" Margin="5" Background="#3c3c3c" Foreground="White" BorderThickness="0" Padding="8,4"/>
+                            <Button Content="📂 Load Scene" Click="OnLoadScene" Margin="5" Background="#3c3c3c" Foreground="White" BorderThickness="0" Padding="8,4"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- File Tree -->
-                    <TreeView x:Name="FileTree"
-                              Background="#252526"
-                              Foreground="White"
-                              BorderThickness="0"
-                              FontSize="13"
-                              AllowDrop="True"
-                              DragEnter="OnTreeViewDragEnter"
-                              Drop="OnTreeViewDrop"
-                              PreviewMouseRightButtonDown="OnTreeViewPreviewRightClick">
-                        <TreeView.ItemContainerStyle>
-                            <Style TargetType="TreeViewItem">
-                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-                                <Setter Property="Foreground" Value="White"/>
-                                <Setter Property="FontSize" Value="13"/>
-                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                            </Style>
-                        </TreeView.ItemContainerStyle>
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate DataType="{x:Type local:FileNode}" ItemsSource="{Binding Children}">
-                                <StackPanel Orientation="Horizontal" Tag="{Binding}">
-                                    <TextBlock Text="{Binding Icon}" FontSize="14" Margin="0,0,8,0"/>
-                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
-                    </TreeView>
-                </DockPanel>
-            </Border>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="200"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- SCENE CANVAS -->
+                        <Canvas x:Name="SceneCanvas"
+                                Background="#1e1e1e"
+                                AllowDrop="True"
+                                Drop="OnSceneDrop"
+                                Grid.Column="0"
+                                ClipToBounds="True"/>
+
+                        <!-- HIERARCHY PANEL -->
+                        <Border Grid.Column="1" Background="#252526" BorderBrush="#3c3c3c" BorderThickness="1,0,0,0">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Top" Text="Hierarchy" Foreground="White" Margin="10" FontWeight="Bold"/>
+                                <ListBox x:Name="SceneHierarchy"
+                                         Background="#1e1e1e"
+                                         Foreground="White"
+                                         BorderThickness="0"
+                                         DisplayMemberPath="Name"/>
+                            </DockPanel>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <!-- RIGHT PANEL (Explorer) -->
+            <Grid Grid.Row="0" Grid.Column="2" Grid.RowSpan="2">
+                <!-- FILE EXPLORER -->
+                <Border x:Name="ExplorerContainer" 
+                        Background="#252526"
+                        BorderBrush="#3c3c3c"
+                        BorderThickness="1,0,0,0"
+                        Visibility="Visible">
+                    <DockPanel>
+                        <!-- Explorer Header -->
+                        <Border DockPanel.Dock="Top" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
+                            <TextBlock Text="📁 EXPLORER"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11"
+                                       FontWeight="Bold"
+                                       Margin="10,10,10,10"/>
+                        </Border>
+                        
+                        <!-- Toolbar -->
+                        <Border DockPanel.Dock="Top" Background="#252526" Padding="5">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="📄 New File" 
+                                        Click="OnNewFileToolbarClick"
+                                        Background="#3c3c3c"
+                                        Foreground="White"
+                                        BorderThickness="0"
+                                        Padding="8,5"
+                                        Margin="0,0,5,0"
+                                        FontSize="11"
+                                        Cursor="Hand"/>
+                                <Button Content="📁 New Folder" 
+                                        Click="OnNewFolderToolbarClick"
+                                        Background="#3c3c3c"
+                                        Foreground="White"
+                                        BorderThickness="0"
+                                        Padding="8,5"
+                                        FontSize="11"
+                                        Cursor="Hand"/>
+                                <Button Content="🔄 Refresh" 
+                                        Click="OnRefreshClicked"
+                                        Background="#3c3c3c"
+                                        Foreground="White"
+                                        BorderThickness="0"
+                                        Padding="8,5"
+                                        Margin="5,0,0,0"
+                                        FontSize="11"
+                                        Cursor="Hand"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- File Tree -->
+                        <TreeView x:Name="FileTree"
+                                  Background="#252526"
+                                  Foreground="White"
+                                  BorderThickness="0"
+                                  FontSize="13"
+                                  AllowDrop="True"
+                                  DragEnter="OnTreeViewDragEnter"
+                                  Drop="OnTreeViewDrop"
+                                  PreviewMouseRightButtonDown="OnTreeViewPreviewRightClick">
+                            <TreeView.ItemContainerStyle>
+                                <Style TargetType="TreeViewItem">
+                                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                                </Style>
+                            </TreeView.ItemContainerStyle>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate DataType="{x:Type local:FileNode}" ItemsSource="{Binding Children}">
+                                    <StackPanel Orientation="Horizontal" Tag="{Binding}">
+                                        <TextBlock Text="{Binding Icon}" FontSize="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
+                    </DockPanel>
+                </Border>
+
+                <!-- INSPECTOR PANEL -->
+                <Border x:Name="InspectorContainer" 
+                        Background="#252526"
+                        BorderBrush="#3c3c3c"
+                        BorderThickness="1,0,0,0"
+                        Visibility="Collapsed">
+                    <DockPanel>
+                        <Border DockPanel.Dock="Top" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
+                            <TextBlock Text="🔍 INSPECTOR"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11"
+                                       FontWeight="Bold"
+                                       Margin="10,10,10,10"/>
+                        </Border>
+
+                        <ScrollViewer>
+                            <StackPanel Margin="10">
+                                <TextBlock Text="Name" Foreground="#888" Margin="0,5"/>
+                                <TextBox x:Name="NameBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
+
+                                <TextBlock Text="Position X" Foreground="#888" Margin="0,10,0,5"/>
+                                <TextBox x:Name="PosXBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
+
+                                <TextBlock Text="Position Y" Foreground="#888" Margin="0,10,0,5"/>
+                                <TextBox x:Name="PosYBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
+
+                                <TextBlock Text="Width" Foreground="#888" Margin="0,10,0,5"/>
+                                <TextBox x:Name="WidthBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
+
+                                <TextBlock Text="Height" Foreground="#888" Margin="0,10,0,5"/>
+                                <TextBox x:Name="HeightBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
+
+                                <TextBlock Text="Rotation" Foreground="#888" Margin="0,10,0,5"/>
+                                <TextBox x:Name="RotationBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
+
+                                <Button Content="Apply Changes"
+                                        Click="OnApplyInspector"
+                                        Margin="0,20,0,0"
+                                        Background="#007acc"
+                                        Foreground="White"
+                                        BorderThickness="0"
+                                        Padding="10,8"
+                                        Cursor="Hand"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+            </Grid>
 
             <!-- OUTPUT CONSOLE -->
-            <Border Grid.Row="1" Grid.Column="0"
+            <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                     Background="#1e1e1e"
                     BorderBrush="#3c3c3c"
                     BorderThickness="0,1,0,0">
