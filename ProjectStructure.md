@@ -47,9 +47,7 @@
         │   │   ├── EditorView.xaml
         │   │   ├── EditorView.xaml.cs
         │   │   ├── MainWindow.xaml
-        │   │   ├── MainWindow.xaml.cs
-        │   │   ├── ProjectView.xaml
-        │   │   └── ProjectView.xaml.cs
+        │   │   └── MainWindow.xaml.cs
         │   ├── Controls/
         │   └── Services/
         │

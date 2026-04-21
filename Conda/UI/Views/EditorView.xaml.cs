@@ -1,4 +1,5 @@
 using System;
+using System.Windows.Media.Animation;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -308,6 +309,7 @@ namespace Conda.UI.Views
                     string folderPath = System.IO.Path.Combine(parentPath, folderName);
                     Directory.CreateDirectory(folderPath);
                     LoadFiles();
+                    ShowToast($"Created folder: {folderName}");
                     OutputConsole.Text += $"📁 Created folder: {folderName}\n";
                 }
             }
@@ -328,6 +330,7 @@ namespace Conda.UI.Views
                         else
                             File.Move(node.FullPath, newPath);
                         LoadFiles();
+                        ShowToast($"Renamed: {node.Name} → {newName}");
                         OutputConsole.Text += $"✏️ Renamed: {node.Name} → {newName}\n";
                     }
                     catch (Exception ex)
@@ -353,6 +356,7 @@ namespace Conda.UI.Views
                         else
                             File.Delete(node.FullPath);
                         LoadFiles();
+                        ShowToast($"Deleted: {node.Name}");
                         OutputConsole.Text += $"🗑️ Deleted: {node.Name}\n";
                     }
                     catch (Exception ex)
@@ -368,7 +372,7 @@ namespace Conda.UI.Views
             if (currentContextItem?.DataContext is FileNode node)
             {
                 System.Windows.Clipboard.SetText(node.FullPath);
-                OutputConsole.Text += $"📋 Copied path: {node.FullPath}\n";
+                ShowToast("Path copied to clipboard");
             }
         }
 
@@ -422,6 +426,7 @@ namespace Conda.UI.Views
                 File.WriteAllText(filePath, "");
                 LoadFiles();
                 OpenFileInTab(filePath);
+                ShowToast($"Created file: {fileName}");
                 OutputConsole.Text += $"📄 Created file: {fileName}\n";
             }
         }
@@ -510,6 +515,7 @@ namespace Conda.UI.Views
                     File.WriteAllText(tab.FilePath, code);
                     tab.Content = code;
                     tab.IsDirty = false;
+                    ShowToast($"Saved: {System.IO.Path.GetFileName(tab.FilePath)}");
                     OutputConsole.Text += $"✅ Saved: {System.IO.Path.GetFileName(tab.FilePath)}\n";
                 }
                 catch (Exception ex)
@@ -869,7 +875,7 @@ namespace Conda.UI.Views
             SceneCanvas.Children.Add(element);
         }
 
-        private Border CreatePlaceholderBorder(SceneObject obj)
+        private static Border CreatePlaceholderBorder(SceneObject obj)
         {
             return new Border
             {
@@ -1221,6 +1227,62 @@ namespace Conda.UI.Views
                     System.Windows.MessageBox.Show($"Error loading scene: {ex.Message}", "Error");
                 }
             }
+        }
+        private void ShowToast(string message, bool isSuccess = true)
+        {
+            if (FindName("ToastMessage") is not TextBlock toastMessage ||
+                FindName("ToastIcon") is not TextBlock toastIcon ||
+                FindName("ToastOverlay") is not Grid toastOverlay ||
+                FindName("ToastTranslate") is not TranslateTransform toastTranslate)
+            {
+                return;
+            }
+
+            toastMessage.Text = message;
+            toastIcon.Text = isSuccess ? "✅" : "❌";
+            toastOverlay.Visibility = Visibility.Visible;
+
+            DoubleAnimation slideUp = new()
+            {
+                From = 100,
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(400),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            DoubleAnimation fadeIn = new()
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(400)
+            };
+
+            toastTranslate.BeginAnimation(TranslateTransform.YProperty, slideUp);
+            toastOverlay.BeginAnimation(OpacityProperty, fadeIn);
+
+            var timer = new System.Windows.Threading.DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(3)
+            };
+            timer.Tick += (s, args) =>
+            {
+                DoubleAnimation slideDown = new()
+                {
+                    To = 100,
+                    Duration = TimeSpan.FromMilliseconds(400),
+                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+                };
+                DoubleAnimation fadeOut = new()
+                {
+                    To = 0,
+                    Duration = TimeSpan.FromMilliseconds(400)
+                };
+                slideDown.Completed += (s2, args2) => toastOverlay.Visibility = Visibility.Collapsed;
+                toastTranslate.BeginAnimation(TranslateTransform.YProperty, slideDown);
+                toastOverlay.BeginAnimation(OpacityProperty, fadeOut);
+                timer.Stop();
+            };
+            timer.Start();
         }
     }
 }

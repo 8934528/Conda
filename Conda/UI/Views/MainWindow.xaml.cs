@@ -3,6 +3,7 @@ using Conda.Core.ProjectSystem;
 using Conda.UI.Views;
 using Microsoft.Win32;
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -28,16 +29,58 @@ namespace Conda
     {
         private bool isFullScreen = false;
         private WindowState previousState;
+        private readonly ProjectManager projectManager;
+        private readonly ObservableCollection<ProjectModel> recentProjects;
+
+        public string ProjectsPath { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
+            projectManager = new ProjectManager();
+            recentProjects = [];
+            RecentProjectsList.ItemsSource = recentProjects;
+            
+            ProjectsPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile), "CondaProjects");
+            DataContext = this;
+
             Loaded += MainWindow_Loaded;
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             await CheckPython();
+            await LoadProjects();
+            await CheckPythonStatus();
+        }
+
+        private async System.Threading.Tasks.Task LoadProjects()
+        {
+            var projects = projectManager.GetAllProjects();
+            recentProjects.Clear();
+            foreach (var project in projects)
+            {
+                recentProjects.Add(project);
+            }
+            ProjectCountText.Text = recentProjects.Count.ToString();
+            await System.Threading.Tasks.Task.CompletedTask;
+        }
+
+        private async System.Threading.Tasks.Task CheckPythonStatus()
+        {
+            if (PythonService.IsPythonInstalled())
+            {
+                string version = PythonService.GetPythonVersion();
+
+                PythonStatusText.Text = $"✓ {version}";
+                PythonStatusText.Foreground = System.Windows.Media.Brushes.LightGreen;
+            }
+            else
+            {
+                PythonStatusText.Text = "✗ Python not found. Please install Python and add to PATH.";
+                PythonStatusText.Foreground = System.Windows.Media.Brushes.Red;
+            }
+            await System.Threading.Tasks.Task.CompletedTask;
         }
 
         private static async System.Threading.Tasks.Task CheckPython()
@@ -460,6 +503,43 @@ namespace Conda
         private void OnRunCommandClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Command runner would open here.", "Run Command", System.Windows.MessageBoxButton.OK);
         private void OnSettingsIconClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Settings panel would open here.", "Settings", System.Windows.MessageBoxButton.OK);
 
+        // Dashboard Event Handlers
+        private void OnProjectSelected(object sender, SelectionChangedEventArgs e)
+        {
+            // Open button logic if needed
+        }
+
+        private async void OnOpenSelectedProject(object sender, RoutedEventArgs e)
+        {
+            if (RecentProjectsList.SelectedItem is ProjectModel project)
+            {
+                OpenProjectEditor(project.Path, project.Name);
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Please select a project to open.", "No Selection", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            }
+            await System.Threading.Tasks.Task.CompletedTask;
+        }
+
+        private async void OnRefreshClicked(object sender, RoutedEventArgs e)
+        {
+            await LoadProjects();
+            await CheckPythonStatus();
+            System.Windows.MessageBox.Show("Projects refreshed!", "Refresh", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        }
+
+        private void OnInstallDepsClicked(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show("To install dependencies:\n\n1. Open a project\n2. Navigate to the Editor\n3. Click 'Install Dependencies' button\n\nOr run: pip install -r requirements.txt in terminal", 
+                "Install Dependencies", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        }
+
+        private void OnCheckPythonClicked(object sender, RoutedEventArgs e)
+        {
+            _ = CheckPythonStatus();
+        }
+
         public void OnDocumentationClicked(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo
@@ -543,7 +623,7 @@ namespace Conda
             timer.Start();
         }
 
-        private void OpenProjectEditor(string projectPath, string projectName)
+        public void OpenProjectEditor(string projectPath, string projectName)
         {
             var editorView = new EditorView(projectPath);
             var editorWindow = new Window
