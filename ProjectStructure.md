@@ -54,6 +54,10 @@
         │   │   ├── Converters.xaml
         │   │   └── BoolToVisibilityConverter.cs
         │   ├── Views/
+        │   │   ├── AnimatedModal.xaml
+        │   │   ├── AnimatedModal.xaml.cs
+        │   │   ├── CustomDialog.xaml
+        │   │   ├── CustomDialog.xaml.cs
         │   │   ├── EditorView.xaml
         │   │   ├── EditorView.xaml.cs
         │   │   ├── MainWindow.xaml
