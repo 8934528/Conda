@@ -44,10 +44,13 @@
         │   ├── FileItem.cs
         │   └── FileNode.cs
         │
+        ├── Docs/
         ├── Utils/
         ├── Config/
         ├── Logs/
         ├── Projects/
+
+        ├── .env/                           # must be created in this dir
         │
         ├── UI/
         │   ├── Converters/

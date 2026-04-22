@@ -6,8 +6,22 @@
       xmlns:local="clr-namespace:Conda.UI.Views"
       mc:Ignorable="d" 
       d:DesignHeight="900" d:DesignWidth="1400">
-      
+
     <Page.Resources>
+        <Storyboard x:Key="FadeInAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                           From="0" To="1" Duration="0:0:0.2"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                           From="0.95" To="1" Duration="0:0:0.2"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                           From="0.95" To="1" Duration="0:0:0.2"/>
+        </Storyboard>
+
+        <Storyboard x:Key="FadeOutAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                           From="1" To="0" Duration="0:0:0.15"/>
+        </Storyboard>
+
         <!-- Section Header Style -->
         <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#4ec9b0"/>
@@ -74,6 +88,69 @@
             <Setter Property="Padding" Value="10,8"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Height" Value="35"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                          Grid.ColumnSpan="2"
+                                          Background="{TemplateBinding Background}"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          Focusable="False"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="Border" 
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="4">
+                                            <Grid>
+                                                <ContentPresenter HorizontalAlignment="Left" 
+                                                                  VerticalAlignment="Center"
+                                                                  Margin="10,0,30,0"/>
+                                                <Path x:Name="Arrow"
+                                                      Fill="#e0e0e0"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Center"
+                                                      Margin="0,0,10,0"
+                                                      Data="M0,0 L4,4 L8,0 Z"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="#2d2d30"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <Popup x:Name="Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Border x:Name="DropDownBorder"
+                                        Background="#252526"
+                                        BorderBrush="#3c3c3c"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Margin="0,2,0,0">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="10" Opacity="0.3" ShadowDepth="2"/>
+                                    </Border.Effect>
+                                    <ScrollViewer CanContentScroll="True">
+                                        <ItemsPresenter/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!-- CheckBox Style -->
@@ -82,6 +159,38 @@
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Margin" Value="0,5"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal">
+                            <Border x:Name="CheckBoxBorder"
+                                    Width="18" Height="18"
+                                    Background="#1e1e1e"
+                                    BorderBrush="#3c3c3c"
+                                    BorderThickness="1"
+                                    CornerRadius="3"
+                                    Margin="0,0,8,0">
+                                <TextBlock x:Name="CheckMark" 
+                                           Text="✓" 
+                                           Foreground="#007acc" 
+                                           FontSize="12"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Visibility="Collapsed"/>
+                            </Border>
+                            <ContentPresenter/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CheckBoxBorder" Property="Background" Value="#2d2d30"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!-- Button Style -->
@@ -162,6 +271,9 @@
                                 Background="#3c3c3c" 
                                 CornerRadius="13"
                                 Cursor="Hand">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="3" Opacity="0.2"/>
+                            </Border.Effect>
                             <Border x:Name="Thumb" 
                                     Width="22" 
                                     Height="22" 
@@ -208,6 +320,19 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
         </Style>
+
+        <!-- Navigation Button Style -->
+        <Style x:Key="NavButtonStyle" TargetType="Border">
+            <Setter Property="Margin" Value="20,0,20,5"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2d2d30"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Page.Resources>
 
     <Grid>
@@ -240,7 +365,7 @@
                     </Border>
 
                     <!-- Navigation Items -->
-                    <Border Margin="20,0,20,5" Padding="12,10" CornerRadius="4" Background="#2d2d30">
+                    <Border x:Name="NavGeneral" Style="{StaticResource NavButtonStyle}" Background="#2d2d30" MouseLeftButtonDown="NavItem_Click" Tag="General">
                         <StackPanel>
                             <TextBlock Text="⚡" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
                             <TextBlock Text="General" Foreground="White" FontSize="13" Margin="0,0,0,3"/>
@@ -248,7 +373,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Margin="20,5,20,5" Padding="12,10" CornerRadius="4" Background="Transparent">
+                    <Border x:Name="NavTheme" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Theme">
                         <StackPanel>
                             <TextBlock Text="🎨" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Theme and Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
@@ -256,7 +381,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Margin="20,5,20,5" Padding="12,10" CornerRadius="4" Background="Transparent">
+                    <Border x:Name="NavPython" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Python">
                         <StackPanel>
                             <TextBlock Text="🐍" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Python" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
@@ -264,7 +389,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Margin="20,5,20,5" Padding="12,10" CornerRadius="4" Background="Transparent">
+                    <Border x:Name="NavEditor" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Editor">
                         <StackPanel>
                             <TextBlock Text="📝" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
@@ -272,7 +397,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Margin="20,5,20,5" Padding="12,10" CornerRadius="4" Background="Transparent">
+                    <Border x:Name="NavGameEngine" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="GameEngine">
                         <StackPanel>
                             <TextBlock Text="🎮" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Game Engine" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
@@ -280,7 +405,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Margin="20,5,20,5" Padding="12,10" CornerRadius="4" Background="Transparent">
+                    <Border x:Name="NavTools" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Tools">
                         <StackPanel>
                             <TextBlock Text="🔧" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Tools" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
@@ -288,7 +413,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Margin="20,5,20,5" Padding="12,10" CornerRadius="4" Background="Transparent">
+                    <Border x:Name="NavExtensions" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Extensions">
                         <StackPanel>
                             <TextBlock Text="🔌" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Extensions" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
@@ -296,7 +421,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Margin="20,5,20,5" Padding="12,10" CornerRadius="4" Background="Transparent">
+                    <Border x:Name="NavKeymap" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Keymap">
                         <StackPanel>
                             <TextBlock Text="⌨️" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Keymap" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
@@ -304,7 +429,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Margin="20,15,20,5" Padding="12,10" CornerRadius="4" Background="Transparent">
+                    <Border x:Name="NavAbout" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="About">
                         <StackPanel>
                             <TextBlock Text="ℹ️" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
                             <TextBlock Text="About" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
@@ -319,7 +444,7 @@
         <Border Grid.Column="1" Background="#3c3c3c"/>
 
         <!-- Main Content Area -->
-        <ScrollViewer Grid.Column="2" Style="{StaticResource ModernScrollViewerStyle}">
+        <ScrollViewer Grid.Column="2" Style="{StaticResource ModernScrollViewerStyle}" x:Name="MainScrollViewer">
             <StackPanel Margin="30,20,30,30">
 
                 <!-- Header -->
@@ -333,580 +458,656 @@
                            Foreground="#888888"
                            Margin="0,0,0,30"/>
 
-                <!-- GENERAL SECTION -->
-                <TextBlock Text="General" Style="{StaticResource SectionHeaderStyle}"/>
+                <!-- Content Container -->
+                <Grid x:Name="ContentContainer" RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    </Grid.RenderTransform>
 
-                <!-- General Settings Card -->
-                <Border Style="{StaticResource SettingsCardStyle}">
-                    <StackPanel>
-                        <!-- Language Setting -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="🌐 Language" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Select interface language" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
-                                <ComboBoxItem IsSelected="True">English (US)</ComboBoxItem>
-                                <ComboBoxItem>Spanish</ComboBoxItem>
-                                <ComboBoxItem>French</ComboBoxItem>
-                                <ComboBoxItem>German</ComboBoxItem>
-                                <ComboBoxItem>Chinese</ComboBoxItem>
-                                <ComboBoxItem>Japanese</ComboBoxItem>
-                            </ComboBox>
-                        </Grid>
+                    <!-- GENERAL SECTION -->
+                    <StackPanel x:Name="GeneralSection" Visibility="Visible">
 
-                        <!-- Startup Behavior -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="🚀 Startup Behavior" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="What to show on IDE startup" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ComboBox Grid.Column="1" Width="250" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
-                                <ComboBoxItem IsSelected="True">Show Dashboard</ComboBoxItem>
-                                <ComboBoxItem>Open Last Project</ComboBoxItem>
-                                <ComboBoxItem>Show Welcome Screen</ComboBoxItem>
-                                <ComboBoxItem>Empty Workspace</ComboBoxItem>
-                            </ComboBox>
-                        </Grid>
+                        <TextBlock Text="General" Style="{StaticResource SectionHeaderStyle}"/>
 
-                        <!-- Auto Save -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                        <!-- General Settings Card -->
+                        <Border Style="{StaticResource SettingsCardStyle}">
                             <StackPanel>
-                                <TextBlock Text="💾 Auto Save" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Automatically save files" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
-                            <ComboBox Grid.Column="2" Width="150" Margin="15,0,0,0" Style="{StaticResource ModernComboBoxStyle}">
-                                <ComboBoxItem IsSelected="True">Every 30 seconds</ComboBoxItem>
-                                <ComboBoxItem>Every 1 minute</ComboBoxItem>
-                                <ComboBoxItem>Every 5 minutes</ComboBoxItem>
-                                <ComboBoxItem>On focus loss</ComboBoxItem>
-                            </ComboBox>
-                        </Grid>
+                                <!-- Language Setting -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🌐 Language" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Select interface language" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                        <ComboBoxItem IsSelected="True">English (US)</ComboBoxItem>
+                                        <ComboBoxItem>Spanish</ComboBoxItem>
+                                        <ComboBoxItem>French</ComboBoxItem>
+                                        <ComboBoxItem>German</ComboBoxItem>
+                                        <ComboBoxItem>Chinese</ComboBoxItem>
+                                        <ComboBoxItem>Japanese</ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
 
-                        <!-- Check for Updates -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="🔄 Check for Updates" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Automatically check for updates" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
-                            <Button Grid.Column="2" Content="Check Now" Width="100" Margin="15,0,0,0" 
-                                    Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left"/>
-                        </Grid>
+                                <!-- Startup Behavior -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🚀 Startup Behavior" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="What to show on IDE startup" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="1" Width="250" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                        <ComboBoxItem IsSelected="True">Show Dashboard</ComboBoxItem>
+                                        <ComboBoxItem>Open Last Project</ComboBoxItem>
+                                        <ComboBoxItem>Show Welcome Screen</ComboBoxItem>
+                                        <ComboBoxItem>Empty Workspace</ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
 
-                        <!-- Telemetry -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="📊 Telemetry" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Send anonymous usage data" Style="{StaticResource SettingDescriptionStyle}"/>
+                                <!-- Auto Save -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="💾 Auto Save" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Automatically save files" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                    <ComboBox Grid.Column="2" Width="150" Margin="15,0,0,0" Style="{StaticResource ModernComboBoxStyle}">
+                                        <ComboBoxItem IsSelected="True">Every 30 seconds</ComboBoxItem>
+                                        <ComboBoxItem>Every 1 minute</ComboBoxItem>
+                                        <ComboBoxItem>Every 5 minutes</ComboBoxItem>
+                                        <ComboBoxItem>On focus loss</ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
+
+                                <!-- Check for Updates -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🔄 Check for Updates" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Automatically check for updates" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                    <Button Grid.Column="2" Content="Check Now" Width="100" Margin="15,0,0,0" 
+                                            Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left"/>
+                                </Grid>
+
+                                <!-- Telemetry -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="📊 Telemetry" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Send anonymous usage data" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="False"/>
+                                </Grid>
                             </StackPanel>
-                            <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="False"/>
-                        </Grid>
+                        </Border>
                     </StackPanel>
-                </Border>
 
-                <!-- THEME & EDITOR SECTION -->
-                <TextBlock Text="Theme and Editor" Style="{StaticResource SectionHeaderStyle}"/>
+                    <!-- THEME & EDITOR SECTION -->
+                    <StackPanel x:Name="ThemeSection" Visibility="Collapsed">
+                        <TextBlock Text="Theme and Editor" Style="{StaticResource SectionHeaderStyle}"/>
 
-                <Border Style="{StaticResource SettingsCardStyle}">
-                    <StackPanel>
-                        <!-- Theme Selection -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource SettingsCardStyle}">
                             <StackPanel>
-                                <TextBlock Text="🎨 Theme" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Choose your preferred theme" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
-                                <ComboBoxItem IsSelected="True">Dark (Default)</ComboBoxItem>
-                                <ComboBoxItem>Light</ComboBoxItem>
-                                <ComboBoxItem>High Contrast</ComboBoxItem>
-                                <ComboBoxItem>Monokai</ComboBoxItem>
-                                <ComboBoxItem>Solarized Dark</ComboBoxItem>
-                            </ComboBox>
-                        </Grid>
+                                <!-- Theme Selection -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🎨 Theme" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Choose your preferred theme" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                        <ComboBoxItem IsSelected="True">Dark (Default)</ComboBoxItem>
+                                        <ComboBoxItem>Light</ComboBoxItem>
+                                        <ComboBoxItem>High Contrast</ComboBoxItem>
+                                        <ComboBoxItem>Monokai</ComboBoxItem>
+                                        <ComboBoxItem>Solarized Dark</ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
 
-                        <!-- Accent Color -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="🎨 Accent Color" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Primary UI accent color" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Border Width="30" Height="30" CornerRadius="4" Background="#007acc" Margin="0,0,5,0" Cursor="Hand">
-                                    <Border.ToolTip>
-                                        <ToolTip>Blue (Default)</ToolTip>
-                                    </Border.ToolTip>
-                                </Border>
-                                <Border Width="30" Height="30" CornerRadius="4" Background="#28a745" Margin="0,0,5,0" Cursor="Hand">
-                                    <Border.ToolTip>
-                                        <ToolTip>Green</ToolTip>
-                                    </Border.ToolTip>
-                                </Border>
-                                <Border Width="30" Height="30" CornerRadius="4" Background="#dc3545" Margin="0,0,5,0" Cursor="Hand">
-                                    <Border.ToolTip>
-                                        <ToolTip>Red</ToolTip>
-                                    </Border.ToolTip>
-                                </Border>
-                                <Border Width="30" Height="30" CornerRadius="4" Background="#fd7e14" Margin="0,0,5,0" Cursor="Hand">
-                                    <Border.ToolTip>
-                                        <ToolTip>Orange</ToolTip>
-                                    </Border.ToolTip>
-                                </Border>
-                                <Border Width="30" Height="30" CornerRadius="4" Background="#6f42c1" Margin="0,0,5,0" Cursor="Hand">
-                                    <Border.ToolTip>
-                                        <ToolTip>Purple</ToolTip>
-                                    </Border.ToolTip>
-                                </Border>
-                            </StackPanel>
-                        </Grid>
+                                <!-- Accent Color -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🎨 Accent Color" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Primary UI accent color" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <Border Width="30" Height="30" CornerRadius="4" Background="#007acc" Margin="0,0,5,0" Cursor="Hand">
+                                            <Border.ToolTip>
+                                                <ToolTip>Blue (Default)</ToolTip>
+                                            </Border.ToolTip>
+                                        </Border>
+                                        <Border Width="30" Height="30" CornerRadius="4" Background="#28a745" Margin="0,0,5,0" Cursor="Hand">
+                                            <Border.ToolTip>
+                                                <ToolTip>Green</ToolTip>
+                                            </Border.ToolTip>
+                                        </Border>
+                                        <Border Width="30" Height="30" CornerRadius="4" Background="#dc3545" Margin="0,0,5,0" Cursor="Hand">
+                                            <Border.ToolTip>
+                                                <ToolTip>Red</ToolTip>
+                                            </Border.ToolTip>
+                                        </Border>
+                                        <Border Width="30" Height="30" CornerRadius="4" Background="#fd7e14" Margin="0,0,5,0" Cursor="Hand">
+                                            <Border.ToolTip>
+                                                <ToolTip>Orange</ToolTip>
+                                            </Border.ToolTip>
+                                        </Border>
+                                        <Border Width="30" Height="30" CornerRadius="4" Background="#6f42c1" Margin="0,0,5,0" Cursor="Hand">
+                                            <Border.ToolTip>
+                                                <ToolTip>Purple</ToolTip>
+                                            </Border.ToolTip>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
 
-                        <!-- Font Family -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="🔤 Font Family" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Editor font family" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ComboBox Grid.Column="1" Width="250" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
-                                <ComboBoxItem IsSelected="True">Consolas</ComboBoxItem>
-                                <ComboBoxItem>Fira Code</ComboBoxItem>
-                                <ComboBoxItem>Cascadia Code</ComboBoxItem>
-                                <ComboBoxItem>JetBrains Mono</ComboBoxItem>
-                                <ComboBoxItem>Source Code Pro</ComboBoxItem>
-                            </ComboBox>
-                        </Grid>
+                                <!-- Font Family -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🔤 Font Family" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Editor font family" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="1" Width="250" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                        <ComboBoxItem IsSelected="True">Consolas</ComboBoxItem>
+                                        <ComboBoxItem>Fira Code</ComboBoxItem>
+                                        <ComboBoxItem>Cascadia Code</ComboBoxItem>
+                                        <ComboBoxItem>JetBrains Mono</ComboBoxItem>
+                                        <ComboBoxItem>Source Code Pro</ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
 
-                        <!-- Font Size -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="📏 Font Size" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Editor font size in pixels" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Slider Width="200" Minimum="10" Maximum="24" Value="14" Style="{StaticResource ModernSliderStyle}"/>
-                                <TextBlock Text="14" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
-                            </StackPanel>
-                        </Grid>
+                                <!-- Font Size -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="📏 Font Size" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Editor font size in pixels" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <Slider Width="200" Minimum="10" Maximum="24" Value="14" Style="{StaticResource ModernSliderStyle}"/>
+                                        <TextBlock Text="14" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
+                                    </StackPanel>
+                                </Grid>
 
-                        <!-- Line Spacing -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="📐 Line Spacing" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Line height multiplier" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Slider Width="200" Minimum="1" Maximum="2" Value="1.4" Style="{StaticResource ModernSliderStyle}"/>
-                                <TextBlock Text="1.4" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
-                            </StackPanel>
-                        </Grid>
+                                <!-- Line Spacing -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="📐 Line Spacing" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Line height multiplier" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <Slider Width="200" Minimum="1" Maximum="2" Value="1.4" Style="{StaticResource ModernSliderStyle}"/>
+                                        <TextBlock Text="1.4" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
+                                    </StackPanel>
+                                </Grid>
 
-                        <!-- Minimap -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="🗺️ Minimap" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Show code minimap" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
-                        </Grid>
+                                <!-- Minimap -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🗺️ Minimap" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Show code minimap" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                </Grid>
 
-                        <!-- Word Wrap -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="📝 Word Wrap" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Wrap long lines" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="False"/>
-                        </Grid>
+                                <!-- Word Wrap -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="📝 Word Wrap" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Wrap long lines" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="False"/>
+                                </Grid>
 
-                        <!-- Line Numbers -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="🔢 Line Numbers" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Show line numbers in editor" Style="{StaticResource SettingDescriptionStyle}"/>
+                                <!-- Line Numbers -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🔢 Line Numbers" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Show line numbers in editor" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                </Grid>
                             </StackPanel>
-                            <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
-                        </Grid>
+                        </Border>
                     </StackPanel>
-                </Border>
 
-                <!-- PYTHON SECTION -->
-                <TextBlock Text="Python" Style="{StaticResource SectionHeaderStyle}"/>
+                    <!-- PYTHON SECTION -->
+                    <StackPanel x:Name="PythonSection" Visibility="Collapsed">
+                        <TextBlock Text="Python" Style="{StaticResource SectionHeaderStyle}"/>
 
-                <Border Style="{StaticResource SettingsCardStyle}">
-                    <StackPanel>
-                        <!-- Python Interpreter -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource SettingsCardStyle}">
                             <StackPanel>
-                                <TextBlock Text="🐍 Python Interpreter" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Path to Python executable" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <TextBox Grid.Column="1" Text="C:\Python39\python.exe" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
-                            <Button Grid.Column="2" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
-                        </Grid>
+                                <!-- Python Interpreter -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🐍 Python Interpreter" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Path to Python executable" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <TextBox Grid.Column="1" Text="C:\Python39\python.exe" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
+                                    <Button Grid.Column="2" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
+                                </Grid>
 
-                        <!-- Default Virtual Environment -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="📦 Virtual Environment" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Auto-create venv for new projects" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
-                        </Grid>
+                                <!-- Default Virtual Environment -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="📦 Virtual Environment" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Auto-create venv for new projects" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                </Grid>
 
-                        <!-- Pip Index -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="📦 Pip Index URL" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Custom package index URL" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <TextBox Grid.Column="1" Text="https://pypi.org/simple" Style="{StaticResource ModernTextBoxStyle}"/>
-                        </Grid>
+                                <!-- Pip Index -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="📦 Pip Index URL" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Custom package index URL" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <TextBox Grid.Column="1" Text="https://pypi.org/simple" Style="{StaticResource ModernTextBoxStyle}"/>
+                                </Grid>
 
-                        <!-- Default Packages -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="📦 Default Packages" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Auto-install for new projects" Style="{StaticResource SettingDescriptionStyle}"/>
+                                <!-- Default Packages -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="📦 Default Packages" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Auto-install for new projects" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <TextBox Grid.Column="1" Text="pygame, arcade, numpy" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
+                                    <Button Grid.Column="2" Content="Manage" Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
+                                </Grid>
                             </StackPanel>
-                            <TextBox Grid.Column="1" Text="pygame, arcade, numpy" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
-                            <Button Grid.Column="2" Content="Manage" Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
-                        </Grid>
+                        </Border>
                     </StackPanel>
-                </Border>
 
-                <!-- GAME ENGINE SECTION -->
-                <TextBlock Text="Game Engine" Style="{StaticResource SectionHeaderStyle}"/>
+                    <!-- EDITOR SECTION -->
+                    <StackPanel x:Name="EditorSection" Visibility="Collapsed">
+                        <TextBlock Text="Editor" Style="{StaticResource SectionHeaderStyle}"/>
 
-                <Border Style="{StaticResource SettingsCardStyle}">
-                    <StackPanel>
-                        <!-- Default Resolution -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource SettingsCardStyle}">
                             <StackPanel>
-                                <TextBlock Text="🎮 Default Resolution" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Default game window size" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
-                                <ComboBoxItem IsSelected="True">800x600</ComboBoxItem>
-                                <ComboBoxItem>1024x768</ComboBoxItem>
-                                <ComboBoxItem>1280x720</ComboBoxItem>
-                                <ComboBoxItem>1920x1080</ComboBoxItem>
-                            </ComboBox>
-                        </Grid>
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="✨ Auto Completion" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Enable code completion" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                </Grid>
 
-                        <!-- Fullscreen by default -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="🖥️ Fullscreen Default" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Start games in fullscreen" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="False"/>
-                        </Grid>
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🔍 Linting" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Enable code linting" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                </Grid>
 
-                        <!-- VSync -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="🔄 VSync" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Enable vertical sync" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
-                        </Grid>
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🎨 Syntax Highlighting" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Enable syntax highlighting" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                </Grid>
 
-                        <!-- Frame Rate -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="🎬 Frame Rate Limit" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Maximum FPS (0 = unlimited)" Style="{StaticResource SettingDescriptionStyle}"/>
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="📏 Tab Size" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Number of spaces per tab" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="1" Width="100" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                        <ComboBoxItem IsSelected="True">2</ComboBoxItem>
+                                        <ComboBoxItem>4</ComboBoxItem>
+                                        <ComboBoxItem>6</ComboBoxItem>
+                                        <ComboBoxItem>8</ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
                             </StackPanel>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Slider Width="200" Minimum="0" Maximum="240" Value="60" Style="{StaticResource ModernSliderStyle}"/>
-                                <TextBlock Text="60 FPS" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
-                            </StackPanel>
-                        </Grid>
-
-                        <!-- Physics Engine -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="⚡ Physics Engine" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Choose physics backend" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
-                                <ComboBoxItem IsSelected="True">Pymunk</ComboBoxItem>
-                                <ComboBoxItem>Box2D</ComboBoxItem>
-                                <ComboBoxItem>None</ComboBoxItem>
-                            </ComboBox>
-                        </Grid>
+                        </Border>
                     </StackPanel>
-                </Border>
 
-                <!-- TOOLS SECTION -->
-                <TextBlock Text="Tools" Style="{StaticResource SectionHeaderStyle}"/>
+                    <!-- GAME ENGINE SECTION -->
+                    <StackPanel x:Name="GameEngineSection" Visibility="Collapsed">
+                        <TextBlock Text="Game Engine" Style="{StaticResource SectionHeaderStyle}"/>
 
-                <Border Style="{StaticResource SettingsCardStyle}">
-                    <StackPanel>
-                        <!-- Terminal Path -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource SettingsCardStyle}">
                             <StackPanel>
-                                <TextBlock Text="🖥️ Terminal Path" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Path to terminal emulator" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <TextBox Grid.Column="1" Text="cmd.exe" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
-                            <Button Grid.Column="2" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
-                        </Grid>
+                                <!-- Default Resolution -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🎮 Default Resolution" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Default game window size" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                        <ComboBoxItem IsSelected="True">800x600</ComboBoxItem>
+                                        <ComboBoxItem>1024x768</ComboBoxItem>
+                                        <ComboBoxItem>1280x720</ComboBoxItem>
+                                        <ComboBoxItem>1920x1080</ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
 
-                        <!-- External Editor -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="📝 External Editor" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Fallback external editor" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <TextBox Grid.Column="1" Text="notepad.exe" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
-                            <Button Grid.Column="2" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
-                        </Grid>
+                                <!-- Fullscreen by default -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🖥️ Fullscreen Default" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Start games in fullscreen" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="False"/>
+                                </Grid>
 
-                        <!-- Build Tool -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="🔨 Build Tool" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Default build tool" Style="{StaticResource SettingDescriptionStyle}"/>
+                                <!-- VSync -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🔄 VSync" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Enable vertical sync" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                </Grid>
+
+                                <!-- Frame Rate -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🎬 Frame Rate Limit" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Maximum FPS (0 = unlimited)" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <Slider Width="200" Minimum="0" Maximum="240" Value="60" Style="{StaticResource ModernSliderStyle}"/>
+                                        <TextBlock Text="60 FPS" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Physics Engine -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="⚡ Physics Engine" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Choose physics backend" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                        <ComboBoxItem IsSelected="True">Pymunk</ComboBoxItem>
+                                        <ComboBoxItem>Box2D</ComboBoxItem>
+                                        <ComboBoxItem>None</ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
                             </StackPanel>
-                            <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
-                                <ComboBoxItem IsSelected="True">PyInstaller</ComboBoxItem>
-                                <ComboBoxItem>cx_Freeze</ComboBoxItem>
-                                <ComboBoxItem>Nuitka</ComboBoxItem>
-                                <ComboBoxItem>Py2exe</ComboBoxItem>
-                            </ComboBox>
-                        </Grid>
+                        </Border>
                     </StackPanel>
-                </Border>
 
-                <!-- KEYMAP SECTION -->
-                <TextBlock Text="Keymap" Style="{StaticResource SectionHeaderStyle}"/>
+                    <!-- TOOLS SECTION -->
+                    <StackPanel x:Name="ToolsSection" Visibility="Collapsed">
+                        <TextBlock Text="Tools" Style="{StaticResource SectionHeaderStyle}"/>
 
-                <Border Style="{StaticResource SettingsCardStyle}">
-                    <StackPanel>
-                        <!-- Keymap Preset -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource SettingsCardStyle}">
                             <StackPanel>
-                                <TextBlock Text="⌨️ Keymap Preset" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Keyboard shortcut scheme" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
-                                <ComboBoxItem IsSelected="True">Conda Default</ComboBoxItem>
-                                <ComboBoxItem>VS Code</ComboBoxItem>
-                                <ComboBoxItem>Sublime Text</ComboBoxItem>
-                                <ComboBoxItem>Visual Studio</ComboBoxItem>
-                                <ComboBoxItem>Emacs</ComboBoxItem>
-                                <ComboBoxItem>Vim</ComboBoxItem>
-                            </ComboBox>
-                        </Grid>
+                                <!-- Terminal Path -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🖥️ Terminal Path" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Path to terminal emulator" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <TextBox Grid.Column="1" Text="cmd.exe" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
+                                    <Button Grid.Column="2" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
+                                </Grid>
 
-                        <!-- Custom Keybindings -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="⚙️ Custom Keybindings" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Edit custom shortcuts" Style="{StaticResource SettingDescriptionStyle}"/>
+                                <!-- External Editor -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="📝 External Editor" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Fallback external editor" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <TextBox Grid.Column="1" Text="notepad.exe" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
+                                    <Button Grid.Column="2" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
+                                </Grid>
+
+                                <!-- Build Tool -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🔨 Build Tool" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Default build tool" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                        <ComboBoxItem IsSelected="True">PyInstaller</ComboBoxItem>
+                                        <ComboBoxItem>cx_Freeze</ComboBoxItem>
+                                        <ComboBoxItem>Nuitka</ComboBoxItem>
+                                        <ComboBoxItem>Py2exe</ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
                             </StackPanel>
-                            <Button Grid.Column="1" Content="Edit Keybindings" Style="{StaticResource SecondaryButtonStyle}" Width="120"/>
-                        </Grid>
+                        </Border>
                     </StackPanel>
-                </Border>
 
-                <!-- EXTENSIONS SECTION -->
-                <TextBlock Text="Extensions" Style="{StaticResource SectionHeaderStyle}"/>
+                    <!-- EXTENSIONS SECTION -->
+                    <StackPanel x:Name="ExtensionsSection" Visibility="Collapsed">
+                        <TextBlock Text="Extensions" Style="{StaticResource SectionHeaderStyle}"/>
 
-                <Border Style="{StaticResource SettingsCardStyle}">
-                    <StackPanel>
-                        <!-- Installed Extensions -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource SettingsCardStyle}">
                             <StackPanel>
-                                <TextBlock Text="🔌 Manage Extensions" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Browse and install extensions" Style="{StaticResource SettingDescriptionStyle}"/>
-                            </StackPanel>
-                            <Button Grid.Column="1" Content="Open Extension Manager" Style="{StaticResource PrimaryButtonStyle}" Width="160"/>
-                        </Grid>
+                                <!-- Installed Extensions -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="🔌 Manage Extensions" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Browse and install extensions" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="Open Extension Manager" Style="{StaticResource PrimaryButtonStyle}" Width="160"/>
+                                </Grid>
 
-                        <!-- Installed Extensions List -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="📦 Installed" Style="{StaticResource SettingLabelStyle}"/>
-                                <TextBlock Text="Currently installed extensions" Style="{StaticResource SettingDescriptionStyle}"/>
+                                <!-- Installed Extensions List -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="📦 Installed" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Currently installed extensions" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="1" Background="#1e1e1e" CornerRadius="4" Padding="10" Margin="0,0,0,0">
+                                        <StackPanel>
+                                            <CheckBox Content="Python Language Support" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
+                                            <CheckBox Content="Pygame Snippets" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
+                                            <CheckBox Content="Git Integration" IsChecked="False" Style="{StaticResource ModernCheckBoxStyle}"/>
+                                            <CheckBox Content="Theme Pack - Monokai" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
                             </StackPanel>
-                            <Border Grid.Column="1" Background="#1e1e1e" CornerRadius="4" Padding="10" Margin="0,0,0,0">
-                                <StackPanel>
-                                    <CheckBox Content="Python Language Support" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
-                                    <CheckBox Content="Pygame Snippets" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
-                                    <CheckBox Content="Git Integration" IsChecked="False" Style="{StaticResource ModernCheckBoxStyle}"/>
-                                    <CheckBox Content="Theme Pack - Monokai" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- KEYMAP SECTION -->
+                    <StackPanel x:Name="KeymapSection" Visibility="Collapsed">
+                        <TextBlock Text="Keymap" Style="{StaticResource SectionHeaderStyle}"/>
+
+                        <Border Style="{StaticResource SettingsCardStyle}">
+                            <StackPanel>
+                                <!-- Keymap Preset -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="⌨️ Keymap Preset" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Keyboard shortcut scheme" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                        <ComboBoxItem IsSelected="True">Conda Default</ComboBoxItem>
+                                        <ComboBoxItem>VS Code</ComboBoxItem>
+                                        <ComboBoxItem>Sublime Text</ComboBoxItem>
+                                        <ComboBoxItem>Visual Studio</ComboBoxItem>
+                                        <ComboBoxItem>Emacs</ComboBoxItem>
+                                        <ComboBoxItem>Vim</ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
+
+                                <!-- Custom Keybindings -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="⚙️ Custom Keybindings" Style="{StaticResource SettingLabelStyle}"/>
+                                        <TextBlock Text="Edit custom shortcuts" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="Edit Keybindings" Style="{StaticResource SecondaryButtonStyle}" Width="120"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- ABOUT SECTION -->
+                    <StackPanel x:Name="AboutSection" Visibility="Collapsed">
+                        <TextBlock Text="About" Style="{StaticResource SectionHeaderStyle}"/>
+
+                        <Border Style="{StaticResource SettingsCardStyle}">
+                            <StackPanel>
+                                <!-- Version Info -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="ℹ️ Version" Style="{StaticResource SettingLabelStyle}"/>
+                                    <TextBlock Grid.Column="1" Text="1.0.0" Foreground="#4ec9b0" FontSize="13" FontWeight="SemiBold"/>
+                                </Grid>
+
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="📅 Build Date" Style="{StaticResource SettingLabelStyle}"/>
+                                    <TextBlock Grid.Column="1" Text="2026" Foreground="#e0e0e0" FontSize="13"/>
+                                </Grid>
+
+                                <!-- Action Buttons -->
+                                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                                    <Button Content="Check for Updates" Style="{StaticResource PrimaryButtonStyle}" Width="140" Margin="0,0,10,0"/>
+                                    <Button Content="View License" Style="{StaticResource SecondaryButtonStyle}" Width="120" Margin="0,0,10,0"/>
+                                    <Button Content="Report Issue" Style="{StaticResource SecondaryButtonStyle}" Width="120"/>
                                 </StackPanel>
-                            </Border>
-                        </Grid>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </Border>
-
-                <!-- ABOUT SECTION -->
-                <TextBlock Text="About" Style="{StaticResource SectionHeaderStyle}"/>
-
-                <Border Style="{StaticResource SettingsCardStyle}">
-                    <StackPanel>
-                        <!-- Version Info -->
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="ℹ️ Version" Style="{StaticResource SettingLabelStyle}"/>
-                            <TextBlock Grid.Column="1" Text="1.0.0" Foreground="#4ec9b0" FontSize="13" FontWeight="SemiBold"/>
-                        </Grid>
-
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="📅 Build Date" Style="{StaticResource SettingLabelStyle}"/>
-                            <TextBlock Grid.Column="1" Text="2024" Foreground="#e0e0e0" FontSize="13"/>
-                        </Grid>
-
-                        <Grid Style="{StaticResource SettingRowStyle}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="⚡ Framework" Style="{StaticResource SettingLabelStyle}"/>
-                            <TextBlock Grid.Column="1" Text=".NET 6.0 / WPF" Foreground="#e0e0e0" FontSize="13"/>
-                        </Grid>
-
-                        <!-- Action Buttons -->
-                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                            <Button Content="Check for Updates" Style="{StaticResource PrimaryButtonStyle}" Width="140" Margin="0,0,10,0"/>
-                            <Button Content="View License" Style="{StaticResource SecondaryButtonStyle}" Width="120" Margin="0,0,10,0"/>
-                            <Button Content="Report Issue" Style="{StaticResource SecondaryButtonStyle}" Width="120"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
+                </Grid>
 
                 <!-- Bottom Action Buttons -->
                 <Border Background="#252526" CornerRadius="6" Padding="20,15" Margin="0,30,0,0">

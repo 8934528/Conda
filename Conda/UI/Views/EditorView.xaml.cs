@@ -17,7 +17,7 @@ using Conda.Engine.VisualScripting;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Conda.UI.Views; // Add this for CustomDialog and AnimatedModal
+using Conda.UI.Views; // for customdialog and animatedmodal
 
 using Point = System.Windows.Point;
 using Color = System.Windows.Media.Color;
@@ -831,8 +831,52 @@ namespace Conda.UI.Views
         private async void OnRunCommandClicked(object sender, RoutedEventArgs e)
             => await CustomDialog.ShowAsync(Window.GetWindow(this), "Command runner would open here.", "Run Command", DialogIcon.Info);
 
+
+
         private async void OnSettingsIconClicked(object sender, RoutedEventArgs e)
-            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Settings panel would open here.", "Settings", DialogIcon.Info);
+        {
+            var settingsView = new SettingsView();
+            var settingsWindow = new Window
+            {
+                Title = "Conda IDE - Settings",
+                Content = settingsView,
+                Width = 1200,
+                Height = 800,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30))
+            };
+            settingsWindow.ShowDialog();
+        }
+
+
+
+        private void OnRenameGameObject(object sender, RoutedEventArgs e)
+        {
+            if (selectedGameObject != null)
+            {
+                var renamePanel = new StackPanel();
+                renamePanel.Children.Add(new TextBlock
+                {
+                    Text = "Enter new name:",
+                    Foreground = Brushes.White,
+                    Margin = new Thickness(0, 0, 0, 10)
+                });
+
+                var nameBox = new TextBox
+                {
+                    Text = selectedGameObject.Name,
+                    Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
+                    Foreground = Brushes.White,
+                    Margin = new Thickness(0, 0, 0, 10),
+                    Padding = new Thickness(5)
+                };
+                renamePanel.Children.Add(nameBox);
+
+                _ = CustomDialog.ShowCustomAsync(Window.GetWindow(this), "Rename Object", renamePanel, "Rename", "Cancel");
+            }
+        }
+
+
 
         private void ToggleFullScreen()
         {

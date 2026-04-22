@@ -17,6 +17,7 @@
     <Folder Include="Engine\Builders\" />
     <Folder Include="Engine\Runtimes\" />
     <Folder Include="Logs\" />
+    <Folder Include="Docs\" />
     <Folder Include="Projects\" />
     <Folder Include="UI\Controls\" />
     <Folder Include="UI\Services\" />
