@@ -4,8 +4,11 @@
     ├── Conda.sln
     │
     └── Conda/
+        ├── Classes/
+        │   ├── Editor_Reusable_Backend.cs
+        │   └── MainWindown_Reusable_Backend.cs   
         ├── Core/
-        │   ├── ProjectSystem/             # Create/open/manage projects
+        │   ├── ProjectSystem/
         │   │   ├── ProjectCreator.cs
         │   │   ├── ProjectManager.cs
         │   │   ├── ProjectModel.cs
