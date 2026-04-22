@@ -26,9 +26,19 @@
         │   ├── SceneSystem/
         │   │   ├── Scene.cs
         │   │   └── SceneObject.cs
+        │   ├── VisualScripting/
+        │   │   └── Node.cs
+        │   ├── Components/
+        │   │   ├── Transform.cs
+        │   │   ├── Sprite.cs
+        │   │   ├── ScriptComponent.cs
+        │   │   └── Component.cs
+        |   |
         │   ├── Runtimes/                  # Pygame/Arcade runners
         │   ├── Builders/                  # Build/export logic
-        │   └── Bridges/                   # C# ↔ Python communication
+        │   ├── Bridges/                   # C# ↔ Python communication
+        |   |
+        │   └── GameObject.cs
         │
         ├── Editor/
         │   ├── FileItem.cs

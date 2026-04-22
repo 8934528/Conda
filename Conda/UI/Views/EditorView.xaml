@@ -46,7 +46,7 @@
                     <Image Source="../../Assets/logo/FirstIcon.png" Width="28" Height="28" Margin="0,0,10,0"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="150,0,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="450,0,0,0">
                     <!-- File -->
                     <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0">
                         <MenuItem Header="File" Background="Transparent" Foreground="#cccccc">
@@ -146,6 +146,9 @@
                     <Button x:Name="SceneEditorToggle" ToolTip="Scene Editor" Click="OnShowSceneEditor" Height="50" Background="Transparent" BorderThickness="0" Cursor="Hand">
                         <TextBlock Text="🎨" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
+                    <Button x:Name="VisualScriptingToggle" ToolTip="Visual Scripting" Click="OnShowVisualScripting" Height="50" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                        <TextBlock Text="🧠" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
                 </StackPanel>
             </Border>
 
@@ -207,6 +210,15 @@
                         <StackPanel Orientation="Horizontal">
                             <Button Content="💾 Save Scene" Click="OnSaveScene" Margin="5" Background="#3c3c3c" Foreground="White" BorderThickness="0" Padding="8,4"/>
                             <Button Content="📂 Load Scene" Click="OnLoadScene" Margin="5" Background="#3c3c3c" Foreground="White" BorderThickness="0" Padding="8,4"/>
+                            <ToggleButton x:Name="PlayToggle"
+                                          Content="▶ Play"
+                                          Click="OnPlayToggle"
+                                          Margin="5"
+                                          Padding="10,5"
+                                          Background="#28a745"
+                                          Foreground="White"
+                                          BorderThickness="0"
+                                          Cursor="Hand"/>
                         </StackPanel>
                     </Border>
 
@@ -237,6 +249,25 @@
                         </Border>
                     </Grid>
                 </Grid>
+
+                <!-- VISUAL SCRIPTING -->
+                <Border x:Name="VisualScriptingContainer" Background="#1e1e1e" Visibility="Collapsed">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Visual Scripting Label -->
+                        <TextBlock Grid.Row="0" Text="🧠 VISUAL SCRIPTING" Style="{StaticResource SectionHeaderStyle}"/>
+
+                        <!-- Node Canvas -->
+                        <Canvas x:Name="NodeCanvas" 
+                                Grid.Row="1" 
+                                Background="#1e1e1e" 
+                                ClipToBounds="True"/>
+                    </Grid>
+                </Border>
             </Grid>
 
             <!-- RIGHT PANEL (Explorer) -->
@@ -298,7 +329,8 @@
                                   AllowDrop="True"
                                   DragEnter="OnTreeViewDragEnter"
                                   Drop="OnTreeViewDrop"
-                                  PreviewMouseRightButtonDown="OnTreeViewPreviewRightClick">
+                                  PreviewMouseRightButtonDown="OnTreeViewPreviewRightClick"
+                                  SelectedItemChanged="OnFileTreeSelectedItemChanged">
                             <TreeView.ItemContainerStyle>
                                 <Style TargetType="TreeViewItem">
                                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
@@ -327,42 +359,26 @@
                         Visibility="Collapsed">
                     <DockPanel>
                         <Border DockPanel.Dock="Top" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
-                            <TextBlock Text="🔍 INSPECTOR"
-                                       Foreground="#aaaaaa"
-                                       FontSize="11"
-                                       FontWeight="Bold"
-                                       Margin="10,10,10,10"/>
-                        </Border>
-
-                        <ScrollViewer>
-                            <StackPanel Margin="10">
-                                <TextBlock Text="Name" Foreground="#888" Margin="0,5"/>
-                                <TextBox x:Name="NameBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
-
-                                <TextBlock Text="Position X" Foreground="#888" Margin="0,10,0,5"/>
-                                <TextBox x:Name="PosXBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
-
-                                <TextBlock Text="Position Y" Foreground="#888" Margin="0,10,0,5"/>
-                                <TextBox x:Name="PosYBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
-
-                                <TextBlock Text="Width" Foreground="#888" Margin="0,10,0,5"/>
-                                <TextBox x:Name="WidthBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
-
-                                <TextBlock Text="Height" Foreground="#888" Margin="0,10,0,5"/>
-                                <TextBox x:Name="HeightBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
-
-                                <TextBlock Text="Rotation" Foreground="#888" Margin="0,10,0,5"/>
-                                <TextBox x:Name="RotationBox" Background="#333" Foreground="White" BorderThickness="1" BorderBrush="#444" Padding="5"/>
-
-                                <Button Content="Apply Changes"
-                                        Click="OnApplyInspector"
-                                        Margin="0,20,0,0"
+                            <StackPanel>
+                                <TextBlock Text="🔍 INSPECTOR"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           FontWeight="Bold"
+                                           Margin="10,10,10,5"/>
+                                <Button Content="➕ Add Object"
+                                        Click="OnAddGameObject"
+                                        Margin="10,0,10,8"
                                         Background="#007acc"
                                         Foreground="White"
                                         BorderThickness="0"
-                                        Padding="10,8"
+                                        Padding="8,4"
+                                        FontSize="11"
                                         Cursor="Hand"/>
                             </StackPanel>
+                        </Border>
+
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel x:Name="InspectorPanel" Margin="10"/>
                         </ScrollViewer>
                     </DockPanel>
                 </Border>
@@ -416,9 +432,9 @@
             </Border>
         </Grid>
 
-        <!-- Toast Notification Overlay -->
+        <!-- Notification -->
         <Grid x:Name="ToastOverlay" Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,50" Visibility="Collapsed">
-            <Border Background="#333333" CornerRadius="8" Padding="20,12" BorderBrush="#007acc" BorderThickness="1" SnapsToDevicePixels="True">
+            <Border Background="#333333" CornerRadius="3" Padding="20,12" BorderBrush="#007acc" BorderThickness="1" SnapsToDevicePixels="True">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="15" Opacity="0.5" Direction="270" ShadowDepth="2"/>
                 </Border.Effect>
