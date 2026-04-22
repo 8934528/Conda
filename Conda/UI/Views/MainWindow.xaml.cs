@@ -40,7 +40,7 @@ namespace Conda
             projectManager = new ProjectManager();
             recentProjects = [];
             RecentProjectsList.ItemsSource = recentProjects;
-            
+
             ProjectsPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile), "CondaProjects");
             DataContext = this;
 
@@ -87,13 +87,15 @@ namespace Conda
         {
             if (!PythonService.IsPythonInstalled())
             {
-                var result = System.Windows.MessageBox.Show(
+                var result = await CustomDialog.ShowAsync(
+                    Application.Current.MainWindow,
                     "Python is not installed or not added to PATH.\n\nPlease install Python to use Conda IDE.\n\nDo you want to open the Python download page?",
                     "Python Not Found",
-                    System.Windows.MessageBoxButton.YesNo,
-                    System.Windows.MessageBoxImage.Warning);
+                    DialogIcon.Warning,
+                    "Yes",
+                    "No");
 
-                if (result == System.Windows.MessageBoxResult.Yes)
+                if (result)
                 {
                     Process.Start(new ProcessStartInfo
                     {
@@ -105,107 +107,102 @@ namespace Conda
             await System.Threading.Tasks.Task.CompletedTask;
         }
 
-        public void OnNewProjectClicked(object sender, RoutedEventArgs e)
+        public async void OnNewProjectClicked(object sender, RoutedEventArgs e)
         {
-            var dialog = new Window
-            {
-                Title = "New Project",
-                Width = 500,
-                Height = 350,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                Owner = this,
-                Background = new SolidColorBrush(Color.FromRgb(45, 45, 45)),
-                ResizeMode = ResizeMode.NoResize
-            };
-
-            var grid = new Grid();
-            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            // Create custom content for the modal
+            var contentGrid = new Grid();
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
             // Project Name
             var nameLabel = new TextBlock
             {
                 Text = "Project Name:",
                 Foreground = Brushes.White,
-                Margin = new Thickness(15, 20, 15, 5),
-                FontSize = 14
+                Margin = new Thickness(0, 0, 0, 8),
+                FontSize = 13,
+                FontWeight = FontWeights.SemiBold
             };
             Grid.SetRow(nameLabel, 0);
-            grid.Children.Add(nameLabel);
+            contentGrid.Children.Add(nameLabel);
 
             var textBox = new TextBox
             {
                 Text = "MyGame",
-                Margin = new Thickness(15, 5, 15, 10),
-                FontSize = 14,
-                Height = 35,
-                Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
-                Foreground = Brushes.White,
-                BorderBrush = new SolidColorBrush(Color.FromRgb(85, 85, 85))
-            };
-            Grid.SetRow(textBox, 1);
-            grid.Children.Add(textBox);
-
-            // Location Option
-            var locationLabel = new TextBlock
-            {
-                Text = "Save Location:",
-                Foreground = Brushes.White,
-                Margin = new Thickness(15, 10, 15, 5),
-                FontSize = 14
-            };
-            Grid.SetRow(locationLabel, 2);
-            grid.Children.Add(locationLabel);
-
-            var locationPanel = new Grid();
-            locationPanel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            locationPanel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            Grid.SetRow(locationPanel, 3);
-            
-            var locationTextBox = new TextBox
-            {
-                Margin = new Thickness(15, 5, 5, 10),
+                Margin = new Thickness(0, 0, 0, 15),
                 FontSize = 13,
                 Height = 35,
                 Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
                 Foreground = Brushes.White,
                 BorderBrush = new SolidColorBrush(Color.FromRgb(85, 85, 85)),
+                BorderThickness = new Thickness(1),
+                Padding = new Thickness(10, 0, 10, 0)
+            };
+            Grid.SetRow(textBox, 1);
+            contentGrid.Children.Add(textBox);
+
+            // Location
+            var locationLabel = new TextBlock
+            {
+                Text = "Save Location:",
+                Foreground = Brushes.White,
+                Margin = new Thickness(0, 0, 0, 8),
+                FontSize = 13,
+                FontWeight = FontWeights.SemiBold
+            };
+            Grid.SetRow(locationLabel, 2);
+            contentGrid.Children.Add(locationLabel);
+
+            var locationPanel = new Grid();
+            locationPanel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            locationPanel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Grid.SetRow(locationPanel, 3);
+
+            var locationTextBox = new TextBox
+            {
+                Margin = new Thickness(0, 0, 8, 0),
+                FontSize = 12,
+                Height = 35,
+                Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
+                Foreground = Brushes.White,
+                BorderBrush = new SolidColorBrush(Color.FromRgb(85, 85, 85)),
+                BorderThickness = new Thickness(1),
+                Padding = new Thickness(10, 0, 10, 0),
                 Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "CondaProjects")
             };
             Grid.SetColumn(locationTextBox, 0);
-            
+
             var browseBtn = new Button
             {
                 Content = "Browse...",
-                Width = 80,
+                Width = 85,
                 Height = 35,
-                Margin = new Thickness(5, 5, 15, 10),
-                Background = new SolidColorBrush(Color.FromRgb(0, 122, 204)),
+                Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
                 Foreground = Brushes.White,
-                FontSize = 12
+                FontSize = 12,
+                Cursor = System.Windows.Input.Cursors.Hand
             };
             Grid.SetColumn(browseBtn, 1);
-            
+
             locationPanel.Children.Add(locationTextBox);
             locationPanel.Children.Add(browseBtn);
-            grid.Children.Add(locationPanel);
-            
+            contentGrid.Children.Add(locationPanel);
+
             // Use default checkbox
             var useDefaultCheck = new CheckBox
             {
                 Content = "Use default location (CondaProjects folder in user home directory)",
-                Margin = new Thickness(15, 5, 15, 10),
+                Margin = new Thickness(0, 15, 0, 0),
                 Foreground = Brushes.White,
-                FontSize = 12,
+                FontSize = 11,
                 IsChecked = true
             };
             Grid.SetRow(useDefaultCheck, 4);
-            grid.Children.Add(useDefaultCheck);
-            
+            contentGrid.Children.Add(useDefaultCheck);
+
             browseBtn.Click += (s, args) =>
             {
                 var dialogFolder = new System.Windows.Forms.FolderBrowserDialog();
@@ -215,7 +212,7 @@ namespace Conda
                     useDefaultCheck.IsChecked = false;
                 }
             };
-            
+
             useDefaultCheck.Checked += (s, args) =>
             {
                 if (useDefaultCheck.IsChecked == true)
@@ -228,63 +225,27 @@ namespace Conda
                     locationTextBox.IsEnabled = true;
                 }
             };
-            
+
             useDefaultCheck.IsChecked = true;
             locationTextBox.IsEnabled = false;
 
-            var progressBar = new ProgressBar
-            {
-                Margin = new Thickness(15, 10, 15, 10),
-                Height = 25,
-                Visibility = Visibility.Collapsed
-            };
-            Grid.SetRow(progressBar, 5);
-            grid.Children.Add(progressBar);
+            // Show the modal
+            var (confirmed, _) = await AnimatedModal.ShowCustomModalAsync(this, "Create New Project", contentGrid, "Create", "Cancel");
 
-            var buttonPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
-                Margin = new Thickness(15, 20, 15, 15)
-            };
-            Grid.SetRow(buttonPanel, 6);
-
-            var createBtn = new Button
-            {
-                Content = "Create",
-                Width = 90,
-                Height = 32,
-                Margin = new Thickness(5),
-                Background = new SolidColorBrush(Color.FromRgb(0, 122, 204)),
-                Foreground = Brushes.White,
-                FontSize = 13
-            };
-
-            var cancelBtn = new Button
-            {
-                Content = "Cancel",
-                Width = 90,
-                Height = 32,
-                Margin = new Thickness(5),
-                Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
-                Foreground = Brushes.White,
-                FontSize = 13
-            };
-
-            createBtn.Click += async (s, args) =>
+            if (confirmed)
             {
                 string projectName = textBox.Text.Trim();
                 string location = locationTextBox.Text.Trim();
 
                 if (string.IsNullOrWhiteSpace(projectName))
                 {
-                    System.Windows.MessageBox.Show("Project name cannot be empty.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    await CustomDialog.ShowAsync(this, "Project name cannot be empty.", "Error", DialogIcon.Error);
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(location))
                 {
-                    System.Windows.MessageBox.Show("Location cannot be empty.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    await CustomDialog.ShowAsync(this, "Location cannot be empty.", "Error", DialogIcon.Error);
                     return;
                 }
 
@@ -292,89 +253,109 @@ namespace Conda
 
                 if (Directory.Exists(projectPath))
                 {
-                    System.Windows.MessageBox.Show("Project already exists at this location!", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    await CustomDialog.ShowAsync(this, "Project already exists at this location!", "Error", DialogIcon.Error);
                     return;
                 }
 
-                createBtn.IsEnabled = false;
-                cancelBtn.IsEnabled = false;
-                progressBar.Visibility = Visibility.Visible;
-                progressBar.IsIndeterminate = true;
+                // Show progress dialog - Fixed version without CornerRadius on Window
+                var progressDialog = new Window
+                {
+                    Title = "Creating Project",
+                    Width = 400,
+                    Height = 150,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    Owner = this,
+                    WindowStyle = WindowStyle.None,
+                    AllowsTransparency = true,
+                    Background = System.Windows.Media.Brushes.Transparent
+                };
 
-                var progress = new Progress<string>(msg => { });
+                // Create a border for the rounded corners
+                var mainBorder = new Border
+                {
+                    Background = new SolidColorBrush(Color.FromRgb(45, 45, 45)),
+                    CornerRadius = new CornerRadius(8),
+                    Padding = new Thickness(0)
+                };
+
+                var progressGrid = new Grid();
+                progressGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                progressGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+                var progressText = new TextBlock
+                {
+                    Text = "Creating project...",
+                    Foreground = Brushes.White,
+                    FontSize = 14,
+                    Margin = new Thickness(20, 20, 20, 10),
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center
+                };
+                Grid.SetRow(progressText, 0);
+                progressGrid.Children.Add(progressText);
+
+                var progressBar = new ProgressBar
+                {
+                    Height = 4,
+                    Margin = new Thickness(20, 0, 20, 20),
+                    IsIndeterminate = true,
+                    Foreground = new SolidColorBrush(Color.FromRgb(0, 122, 204))
+                };
+                Grid.SetRow(progressBar, 1);
+                progressGrid.Children.Add(progressBar);
+
+                mainBorder.Child = progressGrid;
+                progressDialog.Content = mainBorder;
+                progressDialog.Show();
+
+                var progress = new Progress<string>(msg =>
+                {
+                    progressText.Text = msg;
+                });
+
                 string creationResult = await ProjectCreator.CreateProjectWithVenvAtPathAsync(projectPath, progress);
 
-                createBtn.IsEnabled = true;
-                cancelBtn.IsEnabled = true;
-                progressBar.Visibility = Visibility.Collapsed;
+                progressDialog.Close();
 
                 if (creationResult.StartsWith("Error"))
                 {
-                    System.Windows.MessageBox.Show(creationResult, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    await CustomDialog.ShowAsync(this, creationResult, "Error", DialogIcon.Error);
                 }
                 else
                 {
-                    dialog.DialogResult = true;
-                    dialog.Close();
-                    
+                    await CustomDialog.ShowAsync(this, "Project created successfully!", "Success", DialogIcon.Success);
                     ShowToast("Project created successfully!");
-                    
-                    // Delay redirection slightly so user sees the toast
-                    await System.Threading.Tasks.Task.Delay(1500);
                     OpenProjectEditor(projectPath, projectName);
                 }
-            };
-
-            cancelBtn.Click += (s, args) => { dialog.DialogResult = false; dialog.Close(); };
-
-            buttonPanel.Children.Add(createBtn);
-            buttonPanel.Children.Add(cancelBtn);
-            grid.Children.Add(buttonPanel);
-
-            dialog.Content = grid;
-            dialog.ShowDialog();
+            }
         }
 
-        public void OnOpenProjectClicked(object sender, RoutedEventArgs e)
+        public async void OnOpenProjectClicked(object sender, RoutedEventArgs e)
         {
             ProjectManager manager = new();
             var projects = manager.GetAllProjects();
 
             if (projects.Count == 0)
             {
-                System.Windows.MessageBox.Show("No projects found. Create a new project first.", "Conda", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                await CustomDialog.ShowAsync(this, "No projects found. Create a new project first.", "Information", DialogIcon.Info);
                 return;
             }
 
-            var dialog = new Window
-            {
-                Title = "Open Project",
-                Width = 450,
-                Height = 450,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                Owner = this,
-                Background = new SolidColorBrush(Color.FromRgb(45, 45, 45))
-            };
-
-            var grid = new Grid();
-            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            // Create project selection UI
+            var selectionPanel = new StackPanel();
 
             var label = new TextBlock
             {
                 Text = "Select a project to open:",
                 Foreground = Brushes.White,
-                Margin = new Thickness(15, 20, 15, 10),
-                FontSize = 14
+                Margin = new Thickness(0, 0, 0, 15),
+                FontSize = 13,
+                FontWeight = FontWeights.SemiBold
             };
-            Grid.SetRow(label, 0);
-            grid.Children.Add(label);
+            selectionPanel.Children.Add(label);
 
             var listBox = new ListBox
             {
-                Margin = new Thickness(15, 5, 15, 10),
+                Height = 250,
                 Background = new SolidColorBrush(Color.FromRgb(30, 30, 30)),
                 Foreground = Brushes.White,
                 BorderBrush = new SolidColorBrush(Color.FromRgb(85, 85, 85)),
@@ -385,50 +366,19 @@ namespace Conda
             {
                 listBox.Items.Add(project.Name);
             }
-            Grid.SetRow(listBox, 1);
-            grid.Children.Add(listBox);
+            selectionPanel.Children.Add(listBox);
 
             var browseOtherBtn = new Button
             {
                 Content = "📁 Browse Other Location...",
-                Margin = new Thickness(15, 5, 15, 10),
+                Margin = new Thickness(0, 15, 0, 0),
                 Height = 35,
                 Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
                 Foreground = Brushes.White,
-                FontSize = 13
+                FontSize = 13,
+                Cursor = System.Windows.Input.Cursors.Hand
             };
-            Grid.SetRow(browseOtherBtn, 2);
-            grid.Children.Add(browseOtherBtn);
-
-            var buttonPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
-                Margin = new Thickness(15, 10, 15, 15)
-            };
-            Grid.SetRow(buttonPanel, 3);
-
-            var openBtn = new Button
-            {
-                Content = "Open",
-                Width = 90,
-                Height = 32,
-                Margin = new Thickness(5),
-                Background = new SolidColorBrush(Color.FromRgb(0, 122, 204)),
-                Foreground = Brushes.White,
-                FontSize = 13
-            };
-
-            var cancelBtn = new Button
-            {
-                Content = "Cancel",
-                Width = 90,
-                Height = 32,
-                Margin = new Thickness(5),
-                Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
-                Foreground = Brushes.White,
-                FontSize = 13
-            };
+            selectionPanel.Children.Add(browseOtherBtn);
 
             ProjectModel? selectedProject = null;
 
@@ -439,8 +389,8 @@ namespace Conda
                     selectedProject = projects.FirstOrDefault(p => p.Name == listBox.SelectedItem.ToString());
                 }
             };
-            
-            browseOtherBtn.Click += (s, args) =>
+
+            browseOtherBtn.Click += async (s, args) =>
             {
                 var folderDialog = new System.Windows.Forms.FolderBrowserDialog();
                 if (folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -453,35 +403,24 @@ namespace Conda
                             Name = Path.GetFileName(selectedPath),
                             Path = selectedPath
                         };
-                        dialog.DialogResult = true;
-                        dialog.Close();
+                        OpenProjectEditor(selectedProject.Path, selectedProject.Name);
+                        // Close any open dialogs
+                        var window = Window.GetWindow(browseOtherBtn);
+                        if (window is AnimatedModal modal)
+                        {
+                            modal.Close();
+                        }
                     }
                     else
                     {
-                        System.Windows.MessageBox.Show("Selected folder does not contain a valid Conda project (main.py not found).", "Invalid Project", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                        await CustomDialog.ShowAsync(this, "Selected folder does not contain a valid Conda project (main.py not found).", "Invalid Project", DialogIcon.Warning);
                     }
                 }
             };
 
-            openBtn.Click += (s, args) =>
-            {
-                if (selectedProject != null)
-                    dialog.DialogResult = true;
-                else
-                    System.Windows.MessageBox.Show("Please select a project.", "Warning", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
-                dialog.Close();
-            };
+            var (confirmed, _) = await AnimatedModal.ShowCustomModalAsync(this, "Open Project", selectionPanel, "Open", "Cancel");
 
-            cancelBtn.Click += (s, args) => { dialog.DialogResult = false; dialog.Close(); };
-
-            buttonPanel.Children.Add(openBtn);
-            buttonPanel.Children.Add(cancelBtn);
-            grid.Children.Add(buttonPanel);
-
-            dialog.Content = grid;
-            var result = dialog.ShowDialog();
-
-            if (result == true && selectedProject != null)
+            if (confirmed && selectedProject != null)
             {
                 OpenProjectEditor(selectedProject.Path, selectedProject.Name);
             }
@@ -489,19 +428,19 @@ namespace Conda
 
         // Navigation Menu Handlers
         private void OnExitClicked(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
-        private void OnPreferencesClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Preferences dialog would open here.", "Preferences", System.Windows.MessageBoxButton.OK);
-        private void OnSettingsClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Settings dialog would open here.", "Settings", System.Windows.MessageBoxButton.OK);
+        private async void OnPreferencesClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Preferences dialog would open here.", "Preferences", DialogIcon.Info);
+        private async void OnSettingsClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Settings dialog would open here.", "Settings", DialogIcon.Info);
         private void OnToggleFullScreenClicked(object sender, RoutedEventArgs e) => ToggleFullScreen();
-        private void OnResetLayoutClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Layout reset.", "Reset Layout", System.Windows.MessageBoxButton.OK);
-        private void OnRecentProjectsClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Recent projects list would appear here.", "Recent Projects", System.Windows.MessageBoxButton.OK);
-        private void OnProjectSettingsClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Project settings dialog would open here.", "Project Settings", System.Windows.MessageBoxButton.OK);
-        private void OnBuildClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Build process would start here.", "Build", System.Windows.MessageBoxButton.OK);
-        private void OnExportClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Export options would appear here.", "Export", System.Windows.MessageBoxButton.OK);
-        private void OnPackageManagerClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Package manager would open here.", "Package Manager", System.Windows.MessageBoxButton.OK);
-        private void OnExtensionsClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Extensions manager would open here.", "Extensions", System.Windows.MessageBoxButton.OK);
-        private void OnOpenTerminalClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Terminal would open here.", "Terminal", System.Windows.MessageBoxButton.OK);
-        private void OnRunCommandClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Command runner would open here.", "Run Command", System.Windows.MessageBoxButton.OK);
-        private void OnSettingsIconClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Settings panel would open here.", "Settings", System.Windows.MessageBoxButton.OK);
+        private async void OnResetLayoutClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Layout reset.", "Reset Layout", DialogIcon.Info);
+        private async void OnRecentProjectsClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Recent projects list would appear here.", "Recent Projects", DialogIcon.Info);
+        private async void OnProjectSettingsClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Project settings dialog would open here.", "Project Settings", DialogIcon.Info);
+        private async void OnBuildClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Build process would start here.", "Build", DialogIcon.Info);
+        private async void OnExportClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Export options would appear here.", "Export", DialogIcon.Info);
+        private async void OnPackageManagerClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Package manager would open here.", "Package Manager", DialogIcon.Info);
+        private async void OnExtensionsClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Extensions manager would open here.", "Extensions", DialogIcon.Info);
+        private async void OnOpenTerminalClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Terminal would open here.", "Terminal", DialogIcon.Info);
+        private async void OnRunCommandClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Command runner would open here.", "Run Command", DialogIcon.Info);
+        private async void OnSettingsIconClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Settings panel would open here.", "Settings", DialogIcon.Info);
 
         // Dashboard Event Handlers
         private void OnProjectSelected(object sender, SelectionChangedEventArgs e)
@@ -517,22 +456,23 @@ namespace Conda
             }
             else
             {
-                System.Windows.MessageBox.Show("Please select a project to open.", "No Selection", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                await CustomDialog.ShowAsync(this, "Please select a project to open.", "No Selection", DialogIcon.Info);
             }
-            await System.Threading.Tasks.Task.CompletedTask;
         }
 
         private async void OnRefreshClicked(object sender, RoutedEventArgs e)
         {
             await LoadProjects();
             await CheckPythonStatus();
-            System.Windows.MessageBox.Show("Projects refreshed!", "Refresh", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            await CustomDialog.ShowAsync(this, "Projects refreshed successfully!", "Success", DialogIcon.Success);
         }
 
-        private void OnInstallDepsClicked(object sender, RoutedEventArgs e)
+        private async void OnInstallDepsClicked(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("To install dependencies:\n\n1. Open a project\n2. Navigate to the Editor\n3. Click 'Install Dependencies' button\n\nOr run: pip install -r requirements.txt in terminal", 
-                "Install Dependencies", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            await CustomDialog.ShowAsync(this,
+                "To install dependencies:\n\n1. Open a project\n2. Navigate to the Editor\n3. Click 'Install Dependencies' button\n\nOr run: pip install -r requirements.txt in terminal",
+                "Install Dependencies",
+                DialogIcon.Info);
         }
 
         private void OnCheckPythonClicked(object sender, RoutedEventArgs e)
@@ -544,16 +484,16 @@ namespace Conda
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = "https://docs.anaconda.com/",
+                FileName = "#",
                 UseShellExecute = true
             });
         }
 
-        public void OnAboutClicked(object sender, RoutedEventArgs e)
+        public async void OnAboutClicked(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("Conda IDE\nVersion 1.0\n\nA modern environment for Python development.", "About Conda", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            await CustomDialog.ShowAsync(this, "Conda IDE\nVersion 1.0\n\nA modern environment for Python development.", "About Conda", DialogIcon.Info);
         }
-        
+
         private void ToggleFullScreen()
         {
             if (!isFullScreen)

@@ -44,7 +44,7 @@
             BorderThickness="1"
             Padding="0">
         <Border.Effect>
-            <DropShadowEffect BlurRadius="20" 
+            <DropShadowEffect BlurRadius="50" 
                             Opacity="0.4" 
                             ShadowDepth="3"
                             Color="Black"/>
@@ -61,6 +61,7 @@
             <Border Grid.Row="0" 
                     Background="#252526" 
                     CornerRadius="8,8,0,0"
+                BorderBrush="#3c3c3c" 
                     Padding="20,12">
                 <Grid>
                     <StackPanel Orientation="Horizontal">
@@ -68,13 +69,14 @@
                         <TextBlock x:Name="TitleText" 
                                    Text="Dialog" 
                                    Foreground="White" 
-                                   FontSize="14" 
+                                   FontSize="16" 
+                                   Margin="4"
                                    FontWeight="SemiBold"/>
                     </StackPanel>
                     <Button x:Name="CloseButton"
                             HorizontalAlignment="Right"
-                            Width="28"
-                            Height="28"
+                            Width="30"
+                            Height="30"
                             Background="Transparent"
                             BorderThickness="0"
                             Cursor="Hand"
@@ -162,7 +164,7 @@
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="Border" 
                                         Background="{TemplateBinding Background}" 
-                                        CornerRadius="4">
+                                        CornerRadius="3">
                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <ControlTemplate.Triggers>
