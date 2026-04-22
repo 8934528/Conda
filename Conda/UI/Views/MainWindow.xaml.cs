@@ -440,12 +440,26 @@ namespace Conda
         private async void OnExtensionsClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Extensions manager would open here.", "Extensions", DialogIcon.Info);
         private async void OnOpenTerminalClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Terminal would open here.", "Terminal", DialogIcon.Info);
         private async void OnRunCommandClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Command runner would open here.", "Run Command", DialogIcon.Info);
-        private async void OnSettingsIconClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Settings panel would open here.", "Settings", DialogIcon.Info);
+
+        private void OnSettingsIconClicked(object sender, RoutedEventArgs e)
+        {
+            var settingsView = new SettingsView();
+            var settingsWindow = new Window
+            {
+                Title = "Conda IDE - Settings",
+                Content = settingsView,
+                Width = 1200,
+                Height = 800,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30))
+            };
+            settingsWindow.ShowDialog();
+        }
 
         // Dashboard Event Handlers
         private void OnProjectSelected(object sender, SelectionChangedEventArgs e)
         {
-            // Open button logic if needed
+            // Open button 
         }
 
         private async void OnOpenSelectedProject(object sender, RoutedEventArgs e)

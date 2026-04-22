@@ -61,7 +61,9 @@
         │   │   ├── EditorView.xaml
         │   │   ├── EditorView.xaml.cs
         │   │   ├── MainWindow.xaml
-        │   │   └── MainWindow.xaml.cs
+        │   │   ├── MainWindow.xaml.cs
+        │   │   ├── SettingsView.xaml
+        │   │   └── SettingsView.xaml.cs
         │   ├── Controls/
         │   └── Services/
         │

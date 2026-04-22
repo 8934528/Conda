@@ -280,7 +280,7 @@ namespace Conda.UI.Views
                 var treeViewItem = FindParent<TreeViewItem>(hitTestResult.VisualHit);
                 if (treeViewItem == null) return;
 
-                if (treeViewItem?.DataContext is FileNode)
+                if (treeViewItem.DataContext is FileNode)
                 {
                     currentContextItem = treeViewItem;
                     treeViewItem.IsSelected = true;
@@ -754,10 +754,17 @@ namespace Conda.UI.Views
 
         private async void OnSettingsClicked(object sender, RoutedEventArgs e)
         {
-            await CustomDialog.ShowAsync(Window.GetWindow(this),
-                "Settings panel would appear here.\n\nFuture features:\n- Theme customization\n- Font settings\n- Keybindings\n- Python interpreter path",
-                "Settings",
-                DialogIcon.Info);
+            var settingsView = new SettingsView();
+            var settingsWindow = new Window
+            {
+                Title = "Conda IDE - Settings",
+                Content = settingsView,
+                Width = 1200,
+                Height = 800,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30))
+            };
+            settingsWindow.ShowDialog();
         }
 
         private async void OnNewFileToolbarClick(object sender, RoutedEventArgs e)
