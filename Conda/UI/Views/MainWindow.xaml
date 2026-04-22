@@ -27,86 +27,312 @@
         <!-- Title Bar Navs & Tabs -->
         <Border Grid.Row="0" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
             <Grid>
+                <Grid.Resources>
+                    <Style x:Key="ModernMenuItemStyle" TargetType="MenuItem">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="#cccccc"/>
+                        <Setter Property="Padding" Value="12,8,12,8"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="MenuItem">
+                                    <Border x:Name="Border" 
+                                    Background="{TemplateBinding Background}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="4"
+                                    Margin="2,0">
+                                        <Grid>
+                                            <ContentPresenter x:Name="HeaderHost" 
+                                                      ContentSource="Header" 
+                                                      RecognizesAccessKey="True"
+                                                      VerticalAlignment="Center"
+                                                      Margin="{TemplateBinding Padding}"/>
+                                            <Popup x:Name="Popup" 
+                                           Placement="Bottom" 
+                                           IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                           AllowsTransparency="True"
+                                           Focusable="False"
+                                           PopupAnimation="Slide">
+                                                <Border x:Name="SubmenuBorder" 
+                                                Background="#252526" 
+                                                BorderBrush="#3c3c3c" 
+                                                BorderThickness="1"
+                                                CornerRadius="6"
+                                                Margin="0,2,0,0"
+                                                Padding="4">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect BlurRadius="15" 
+                                                                  Opacity="0.3" 
+                                                                  ShadowDepth="2"
+                                                                  Color="Black"/>
+                                                    </Border.Effect>
+                                                    <StackPanel IsItemsHost="True" 
+                                                        KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                        Margin="0,4"/>
+                                                </Border>
+                                            </Popup>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#3c3c3c"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSubmenuOpen" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#3c3c3c"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <!-- Submenu Item Style -->
+                    <Style x:Key="ModernSubMenuItemStyle" TargetType="MenuItem">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="#e0e0e0"/>
+                        <Setter Property="Padding" Value="12,8,12,8"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="MenuItem">
+                                    <Border x:Name="Border" 
+                                    Background="{TemplateBinding Background}" 
+                                    CornerRadius="4"
+                                    Margin="2">
+                                        <Grid>
+                                            <ContentPresenter x:Name="HeaderHost" 
+                                                      ContentSource="Header" 
+                                                      RecognizesAccessKey="True"
+                                                      VerticalAlignment="Center"
+                                                      Margin="{TemplateBinding Padding}"/>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#2d2d30"/>
+                                            <Setter Property="Foreground" Value="#007acc"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style x:Key="ModernSeparatorStyle" TargetType="Separator">
+                        <Setter Property="Background" Value="#3c3c3c"/>
+                        <Setter Property="Height" Value="1"/>
+                        <Setter Property="Margin" Value="8,4,8,4"/>
+                    </Style>
+                </Grid.Resources>
+
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
                     <Image Source="/Assets/logo/FirstIcon.png" Width="28" Height="28" Margin="0,0,10,0"/>
                 </StackPanel>
-                
+
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="450,0,0,0">
-                    <!-- File -->
-                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0">
-                        <MenuItem Header="File" Background="Transparent" Foreground="#cccccc">
-                            <MenuItem Header="New Project" Click="OnNewProjectClicked" Style="{StaticResource MenuItemStyle}"/>
-                            <MenuItem Header="Open Project" Click="OnOpenProjectClicked" Style="{StaticResource MenuItemStyle}"/>
-                            <Separator Background="#3c3c3c"/>
-                            <MenuItem Header="Exit" Click="OnExitClicked" Style="{StaticResource MenuItemStyle}"/>
-                        </MenuItem>
-                    </Menu>
-                    
-                    <!-- Edit -->
-                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
-                        <MenuItem Header="Edit" Background="Transparent" Foreground="#cccccc">
-                            <MenuItem Header="Preferences" Click="OnPreferencesClicked" Style="{StaticResource MenuItemStyle}"/>
-                            <MenuItem Header="Settings" Click="OnSettingsClicked" Style="{StaticResource MenuItemStyle}"/>
-                        </MenuItem>
-                    </Menu>
-                    
-                    <!-- View -->
-                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
-                        <MenuItem Header="View" Background="Transparent" Foreground="#cccccc">
-                            <MenuItem Header="Toggle Full Screen" Click="OnToggleFullScreenClicked" Style="{StaticResource MenuItemStyle}"/>
-                            <MenuItem Header="Reset Layout" Click="OnResetLayoutClicked" Style="{StaticResource MenuItemStyle}"/>
-                        </MenuItem>
-                    </Menu>
-                    
-                    <!-- Project -->
-                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
-                        <MenuItem Header="Project" Background="Transparent" Foreground="#cccccc">
-                            <MenuItem Header="Recent Projects" Click="OnRecentProjectsClicked" Style="{StaticResource MenuItemStyle}"/>
-                            <MenuItem Header="Project Settings" Click="OnProjectSettingsClicked" Style="{StaticResource MenuItemStyle}"/>
-                        </MenuItem>
-                    </Menu>
-                    
-                    <!-- Build -->
-                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
-                        <MenuItem Header="Build" Background="Transparent" Foreground="#cccccc">
-                            <MenuItem Header="Build Project" Click="OnBuildClicked" Style="{StaticResource MenuItemStyle}"/>
-                            <MenuItem Header="Export Game" Click="OnExportClicked" Style="{StaticResource MenuItemStyle}"/>
-                        </MenuItem>
-                    </Menu>
-                    
-                    <!-- Tools -->
-                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
-                        <MenuItem Header="Tools" Background="Transparent" Foreground="#cccccc">
-                            <MenuItem Header="Package Manager" Click="OnPackageManagerClicked" Style="{StaticResource MenuItemStyle}"/>
-                            <MenuItem Header="Extensions" Click="OnExtensionsClicked" Style="{StaticResource MenuItemStyle}"/>
-                        </MenuItem>
-                    </Menu>
-                    
-                    <!-- Terminal -->
-                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
-                        <MenuItem Header="Terminal" Background="Transparent" Foreground="#cccccc">
-                            <MenuItem Header="Open Terminal" Click="OnOpenTerminalClicked" Style="{StaticResource MenuItemStyle}"/>
-                            <MenuItem Header="Run Command" Click="OnRunCommandClicked" Style="{StaticResource MenuItemStyle}"/>
+                    <!-- File Menu -->
+                    <Menu Background="Transparent" BorderThickness="0">
+                        <MenuItem Header="File" Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem Header="📁 New Project" 
+                              Click="OnNewProjectClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+N"/>
+                            <MenuItem Header="📂 Open Project" 
+                              Click="OnOpenProjectClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+O"/>
+                            <Separator Style="{StaticResource ModernSeparatorStyle}"/>
+                            <MenuItem Header="💾 Save All" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+Shift+S"/>
+                            <MenuItem Header="🔄 Recent Projects" 
+                              Click="OnRecentProjectsClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <Separator Style="{StaticResource ModernSeparatorStyle}"/>
+                            <MenuItem Header="❌ Exit" 
+                              Click="OnExitClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Alt+F4"/>
                         </MenuItem>
                     </Menu>
 
-                    <!-- Help -->
-                    <Menu Background="Transparent" Foreground="#cccccc" BorderThickness="0" Margin="10,0,0,0">
-                        <MenuItem Header="Help" Background="Transparent" Foreground="#cccccc">
-                            <MenuItem Header="Documentation" Click="OnDocumentationClicked" Style="{StaticResource MenuItemStyle}"/>
-                            <MenuItem Header="About" Click="OnAboutClicked" Style="{StaticResource MenuItemStyle}"/>
+                    <!-- Edit Menu -->
+                    <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                        <MenuItem Header="Edit" Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem Header="✂️ Cut" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+X"/>
+                            <MenuItem Header="📋 Copy" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+C"/>
+                            <MenuItem Header="📌 Paste" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+V"/>
+                            <Separator Style="{StaticResource ModernSeparatorStyle}"/>
+                            <MenuItem Header="⚙️ Preferences" 
+                              Click="OnPreferencesClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+,"/>
+                            <MenuItem Header="🔧 Settings" 
+                              Click="OnSettingsClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+Shift+,"/>
+                        </MenuItem>
+                    </Menu>
+
+                    <!-- View Menu -->
+                    <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                        <MenuItem Header="View" Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem Header="🖥️ Toggle Full Screen" 
+                              Click="OnToggleFullScreenClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="F11"/>
+                            <MenuItem Header="🔄 Reset Layout" 
+                              Click="OnResetLayoutClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <Separator Style="{StaticResource ModernSeparatorStyle}"/>
+                            <MenuItem Header="📊 Show Dashboard" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+1"/>
+                            <MenuItem Header="📝 Show Editor" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+2"/>
+                            <MenuItem Header="📟 Show Terminal" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+`"/>
+                        </MenuItem>
+                    </Menu>
+
+                    <!-- Project Menu -->
+                    <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                        <MenuItem Header="Project" Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem Header="🆕 New Project" 
+                              Click="OnNewProjectClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Header="📂 Open Project" 
+                              Click="OnOpenProjectClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Header="🕒 Recent Projects" 
+                              Click="OnRecentProjectsClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <Separator Style="{StaticResource ModernSeparatorStyle}"/>
+                            <MenuItem Header="⚙️ Project Settings" 
+                              Click="OnProjectSettingsClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Header="📦 Project Dependencies" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
+
+                    <!-- Build Menu -->
+                    <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                        <MenuItem Header="Build" Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem Header="🔨 Build Project" 
+                              Click="OnBuildClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="F7"/>
+                            <MenuItem Header="▶️ Run Project" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="F5"/>
+                            <MenuItem Header="🐛 Debug Project" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="F6"/>
+                            <Separator Style="{StaticResource ModernSeparatorStyle}"/>
+                            <MenuItem Header="📦 Export Game" 
+                              Click="OnExportClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Header="📋 Build Settings" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
+
+                    <!-- Tools Menu -->
+                    <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                        <MenuItem Header="Tools" Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem Header="📦 Package Manager" 
+                              Click="OnPackageManagerClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Header="🧩 Extensions" 
+                              Click="OnExtensionsClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <Separator Style="{StaticResource ModernSeparatorStyle}"/>
+                            <MenuItem Header="🐍 Python Environment" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Header="🔍 Code Analysis" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                        </MenuItem>
+                    </Menu>
+
+                    <!-- Terminal Menu -->
+                    <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                        <MenuItem Header="Terminal" Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem Header="🖥️ Open Terminal" 
+                              Click="OnOpenTerminalClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+Shift+`"/>
+                            <MenuItem Header="⚡ Run Command" 
+                              Click="OnRunCommandClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+Shift+P"/>
+                            <Separator Style="{StaticResource ModernSeparatorStyle}"/>
+                            <MenuItem Header="🧹 Clear Terminal" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+L"/>
+                            <MenuItem Header="📋 New Terminal Tab" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="Ctrl+Shift+T"/>
+                        </MenuItem>
+                    </Menu>
+
+                    <!-- Help Menu -->
+                    <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                        <MenuItem Header="Help" Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem Header="📚 Documentation" 
+                              Click="OnDocumentationClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"
+                              InputGestureText="F1"/>
+                            <MenuItem Header="💡 Tips and Tricks" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Header="🐛 Report Issue" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <Separator Style="{StaticResource ModernSeparatorStyle}"/>
+                            <MenuItem Header="ℹ️ About" 
+                              Click="OnAboutClicked" 
+                              Style="{StaticResource ModernSubMenuItemStyle}"/>
                         </MenuItem>
                     </Menu>
                 </StackPanel>
-                
-                <!-- Settings -->
-                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0"
-                        Background="Transparent" BorderThickness="0" Cursor="Hand"
-                        Click="OnSettingsIconClicked">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="⚙️" FontSize="18" Foreground="#cccccc"/>
-                    </StackPanel>
-                </Button>
+
+                <!-- Settings Button -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0">
+                    <Button x:Name="SettingsButton"
+                    Background="Transparent" 
+                    BorderThickness="0" 
+                    Cursor="Hand"
+                    Click="OnSettingsIconClicked"
+                    Width="32"
+                    Height="32"
+                    Margin="0,0,10,0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="Border" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="4">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="#3c3c3c"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <StackPanel>
+                            <TextBlock Text="⚙️" FontSize="18" Foreground="#cccccc"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
 
