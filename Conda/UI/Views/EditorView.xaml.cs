@@ -17,6 +17,7 @@ using Conda.Engine.VisualScripting;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Conda.UI.Views; // Add this for CustomDialog and AnimatedModal
 
 using Point = System.Windows.Point;
 using Color = System.Windows.Media.Color;
@@ -208,7 +209,7 @@ namespace Conda.UI.Views
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Error loading files: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                _ = CustomDialog.ShowAsync(Window.GetWindow(this), $"Error loading files: {ex.Message}", "Error", DialogIcon.Error);
             }
         }
 
@@ -277,6 +278,8 @@ namespace Conda.UI.Views
             if (hitTestResult?.VisualHit != null)
             {
                 var treeViewItem = FindParent<TreeViewItem>(hitTestResult.VisualHit);
+                if (treeViewItem == null) return;
+
                 if (treeViewItem?.DataContext is FileNode)
                 {
                     currentContextItem = treeViewItem;
@@ -307,16 +310,16 @@ namespace Conda.UI.Views
             }
         }
 
-        private void OnNewFileClick(object sender, RoutedEventArgs e)
+        private async void OnNewFileClick(object sender, RoutedEventArgs e)
         {
             if (currentContextItem?.DataContext is FileNode node)
             {
                 string parentPath = node.IsDirectory ? node.FullPath : System.IO.Path.GetDirectoryName(node.FullPath)!;
-                CreateNewFile(parentPath);
+                await CreateNewFileAsync(parentPath);
             }
         }
 
-        private void OnNewFolderClick(object sender, RoutedEventArgs e)
+        private async void OnNewFolderClick(object sender, RoutedEventArgs e)
         {
             if (currentContextItem?.DataContext is FileNode node)
             {
@@ -331,9 +334,10 @@ namespace Conda.UI.Views
                     OutputConsole.Text += $"📁 Created folder: {folderName}\n";
                 }
             }
+            await Task.CompletedTask;
         }
 
-        private void OnRenameClick(object sender, RoutedEventArgs e)
+        private async void OnRenameClick(object sender, RoutedEventArgs e)
         {
             if (currentContextItem?.DataContext is FileNode node)
             {
@@ -353,19 +357,25 @@ namespace Conda.UI.Views
                     }
                     catch (Exception ex)
                     {
-                        System.Windows.MessageBox.Show($"Error renaming: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                        await CustomDialog.ShowAsync(Window.GetWindow(this), $"Error renaming: {ex.Message}", "Error", DialogIcon.Error);
                     }
                 }
             }
         }
 
-        private void OnDeleteClick(object sender, RoutedEventArgs e)
+        private async void OnDeleteClick(object sender, RoutedEventArgs e)
         {
             if (currentContextItem?.DataContext is FileNode node)
             {
-                var result = System.Windows.MessageBox.Show($"Are you sure you want to delete {node.Name}?", "Confirm Delete",
-                    System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
-                if (result == System.Windows.MessageBoxResult.Yes)
+                var result = await CustomDialog.ShowAsync(
+                    Window.GetWindow(this),
+                    $"Are you sure you want to delete {node.Name}?",
+                    "Confirm Delete",
+                    DialogIcon.Warning,
+                    "Yes",
+                    "No");
+
+                if (result)
                 {
                     try
                     {
@@ -379,7 +389,7 @@ namespace Conda.UI.Views
                     }
                     catch (Exception ex)
                     {
-                        System.Windows.MessageBox.Show($"Error deleting: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                        await CustomDialog.ShowAsync(Window.GetWindow(this), $"Error deleting: {ex.Message}", "Error", DialogIcon.Error);
                     }
                 }
             }
@@ -435,7 +445,7 @@ namespace Conda.UI.Views
             }
         }
 
-        private void CreateNewFile(string parentPath)
+        private async Task CreateNewFileAsync(string parentPath)
         {
             string fileName = Microsoft.VisualBasic.Interaction.InputBox("Enter file name:", "New File", "newfile.py");
             if (!string.IsNullOrWhiteSpace(fileName))
@@ -447,11 +457,12 @@ namespace Conda.UI.Views
                 ShowToast($"Created file: {fileName}");
                 OutputConsole.Text += $"📄 Created file: {fileName}\n";
             }
+            await Task.CompletedTask;
         }
 
         private void OnFileTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (e.NewValue is FileNode node && !node.IsDirectory)
+            if (e.NewValue is FileNode node && node != null && !node.IsDirectory)
             {
                 OpenFileInTab(node.FullPath);
             }
@@ -499,15 +510,17 @@ namespace Conda.UI.Views
             {
                 if (tab.IsDirty)
                 {
-                    var result = System.Windows.MessageBox.Show($"Save changes to {tab.Name}?", "Unsaved Changes", 
-                        System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Question);
-                    if (result == System.Windows.MessageBoxResult.Yes)
+                    var result = await CustomDialog.ShowAsync(
+                        Window.GetWindow(this),
+                        $"Save changes to {tab.Name}?",
+                        "Unsaved Changes",
+                        DialogIcon.Question,
+                        "Yes",
+                        "No");
+
+                    if (result)
                     {
                         await SaveCurrentFile();
-                    }
-                    else if (result == System.Windows.MessageBoxResult.Cancel)
-                    {
-                        return;
                     }
                 }
                 openTabs.Remove(tab);
@@ -532,7 +545,7 @@ namespace Conda.UI.Views
                 {
                     if (!isWebViewReady || CodeWebView?.CoreWebView2 == null)
                     {
-                        System.Windows.MessageBox.Show("Editor is not ready yet.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                        await CustomDialog.ShowAsync(Window.GetWindow(this), "Editor is not ready yet.", "Error", DialogIcon.Error);
                         return;
                     }
 
@@ -546,7 +559,7 @@ namespace Conda.UI.Views
                 }
                 catch (Exception ex)
                 {
-                    System.Windows.MessageBox.Show($"Error saving file: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    await CustomDialog.ShowAsync(Window.GetWindow(this), $"Error saving file: {ex.Message}", "Error", DialogIcon.Error);
                 }
             }
         }
@@ -561,7 +574,7 @@ namespace Conda.UI.Views
                 string mainFile = System.IO.Path.Combine(projectPath, "main.py");
                 if (!File.Exists(mainFile))
                 {
-                    System.Windows.MessageBox.Show("main.py not found.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    await CustomDialog.ShowAsync(Window.GetWindow(this), "main.py not found.", "Error", DialogIcon.Error);
                     return;
                 }
 
@@ -602,7 +615,7 @@ namespace Conda.UI.Views
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Error: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                await CustomDialog.ShowAsync(Window.GetWindow(this), $"Error: {ex.Message}", "Error", DialogIcon.Error);
             }
         }
 
@@ -653,9 +666,9 @@ namespace Conda.UI.Views
         }
 
         // Menu Handlers
-        private void OnNewFileMenuClick(object sender, RoutedEventArgs e)
+        private async void OnNewFileMenuClick(object sender, RoutedEventArgs e)
         {
-            CreateNewFile(projectPath);
+            await CreateNewFileAsync(projectPath);
         }
 
         private void OnSaveAllClicked(object sender, RoutedEventArgs e)
@@ -731,24 +744,28 @@ namespace Conda.UI.Views
             });
         }
 
-        private void OnAboutClicked(object sender, RoutedEventArgs e)
+        private async void OnAboutClicked(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("Conda IDE\nVersion 1.0\n\nA Python Game Development Environment\nBuilt with WPF and WebView2", 
-                "About Conda IDE", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            await CustomDialog.ShowAsync(Window.GetWindow(this),
+                "Conda IDE\nVersion 1.0\n\nA Python Game Development Environment\nBuilt with WPF and WebView2",
+                "About Conda IDE",
+                DialogIcon.Info);
         }
 
-        private void OnSettingsClicked(object sender, RoutedEventArgs e)
+        private async void OnSettingsClicked(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("Settings panel would appear here.\n\nFuture features:\n- Theme customization\n- Font settings\n- Keybindings\n- Python interpreter path", 
-                "Settings", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            await CustomDialog.ShowAsync(Window.GetWindow(this),
+                "Settings panel would appear here.\n\nFuture features:\n- Theme customization\n- Font settings\n- Keybindings\n- Python interpreter path",
+                "Settings",
+                DialogIcon.Info);
         }
 
-        private void OnNewFileToolbarClick(object sender, RoutedEventArgs e)
+        private async void OnNewFileToolbarClick(object sender, RoutedEventArgs e)
         {
-            CreateNewFile(projectPath);
+            await CreateNewFileAsync(projectPath);
         }
 
-        private void OnNewFolderToolbarClick(object sender, RoutedEventArgs e)
+        private async void OnNewFolderToolbarClick(object sender, RoutedEventArgs e)
         {
             string folderName = Microsoft.VisualBasic.Interaction.InputBox("Enter folder name:", "New Folder", "NewFolder");
             if (!string.IsNullOrWhiteSpace(folderName))
@@ -758,6 +775,7 @@ namespace Conda.UI.Views
                 LoadFiles();
                 OutputConsole.Text += $"📁 Created folder: {folderName}\n";
             }
+            await Task.CompletedTask;
         }
 
         private void OnRefreshClicked(object sender, RoutedEventArgs e)
@@ -766,21 +784,48 @@ namespace Conda.UI.Views
             OutputConsole.Text += "🔄 File explorer refreshed\n";
         }
 
-        // New Missing Handlers
-        private void OnNewProjectClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("New Project dialog would open here.", "New Project", System.Windows.MessageBoxButton.OK);
-        private void OnOpenProjectClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Open Project dialog would open here.", "Open Project", System.Windows.MessageBoxButton.OK);
-        private void OnExitClicked(object sender, RoutedEventArgs e) => System.Windows.Application.Current.Shutdown();
-        private void OnPreferencesClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Preferences dialog would open here.", "Preferences", System.Windows.MessageBoxButton.OK);
-        private void OnResetLayoutClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Layout reset.", "Reset Layout", System.Windows.MessageBoxButton.OK);
-        private void OnRecentProjectsClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Recent projects list would appear here.", "Recent Projects", System.Windows.MessageBoxButton.OK);
-        private void OnProjectSettingsClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Project settings dialog would open here.", "Project Settings", System.Windows.MessageBoxButton.OK);
-        private void OnBuildClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Build process would start here.", "Build", System.Windows.MessageBoxButton.OK);
-        private void OnExportClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Export options would appear here.", "Export", System.Windows.MessageBoxButton.OK);
-        private void OnPackageManagerClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Package manager would open here.", "Package Manager", System.Windows.MessageBoxButton.OK);
-        private void OnExtensionsClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Extensions manager would open here.", "Extensions", System.Windows.MessageBoxButton.OK);
-        private void OnOpenTerminalClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Terminal would open here.", "Terminal", System.Windows.MessageBoxButton.OK);
-        private void OnRunCommandClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Command runner would open here.", "Run Command", System.Windows.MessageBoxButton.OK);
-        private void OnSettingsIconClicked(object sender, RoutedEventArgs e) => System.Windows.MessageBox.Show("Settings panel would open here.", "Settings", System.Windows.MessageBoxButton.OK);
+        // Updated Menu Handlers with CustomDialog
+        private async void OnNewProjectClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "New Project dialog would open here.", "New Project", DialogIcon.Info);
+
+        private async void OnOpenProjectClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Open Project dialog would open here.", "Open Project", DialogIcon.Info);
+
+        private void OnExitClicked(object sender, RoutedEventArgs e)
+            => System.Windows.Application.Current.Shutdown();
+
+        private async void OnPreferencesClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Preferences dialog would open here.", "Preferences", DialogIcon.Info);
+
+        private async void OnResetLayoutClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Layout reset.", "Reset Layout", DialogIcon.Info);
+
+        private async void OnRecentProjectsClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Recent projects list would appear here.", "Recent Projects", DialogIcon.Info);
+
+        private async void OnProjectSettingsClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Project settings dialog would open here.", "Project Settings", DialogIcon.Info);
+
+        private async void OnBuildClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Build process would start here.", "Build", DialogIcon.Info);
+
+        private async void OnExportClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Export options would appear here.", "Export", DialogIcon.Info);
+
+        private async void OnPackageManagerClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Package manager would open here.", "Package Manager", DialogIcon.Info);
+
+        private async void OnExtensionsClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Extensions manager would open here.", "Extensions", DialogIcon.Info);
+
+        private async void OnOpenTerminalClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Terminal would open here.", "Terminal", DialogIcon.Info);
+
+        private async void OnRunCommandClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Command runner would open here.", "Run Command", DialogIcon.Info);
+
+        private async void OnSettingsIconClicked(object sender, RoutedEventArgs e)
+            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Settings panel would open here.", "Settings", DialogIcon.Info);
 
         private void ToggleFullScreen()
         {
@@ -867,22 +912,22 @@ namespace Conda.UI.Views
             var objects = SceneCanvas.Children.OfType<Border>()
                 .Where(b => b.Tag is GameObject)
                 .Select(obj =>
-            {
-                var go = (GameObject)obj.Tag;
-                var t = go.GetComponent<EngineTransform>();
-                var s = go.GetComponent<Sprite>();
-
-                return new
                 {
-                    name = go.Name,
-                    x = t.X,
-                    y = t.Y,
-                    width = s.Width,
-                    height = s.Height,
-                    color = s.Color,
-                    rotation = t.Rotation
-                };
-            });
+                    var go = (GameObject)obj.Tag;
+                    var t = go.GetComponent<EngineTransform>();
+                    var s = go.GetComponent<Sprite>();
+
+                    return new
+                    {
+                        name = go.Name,
+                        x = t.X,
+                        y = t.Y,
+                        width = s.Width,
+                        height = s.Height,
+                        color = s.Color,
+                        rotation = t.Rotation
+                    };
+                });
 
             return JsonSerializer.Serialize(objects, new JsonSerializerOptions
             {
@@ -927,7 +972,7 @@ namespace Conda.UI.Views
                     if (!string.IsNullOrEmpty(e.Data))
                         Dispatcher.Invoke(() => OutputConsole.Text += e.Data + "\n");
                 };
-                
+
                 currentProcess.ErrorDataReceived += (s, e) =>
                 {
                     if (!string.IsNullOrEmpty(e.Data))
@@ -940,7 +985,7 @@ namespace Conda.UI.Views
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(ex.Message);
+                await CustomDialog.ShowAsync(Window.GetWindow(this), ex.Message, "Error", DialogIcon.Error);
             }
         }
 
@@ -1066,11 +1111,11 @@ pygame.quit()
         {
             var stack = new StackPanel { Margin = new Thickness(0, 5, 0, 5) };
             stack.Children.Add(new TextBlock { Text = label, Foreground = Brushes.Gray, FontSize = 11 });
-            var box = new TextBox 
-            { 
-                Text = value, 
-                Background = new SolidColorBrush(Color.FromRgb(45, 45, 48)), 
-                Foreground = Brushes.White, 
+            var box = new TextBox
+            {
+                Text = value,
+                Background = new SolidColorBrush(Color.FromRgb(45, 45, 48)),
+                Foreground = Brushes.White,
                 BorderThickness = new Thickness(1),
                 Padding = new Thickness(5, 2, 5, 2)
             };
@@ -1210,13 +1255,13 @@ pygame.quit()
                 {
                     var pos = e.GetPosition(NodeCanvas);
                     var node = (Node)nodeUI.Tag;
-                    
+
                     node.X = pos.X - (nodeUI.Width / 2);
                     node.Y = pos.Y - (nodeUI.Height / 2);
 
                     Canvas.SetLeft(nodeUI, node.X);
                     Canvas.SetTop(nodeUI, node.Y);
-                    
+
                     // Draw connections would go here
                 }
             };
@@ -1239,11 +1284,11 @@ pygame.quit()
                     // Reset selection or handle multi-connection
                     ShowToast($"Connected {selectedNode.Title} to {node.Title}");
                 }
-                
+
                 // Clear selection highlight
                 foreach (var child in NodeCanvas.Children.OfType<Border>())
                     child.BorderBrush = Brushes.Gray;
-                    
+
                 selectedNode = null;
             }
         }
@@ -1582,7 +1627,10 @@ pygame.quit()
             {
                 var line = new System.Windows.Shapes.Line
                 {
-                    X1 = x, Y1 = 0, X2 = x, Y2 = height,
+                    X1 = x,
+                    Y1 = 0,
+                    X2 = x,
+                    Y2 = height,
                     Stroke = new SolidColorBrush(Color.FromRgb(40, 40, 40)),
                     StrokeThickness = 1
                 };
@@ -1593,7 +1641,10 @@ pygame.quit()
             {
                 var line = new System.Windows.Shapes.Line
                 {
-                    X1 = 0, Y1 = y, X2 = width, Y2 = y,
+                    X1 = 0,
+                    Y1 = y,
+                    X2 = width,
+                    Y2 = y,
                     Stroke = new SolidColorBrush(Color.FromRgb(40, 40, 40)),
                     StrokeThickness = 1
                 };
@@ -1620,7 +1671,7 @@ pygame.quit()
             SceneHierarchy.ItemsSource = sceneObjects;
         }
 
-        private void OnSaveScene(object sender, RoutedEventArgs e)
+        private async void OnSaveScene(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.SaveFileDialog { Filter = "Conda Scene (*.conda)|*.conda", InitialDirectory = projectPath };
 
@@ -1630,15 +1681,16 @@ pygame.quit()
                 {
                     currentScene.Save(dialog.FileName);
                     OutputConsole.Text += $"💾 Scene saved: {System.IO.Path.GetFileName(dialog.FileName)}\n";
+                    await CustomDialog.ShowAsync(Window.GetWindow(this), "Scene saved successfully!", "Success", DialogIcon.Success);
                 }
                 catch (Exception ex)
                 {
-                    System.Windows.MessageBox.Show($"Error saving scene: {ex.Message}", "Error");
+                    await CustomDialog.ShowAsync(Window.GetWindow(this), $"Error saving scene: {ex.Message}", "Error", DialogIcon.Error);
                 }
             }
         }
 
-        private void OnLoadScene(object sender, RoutedEventArgs e)
+        private async void OnLoadScene(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "Conda Scene (*.conda)|*.conda", InitialDirectory = projectPath };
 
@@ -1651,13 +1703,15 @@ pygame.quit()
                     DrawGrid();
                     RefreshHierarchy();
                     OutputConsole.Text += $"📂 Scene loaded: {System.IO.Path.GetFileName(dialog.FileName)}\n";
+                    await CustomDialog.ShowAsync(Window.GetWindow(this), "Scene loaded successfully!", "Success", DialogIcon.Success);
                 }
                 catch (Exception ex)
                 {
-                    System.Windows.MessageBox.Show($"Error loading scene: {ex.Message}", "Error");
+                    await CustomDialog.ShowAsync(Window.GetWindow(this), $"Error loading scene: {ex.Message}", "Error", DialogIcon.Error);
                 }
             }
         }
+
         private void ShowToast(string message, bool isSuccess = true)
         {
             if (FindName("ToastMessage") is not TextBlock toastMessage ||
