@@ -69,7 +69,9 @@
         │   │   ├── MainWindow.xaml
         │   │   ├── MainWindow.xaml.cs
         │   │   ├── SettingsView.xaml
-        │   │   └── SettingsView.xaml.cs
+        │   │   ├── SettingsView.xaml.cs
+        │   │   ├── TitleBarControl.xaml
+        │   │   └── TitleBarControl.xaml.cs
         │   ├── Controls/
         │   └── Services/
         │

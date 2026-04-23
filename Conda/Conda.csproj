@@ -10,18 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Core\FileSystem\" />
     <Folder Include="Core\Settings\" />
     <Folder Include="Config\" />
-    <Folder Include="Engine\Bridges\" />
-    <Folder Include="Engine\Builders\" />
-    <Folder Include="Engine\Runtimes\" />
-    <Folder Include="Logs\" />
     <Folder Include="Docs\" />
     <Folder Include="Projects\" />
-    <Folder Include="UI\Controls\" />
-    <Folder Include="UI\Services\" />
-    <Folder Include="Utils\" />
   </ItemGroup>
 
   <ItemGroup>
