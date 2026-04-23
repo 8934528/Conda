@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +22,7 @@ namespace Conda.UI.Views
     public partial class SettingsView : Page
     {
         private Border? currentSelectedNav;
-        private readonly Dictionary<string, StackPanel> sections = new();
+        private readonly Dictionary<string, StackPanel> sections = [];
 
         public SettingsView()
         {
@@ -64,8 +64,7 @@ namespace Conda.UI.Views
 
         private async void SwitchSection(string sectionName)
         {
-            var fadeOut = FindResource("FadeOutAnimation") as Storyboard;
-            if (fadeOut != null)
+            if (FindResource("FadeOutAnimation") is Storyboard fadeOut)
             {
                 fadeOut.Completed += (s, _) =>
                 {
@@ -78,8 +77,7 @@ namespace Conda.UI.Views
                     {
                         selectedSection.Visibility = Visibility.Visible;
 
-                        var fadeIn = FindResource("FadeInAnimation") as Storyboard;
-                        if (fadeIn != null)
+                        if (FindResource("FadeInAnimation") is Storyboard fadeIn)
                         {
                             fadeIn.Begin(ContentContainer);
                         }

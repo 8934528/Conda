@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +9,11 @@ namespace Conda.Engine.VisualScripting
     public class Node
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         public double X { get; set; }
         public double Y { get; set; }
 
-        public List<Node> Outputs { get; set; } = new();
+        public List<Node> Outputs { get; set; } = [];
     }
 }

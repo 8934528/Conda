@@ -7,12 +7,11 @@
       xmlns:local="clr-namespace:Conda.Editor"
       mc:Ignorable="d" 
       d:DesignHeight="900" d:DesignWidth="1400"
-      Title="Conda Editor"
+      Title="Editor"
       Background="#1e1e1e"
       Loaded="Page_Loaded">
 
     <Page.Resources>
-        <!-- Animations -->
         <Storyboard x:Key="FadeInAnimation">
             <DoubleAnimation Storyboard.TargetProperty="Opacity"
                            From="0" To="1" Duration="0:0:0.2"/>

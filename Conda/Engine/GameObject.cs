@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,17 +11,19 @@ namespace Conda.Engine
     {
         public string Name { get; set; } = "GameObject";
 
-        private List<Component> components = new();
+        private readonly List<Component> components = [];
 
         public T AddComponent<T>() where T : Component, new()
         {
-            var comp = new T();
-            comp.GameObject = this;
+            var comp = new T
+            {
+                GameObject = this
+            };
             components.Add(comp);
             return comp;
         }
 
-        public T GetComponent<T>() where T : Component
+        public T? GetComponent<T>() where T : Component
         {
             return components.OfType<T>().FirstOrDefault();
         }

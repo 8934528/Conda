@@ -49,11 +49,13 @@ namespace Conda.UI.Views
 
         // Play Mode & Scene Objects
         private bool isPlaying = false;
-        private List<GameObject> sceneObjects = new();
+        private readonly List<GameObject> sceneObjects = [];
 
         // Visual Scripting
-        private List<Node> nodes = new();
+        private readonly List<Node> nodes = [];
         private Node? selectedNode;
+
+        private static readonly JsonSerializerOptions JsonIndentedOptions = new() { WriteIndented = true };
 
 
 
@@ -739,7 +741,7 @@ namespace Conda.UI.Views
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = "https://www.pygame.org/docs/",
+                FileName = "#",
                 UseShellExecute = true
             });
         }
@@ -752,7 +754,7 @@ namespace Conda.UI.Views
                 DialogIcon.Info);
         }
 
-        private async void OnSettingsClicked(object sender, RoutedEventArgs e)
+        private void OnSettingsClicked(object sender, RoutedEventArgs e)
         {
             var settingsView = new SettingsView();
             var settingsWindow = new Window
@@ -833,7 +835,7 @@ namespace Conda.UI.Views
 
 
 
-        private async void OnSettingsIconClicked(object sender, RoutedEventArgs e)
+        private void OnSettingsIconClicked(object sender, RoutedEventArgs e)
         {
             var settingsView = new SettingsView();
             var settingsWindow = new Window
@@ -965,8 +967,8 @@ namespace Conda.UI.Views
                 .Select(obj =>
                 {
                     var go = (GameObject)obj.Tag;
-                    var t = go.GetComponent<EngineTransform>();
-                    var s = go.GetComponent<Sprite>();
+                    var t = go.GetComponent<EngineTransform>()!;
+                    var s = go.GetComponent<Sprite>()!;
 
                     return new
                     {
@@ -980,10 +982,7 @@ namespace Conda.UI.Views
                     };
                 });
 
-            return JsonSerializer.Serialize(objects, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            return JsonSerializer.Serialize(objects, JsonIndentedOptions);
         }
 
         private async Task StartPlayMode()
@@ -1126,7 +1125,7 @@ pygame.quit()
             transform.X = 100;
             transform.Y = 100;
 
-            var sprite = go.AddComponent<Sprite>();
+            _ = go.AddComponent<Sprite>();
 
             sceneObjects.Add(go);
             RenderGameObject(go);
@@ -1135,14 +1134,14 @@ pygame.quit()
 
         private void RenderGameObject(GameObject go)
         {
-            var transform = go.GetComponent<EngineTransform>();
-            var sprite = go.GetComponent<Sprite>();
+            var transform = go.GetComponent<EngineTransform>()!;
+            var sprite = go.GetComponent<Sprite>()!;
 
             var rect = new Border
             {
                 Width = sprite.Width,
                 Height = sprite.Height,
-                Background = (SolidColorBrush)new BrushConverter().ConvertFromString(sprite.Color),
+                Background = new BrushConverter().ConvertFromString(sprite.Color) as SolidColorBrush ?? Brushes.Transparent,
                 Tag = go,
                 BorderBrush = Brushes.White,
                 BorderThickness = new Thickness(1)
@@ -1226,7 +1225,7 @@ pygame.quit()
             var element = SceneCanvas.Children.OfType<Border>().FirstOrDefault(b => b.Tag == go);
             if (element != null)
             {
-                var t = go.GetComponent<EngineTransform>();
+                var t = go.GetComponent<EngineTransform>()!;
                 Canvas.SetLeft(element, t.X);
                 Canvas.SetTop(element, t.Y);
             }
@@ -1237,7 +1236,7 @@ pygame.quit()
             var element = SceneCanvas.Children.OfType<Border>().FirstOrDefault(b => b.Tag == go);
             if (element != null)
             {
-                var t = go.GetComponent<EngineTransform>();
+                var t = go.GetComponent<EngineTransform>()!;
                 element.RenderTransform = new RotateTransform(t.Rotation);
             }
         }
@@ -1247,7 +1246,7 @@ pygame.quit()
             var element = SceneCanvas.Children.OfType<Border>().FirstOrDefault(b => b.Tag == go);
             if (element != null)
             {
-                var s = go.GetComponent<Sprite>();
+                var s = go.GetComponent<Sprite>()!;
                 element.Width = s.Width;
                 element.Height = s.Height;
             }
@@ -1258,8 +1257,8 @@ pygame.quit()
             var element = SceneCanvas.Children.OfType<Border>().FirstOrDefault(b => b.Tag == go);
             if (element != null)
             {
-                var s = go.GetComponent<Sprite>();
-                try { element.Background = (SolidColorBrush)new BrushConverter().ConvertFromString(s.Color); } catch { }
+                var s = go.GetComponent<Sprite>()!;
+                try { element.Background = new BrushConverter().ConvertFromString(s.Color) as SolidColorBrush ?? Brushes.Transparent; } catch { }
             }
         }
 
@@ -1346,7 +1345,7 @@ pygame.quit()
 
         private string ExportNodes()
         {
-            return JsonSerializer.Serialize(nodes, new JsonSerializerOptions { WriteIndented = true });
+            return JsonSerializer.Serialize(nodes, JsonIndentedOptions);
         }
 
         private void OnSceneDrop(object sender, DragEventArgs e)
@@ -1462,7 +1461,7 @@ pygame.quit()
             double dx = pos.X - lastMousePos.X;
             double dy = pos.Y - lastMousePos.Y;
 
-            var transform = selectedGameObject.GetComponent<EngineTransform>();
+            var transform = selectedGameObject.GetComponent<EngineTransform>()!;
             transform.X = Snap(transform.X + dx);
             transform.Y = Snap(transform.Y + dy);
 
@@ -1584,7 +1583,7 @@ pygame.quit()
             double dx = pos.X - resizeStart.X;
             double dy = pos.Y - resizeStart.Y;
 
-            var sprite = selectedGameObject.GetComponent<Sprite>();
+            var sprite = selectedGameObject.GetComponent<Sprite>()!;
             if (handlePos.X == 1) sprite.Width = Math.Max(10, Snap(sprite.Width + dx));
             if (handlePos.Y == 1) sprite.Height = Math.Max(10, Snap(sprite.Height + dy));
 
@@ -1655,7 +1654,7 @@ pygame.quit()
             double angle = Math.Atan2(pos.Y - centerY, pos.X - centerX) * (180 / Math.PI);
             angle += 90; // Offset to make 0 up
 
-            var transform = selectedGameObject.GetComponent<EngineTransform>();
+            var transform = selectedGameObject.GetComponent<EngineTransform>()!;
             transform.Rotation = angle;
             selectedElement.RenderTransform = new RotateTransform(angle);
             UpdateInspector(selectedGameObject);
@@ -1707,7 +1706,7 @@ pygame.quit()
 
         private static double Snap(double value) => Math.Round(value / GridSize) * GridSize;
 
-        private void LoadInspector() { /* replaced by UpdateInspector(GameObject) */ }
+        private static void LoadInspector() { /* replaced by UpdateInspector(GameObject) */ }
 
         private void OnApplyInspector(object sender, RoutedEventArgs e)
         {

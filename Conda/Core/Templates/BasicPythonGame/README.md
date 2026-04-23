@@ -1,4 +1,4 @@
-﻿# Conda – Core Collector
+# Conda – Core Collector
 
 A simple Python game built with **pygame**, where you control *Conda* (the snake) and collect points on a grid.
 
@@ -25,7 +25,7 @@ The twist:
 
 ## Project Structure
 
-```
+```text
 BasicPythonGame 
 ├── assets/
 │   └── conda.png

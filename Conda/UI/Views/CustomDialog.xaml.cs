@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,8 +37,7 @@ namespace Conda.UI.Views
 
         private void CustomDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            var showAnimation = FindResource("ShowDialogAnimation") as Storyboard;
-            if (showAnimation != null)
+            if (FindResource("ShowDialogAnimation") is Storyboard showAnimation)
             {
                 showAnimation.Begin(this);
             }
@@ -136,8 +135,7 @@ namespace Conda.UI.Views
             var button = sender as System.Windows.Controls.Button;
             result = button == Button1;
 
-            var hideAnimation = FindResource("HideDialogAnimation") as Storyboard;
-            if (hideAnimation != null)
+            if (FindResource("HideDialogAnimation") is Storyboard hideAnimation)
             {
                 hideAnimation.Completed += (s, _) => Close();
                 hideAnimation.Begin(this);
@@ -152,8 +150,7 @@ namespace Conda.UI.Views
         private async void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             result = false;
-            var hideAnimation = FindResource("HideDialogAnimation") as Storyboard;
-            if (hideAnimation != null)
+            if (FindResource("HideDialogAnimation") is Storyboard hideAnimation)
             {
                 hideAnimation.Completed += (s, _) => Close();
                 hideAnimation.Begin(this);

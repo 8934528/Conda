@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +17,7 @@ namespace Conda.UI.Views
 {
     public partial class AnimatedModal : Window
     {
-        private object? result = null;
+        private readonly object? result = null;
         private bool isConfirmed = false;
 
         public AnimatedModal()
@@ -28,8 +28,7 @@ namespace Conda.UI.Views
 
         private void AnimatedModal_Loaded(object sender, RoutedEventArgs e)
         {
-            var showAnimation = FindResource("ShowModalAnimation") as Storyboard;
-            if (showAnimation != null)
+            if (FindResource("ShowModalAnimation") is Storyboard showAnimation)
             {
                 showAnimation.Begin(this);
             }
@@ -109,8 +108,7 @@ namespace Conda.UI.Views
 
         private async Task CloseWithAnimation()
         {
-            var hideAnimation = FindResource("HideModalAnimation") as Storyboard;
-            if (hideAnimation != null)
+            if (FindResource("HideModalAnimation") is Storyboard hideAnimation)
             {
                 hideAnimation.Completed += (s, _) => Close();
                 hideAnimation.Begin(this);
