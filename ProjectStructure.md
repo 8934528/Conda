@@ -26,11 +26,22 @@
         │   └── Settings/                  # App-level settings
         │
         ├── Engine/                        # Python game engine support
+        │   ├── Physics/
+        │   │   ├── Collider.cs
+        │   │   ├── PhysicsEngine.cs
+        │   │   ├── Rigidbody.cs
+        │   │   └── Collision.cs
+        │   ├── Prebabs/
+        │   │   ├── Prebabs.cs
+        │   │   └── PrebabsManager.cs
         │   ├── SceneSystem/
         │   │   ├── Scene.cs
         │   │   └── SceneObject.cs
         │   ├── VisualScripting/
+        │   │   ├── NodeGraph.cs
         │   │   └── Node.cs
+        │   ├── Netwoking/
+        │   │   └── SceneSyncMessage.cs
         │   ├── Components/
         │   │   ├── Transform.cs
         │   │   ├── Sprite.cs

@@ -386,6 +386,8 @@
                             <Button Content="📂 Load Scene" Click="OnLoadScene" Style="{StaticResource SceneToolButton}"/>
                             <Separator Width="10" Visibility="Collapsed"/>
                             <Button Content="➕ Add Object" Click="OnAddGameObject" Style="{StaticResource SceneToolButton}"/>
+                            <Button Content="💾 Save Prefab" Click="OnSavePrefab" Style="{StaticResource SceneToolButton}"/>
+                            <Button Content="📂 Load Prefab" Click="OnLoadPrefab" Style="{StaticResource SceneToolButton}"/>
                             <Button Content="📋 Duplicate" Style="{StaticResource SceneToolButton}"/>
                             <Button Content="🗑️ Delete" Style="{StaticResource SceneToolButton}"/>
                             <Separator Width="10" Visibility="Collapsed"/>
@@ -437,7 +439,7 @@
                         <Canvas x:Name="SceneCanvas"
                                 Background="#1e1e1e"
                                 AllowDrop="True"
-                                Drop="OnSceneDrop"
+                                Drop="OnAssetDropped"
                                 Grid.Column="0"
                                 ClipToBounds="True"/>
 

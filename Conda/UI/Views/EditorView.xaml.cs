@@ -1,4 +1,7 @@
 using System;
+using System.Net.WebSockets;
+using Conda.Engine.Prefabs;
+using Conda.Engine.Networking;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
 using System.IO;
@@ -41,6 +44,7 @@ namespace Conda.UI.Views
         private readonly string projectPath;
         private string currentFilePath = string.Empty;
         private Process? currentProcess;
+        private ClientWebSocket syncSocket = new ClientWebSocket();
         private bool isWebViewReady = false;
         private bool isVenvActive = false;
         private bool isFullScreen = false;
@@ -54,6 +58,7 @@ namespace Conda.UI.Views
         // Visual Scripting
         private readonly List<Node> nodes = [];
         private Node? selectedNode;
+        private NodeGraph currentGraph = new NodeGraph();
 
         private static readonly JsonSerializerOptions JsonIndentedOptions = new() { WriteIndented = true };
 
@@ -95,6 +100,7 @@ namespace Conda.UI.Views
             projectPath = path;
             FileTabs.ItemsSource = openTabs;
             Loaded += EditorView_Loaded;
+            currentGraph.Nodes = nodes;
             SceneCanvas.Loaded += (s, e) => DrawGrid();
         }
 
@@ -124,6 +130,17 @@ namespace Conda.UI.Views
             OutputConsole.Text += $"📁 Project: {projectPath}\n";
             OutputConsole.Text += "🐍 Python virtual environment support enabled\n";
             OutputConsole.Text += "-----------------------------------------------------------------------------\n\n";
+
+            try
+            {
+                await syncSocket.ConnectAsync(new Uri("ws://localhost:5000/ws"), System.Threading.CancellationToken.None);
+                _ = ReceiveUpdatesLoop();
+                OutputConsole.Text += "🌐 Connected to Multiplayer Scene Sync!\n";
+            }
+            catch
+            {
+                OutputConsole.Text += "⚠️ Multiplayer Scene Sync server not running (ws://localhost:5000/ws).\n";
+            }
         }
 
         private void CheckVenvStatus()
@@ -960,6 +977,11 @@ namespace Conda.UI.Views
             }
         }
 
+        private string ExportNodeGraph(NodeGraph graph)
+        {
+            return JsonSerializer.Serialize(graph, JsonIndentedOptions);
+        }
+
         private string ExportSceneToJson()
         {
             var objects = SceneCanvas.Children.OfType<Border>()
@@ -969,6 +991,7 @@ namespace Conda.UI.Views
                     var go = (GameObject)obj.Tag;
                     var t = go.GetComponent<EngineTransform>()!;
                     var s = go.GetComponent<Sprite>()!;
+                    var script = go.GetComponent<ScriptComponent>();
 
                     return new
                     {
@@ -978,7 +1001,9 @@ namespace Conda.UI.Views
                         width = s.Width,
                         height = s.Height,
                         color = s.Color,
-                        rotation = t.Rotation
+                        rotation = t.Rotation,
+                        ImagePath = s.ImagePath,
+                        graph = script?.Graph
                     };
                 });
 
@@ -1072,18 +1097,47 @@ pygame.display.set_caption(""Conda Runtime"")
 clock = pygame.time.Clock()
 
 # Load scene
-scene_file = ""scene_runtime.json""
+scene = []
+if os.path.exists(""scene_runtime.json""):
+    with open(""scene_runtime.json"") as f:
+        scene = json.load(f)
 
-def load_objects():
-    if os.path.exists(scene_file):
-        try:
-            with open(scene_file, ""r"") as f:
-                return json.load(f)
-        except:
-            return []
-    return []
+# Load node graph
+graph = {}
+if os.path.exists(""node_graph.json""):
+    with open(""node_graph.json"") as f:
+        graph = json.load(f)
 
-objects = load_objects()
+def execute_node(node_id, obj, nodes):
+    node = nodes.get(node_id)
+    if not node:
+        return
+
+    node_type = node[""Type""]
+    props = node.get(""Properties"", {})
+
+    # === NODE TYPES ===
+    if node_type == ""Move"":
+        obj[""x""] += float(props.get(""dx"", 0))
+        obj[""y""] += float(props.get(""dy"", 0))
+
+    elif node_type == ""Rotate"":
+        obj[""rotation""] += float(props.get(""angle"", 1))
+
+    elif node_type == ""Print"":
+        print(props.get(""text"", ""Hello""))
+
+    # === FLOW ===
+    for out in node.get(""Outputs"", []):
+        execute_node(out, obj, nodes)
+
+image_cache = {}
+
+def load_image(path):
+    if path not in image_cache:
+        image_cache[path] = pygame.image.load(path)
+    return image_cache[path]
+
 running = True
 
 while running:
@@ -1091,22 +1145,37 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # Hot reload scene
-    objects = load_objects()
+    screen.fill((30, 30, 30))
 
-    screen.fill((20, 20, 20))
+    for obj in scene:
+        obj_graph = obj.get(""graph"")
+        if obj_graph:
+            obj_nodes = {n[""Id""]: n for n in obj_graph.get(""Nodes"", [])}
+        else:
+            obj_nodes = {n[""Id""]: n for n in graph.get(""Nodes"", [])}
 
-    for obj in objects:
-        # Create a surface for rotation
-        s = pygame.Surface((obj[""width""], obj[""height""]), pygame.SRCALPHA)
-        color = pygame.Color(obj[""color""])
-        pygame.draw.rect(s, color, (0, 0, obj[""width""], obj[""height""]))
-        
-        # Rotate
-        rotated_s = pygame.transform.rotate(s, -obj[""rotation""])
-        new_rect = rotated_s.get_rect(center=(obj[""x""] + obj[""width""]/2, obj[""y""] + obj[""height""]/2))
-        
-        screen.blit(rotated_s, new_rect.topleft)
+        start_nodes = [n for n in obj_nodes.values() if n[""Type""] == ""Start""]
+
+        for start in start_nodes:
+            execute_node(start[""Id""], obj, obj_nodes)
+
+        # Rendering
+        if ""ImagePath"" in obj and obj[""ImagePath""]:
+            img = load_image(obj[""ImagePath""])
+            # Apply rotation if needed (simplified here based on tutorial)
+            rotated_img = pygame.transform.rotate(img, -obj.get(""rotation"", 0))
+            new_rect = rotated_img.get_rect(center=(obj[""x""] + obj[""width""]/2, obj[""y""] + obj[""height""]/2))
+            screen.blit(rotated_img, new_rect.topleft)
+        else:
+            s = pygame.Surface((obj[""width""], obj[""height""]), pygame.SRCALPHA)
+            color = pygame.Color(obj.get(""color"", ""#00C8FF""))
+            pygame.draw.rect(s, color, (0, 0, obj[""width""], obj[""height""]))
+            
+            # Rotate
+            rotated_s = pygame.transform.rotate(s, -obj.get(""rotation"", 0))
+            new_rect = rotated_s.get_rect(center=(obj[""x""] + obj[""width""]/2, obj[""y""] + obj[""height""]/2))
+            
+            screen.blit(rotated_s, new_rect.topleft)
 
     pygame.display.flip()
     clock.tick(60)
@@ -1126,6 +1195,8 @@ pygame.quit()
             transform.Y = 100;
 
             _ = go.AddComponent<Sprite>();
+            var script = go.AddComponent<ScriptComponent>();
+            script.Graph = currentGraph;
 
             sceneObjects.Add(go);
             RenderGameObject(go);
@@ -1177,6 +1248,45 @@ pygame.quit()
         private void OnAddGameObject(object sender, RoutedEventArgs e)
         {
             AddGameObject();
+        }
+
+        private void OnSavePrefab(object sender, RoutedEventArgs e)
+        {
+            if (selectedGameObject == null)
+            {
+                ShowToast("Select an object to save as Prefab", false);
+                return;
+            }
+            var prefabManager = new PrefabManager(projectPath);
+            prefabManager.SavePrefab(selectedGameObject.Name, selectedGameObject);
+            ShowToast($"Saved Prefab: {selectedGameObject.Name}");
+        }
+
+        private void OnLoadPrefab(object sender, RoutedEventArgs e)
+        {
+            string prefabName = Microsoft.VisualBasic.Interaction.InputBox("Enter Prefab name to load:", "Load Prefab", "GameObject");
+            if (!string.IsNullOrWhiteSpace(prefabName))
+            {
+                var prefabManager = new PrefabManager(projectPath);
+                var loaded = prefabManager.LoadPrefab<GameObject>(prefabName);
+                if (loaded != null)
+                {
+                    loaded.Id = Guid.NewGuid().ToString(); // New ID for instance
+                    sceneObjects.Add(loaded);
+                    
+                    if (loaded.GetComponent<Sprite>()?.ImagePath != null)
+                        RenderSprite(loaded);
+                    else
+                        RenderGameObject(loaded);
+                        
+                    RefreshHierarchy();
+                    ShowToast($"Loaded Prefab: {prefabName}");
+                }
+                else
+                {
+                    ShowToast($"Failed to load Prefab: {prefabName}", false);
+                }
+            }
         }
 
         private void UpdateInspector(GameObject go)
@@ -1330,7 +1440,7 @@ pygame.quit()
             {
                 if (selectedNode != node)
                 {
-                    selectedNode.Outputs.Add(node);
+                    selectedNode.Outputs.Add(node.Id);
                     // Reset selection or handle multi-connection
                     ShowToast($"Connected {selectedNode.Title} to {node.Title}");
                 }
@@ -1348,30 +1458,74 @@ pygame.quit()
             return JsonSerializer.Serialize(nodes, JsonIndentedOptions);
         }
 
-        private void OnSceneDrop(object sender, DragEventArgs e)
+        private void OnAssetDropped(object sender, DragEventArgs e)
         {
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+                return;
 
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
             foreach (var file in files)
             {
-                var obj = new SceneObject
-                {
-                    Name = System.IO.Path.GetFileName(file),
-                    Type = IsImageFile(file) ? "Image" : "Rectangle",
-                    X = 50,
-                    Y = 50,
-                    Width = 100,
-                    Height = 100,
-                    AssetPath = file
-                };
+                if (!file.EndsWith(".png", StringComparison.OrdinalIgnoreCase) && !file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase))
+                    continue;
 
-                currentScene.Objects.Add(obj);
-                DrawObject(obj);
+                CreateSpriteFromImage(file);
             }
+        }
 
+        private void CreateSpriteFromImage(string path)
+        {
+            var go = new GameObject { Name = "Sprite" };
+
+            var t = go.AddComponent<EngineTransform>();
+            t.X = 200;
+            t.Y = 200;
+
+            var s = go.AddComponent<Sprite>();
+            s.ImagePath = path;
+
+            var script = go.AddComponent<ScriptComponent>();
+            script.Graph = currentGraph;
+
+            sceneObjects.Add(go);
+            RenderSprite(go);
             RefreshHierarchy();
+        }
+
+        private void RenderSprite(GameObject go)
+        {
+            var t = go.GetComponent<EngineTransform>()!;
+            var s = go.GetComponent<Sprite>()!;
+
+            var img = new System.Windows.Controls.Image
+            {
+                Width = s.Width,
+                Height = s.Height,
+                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(s.ImagePath)),
+                Tag = go
+            };
+
+            // wrap in a border for standard selection highlighting
+            var border = new Border
+            {
+                Width = s.Width,
+                Height = s.Height,
+                Background = Brushes.Transparent,
+                Tag = go,
+                BorderBrush = Brushes.Transparent,
+                BorderThickness = new Thickness(1),
+                Child = img
+            };
+
+            Canvas.SetLeft(border, t.X);
+            Canvas.SetTop(border, t.Y);
+
+            border.MouseLeftButtonDown += OnObjectSelected;
+            border.MouseMove += OnObjectMouseMove;
+            border.MouseLeftButtonUp += OnObjectMouseUp;
+
+            SceneCanvas.Children.Add(border);
         }
 
         private static bool IsImageFile(string path)
@@ -1473,6 +1627,7 @@ pygame.quit()
             UpdateRotationHandle();
             UpdateInspector(selectedGameObject);
             SyncSceneWhilePlaying();
+            SendSyncUpdate("Move", selectedGameObject);
         }
 
         private void OnObjectMouseUp(object sender, MouseButtonEventArgs e)
@@ -1817,6 +1972,52 @@ pygame.quit()
                 timer.Stop();
             };
             timer.Start();
+        }
+
+        // --- MULTIPLAYER SYNC METHODS ---
+        private async void SendSyncUpdate(string type, GameObject obj)
+        {
+            if (syncSocket.State != WebSocketState.Open) return;
+            var transform = obj.GetComponent<EngineTransform>();
+            if (transform == null) return;
+            
+            var msg = JsonSerializer.Serialize(new SceneSyncMessage
+            {
+                Type = type,
+                ObjectId = obj.Id,
+                X = transform.X,
+                Y = transform.Y
+            });
+            var bytes = System.Text.Encoding.UTF8.GetBytes(msg);
+            await syncSocket.SendAsync(bytes, WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
+        }
+
+        private async Task ReceiveUpdatesLoop()
+        {
+            var buffer = new byte[1024];
+            while (syncSocket.State == WebSocketState.Open)
+            {
+                var result = await syncSocket.ReceiveAsync(buffer, System.Threading.CancellationToken.None);
+                if (result.MessageType == WebSocketMessageType.Close) break;
+                string json = System.Text.Encoding.UTF8.GetString(buffer, 0, result.Count);
+                var update = JsonSerializer.Deserialize<SceneSyncMessage>(json);
+                if (update != null) Dispatcher.Invoke(() => ApplySyncUpdate(update));
+            }
+        }
+
+        private void ApplySyncUpdate(SceneSyncMessage msg)
+        {
+            var obj = sceneObjects.FirstOrDefault(o => o.Id == msg.ObjectId);
+            if (obj != null)
+            {
+                var t = obj.GetComponent<EngineTransform>();
+                if (t != null)
+                {
+                    t.X = msg.X;
+                    t.Y = msg.Y;
+                    UpdateElementPosition(obj);
+                }
+            }
         }
     }
 }

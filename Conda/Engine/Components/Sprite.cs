@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +9,7 @@ namespace Conda.Engine.Components
     public class Sprite : Component
     {
         public string Color { get; set; } = "#00C8FF";
+        public string ImagePath { get; set; } = "";
         public double Width { get; set; } = 100;
         public double Height { get; set; } = 100;
     }

@@ -4,12 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Conda.Engine.Components;
+using Conda.Engine.Physics;
 
 namespace Conda.Engine
 {
     public class GameObject
     {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; } = "GameObject";
+
+        public Rigidbody? Rigidbody { get; set; }
+        public Collider? Collider { get; set; }
 
         private readonly List<Component> components = [];
 
