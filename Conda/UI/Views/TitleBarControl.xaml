@@ -21,7 +21,7 @@
                         <Border x:Name="Border" 
                                 Background="{TemplateBinding Background}" 
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4"
+                                CornerRadius="3"
                                 Margin="2,0">
                             <Grid>
                                 <ContentPresenter x:Name="HeaderHost" 
@@ -39,7 +39,7 @@
                                             Background="#252526" 
                                             BorderBrush="#3c3c3c" 
                                             BorderThickness="1"
-                                            CornerRadius="6"
+                                            CornerRadius="3"
                                             Margin="0,2,0,0"
                                             Padding="4">
                                         <Border.Effect>
@@ -83,7 +83,7 @@
                     <ControlTemplate TargetType="MenuItem">
                         <Border x:Name="Border" 
                                 Background="{TemplateBinding Background}" 
-                                CornerRadius="4"
+                                CornerRadius="3"
                                 Margin="2">
                             <Grid>
                                 <ContentPresenter x:Name="HeaderHost" 
@@ -299,7 +299,7 @@
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="Border" 
                                     Background="{TemplateBinding Background}" 
-                                    CornerRadius="4">
+                                    CornerRadius="3">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>

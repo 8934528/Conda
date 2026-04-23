@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Conda.UI.Views"
         mc:Ignorable="d"
-        Title="Note"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -39,7 +38,7 @@
     </Window.RenderTransform>
 
     <Border Background="#2d2d30" 
-            CornerRadius="8" 
+            CornerRadius="3" 
             BorderBrush="#3c3c3c" 
             BorderThickness="1"
             Padding="0">
@@ -60,7 +59,7 @@
             <!-- Title Bar -->
             <Border Grid.Row="0" 
                     Background="#252526" 
-                    CornerRadius="8,8,0,0"
+                    CornerRadius="3,3,0,0"
                 BorderBrush="#3c3c3c" 
                     Padding="20,12">
                 <Grid>
@@ -83,7 +82,7 @@
                             Click="CloseButton_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <Border x:Name="Border" Background="Transparent" CornerRadius="4">
+                                <Border x:Name="Border" Background="Transparent" CornerRadius="3">
                                     <TextBlock Text="✕" Foreground="#cccccc" FontSize="14" 
                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
@@ -116,7 +115,7 @@
             <!-- Buttons -->
             <Border Grid.Row="2" 
                     Background="#252526" 
-                    CornerRadius="0,0,8,8"
+                    CornerRadius="0,0,3,3"
                     Padding="15,12">
                 <StackPanel x:Name="ButtonsPanel" 
                             Orientation="Horizontal" 
@@ -136,7 +135,7 @@
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="Border" 
                                         Background="{TemplateBinding Background}" 
-                                        CornerRadius="4">
+                                        CornerRadius="3">
                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <ControlTemplate.Triggers>

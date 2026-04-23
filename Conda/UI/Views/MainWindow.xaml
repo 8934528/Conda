@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         d:DesignHeight="900" d:DesignWidth="1400"
-        Title="Conda IDE"
         Background="#1e1e1e"
         WindowStartupLocation="CenterScreen">
 
@@ -23,7 +22,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                                CornerRadius="4"
+                                CornerRadius="3"
                                 BorderThickness="0">
                             <ContentPresenter HorizontalAlignment="Center" 
                                             VerticalAlignment="Center"/>
@@ -62,7 +61,7 @@
                                     <Border x:Name="Border" 
                             Background="{TemplateBinding Background}" 
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="4"
+                            CornerRadius="3"
                             Margin="2,0">
                                         <Grid>
                                             <ContentPresenter x:Name="HeaderHost" 
@@ -80,7 +79,7 @@
                                         Background="#252526" 
                                         BorderBrush="#3c3c3c" 
                                         BorderThickness="1"
-                                        CornerRadius="6"
+                                        CornerRadius="3"
                                         Margin="0,2,0,0"
                                         Padding="4">
                                                     <Border.Effect>
@@ -124,7 +123,7 @@
                                 <ControlTemplate TargetType="MenuItem">
                                     <Border x:Name="Border" 
                             Background="{TemplateBinding Background}" 
-                            CornerRadius="4"
+                            CornerRadius="3"
                             Margin="2">
                                         <Grid>
                                             <ContentPresenter x:Name="HeaderHost" 
@@ -156,9 +155,9 @@
                     <Image Source="/Assets/logo/FirstIcon.png" Width="28" Height="28" Margin="0,0,10,0"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="780,0,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="450,0,0,0">
                     <Menu Background="Transparent" BorderThickness="0">
-                        <MenuItem Header="File" Style="{StaticResource ModernMenuItemStyle}">
+                        <MenuItem Header="📄 File" Style="{StaticResource ModernMenuItemStyle}">
                             <MenuItem Header="📁 New Project" Click="OnNewProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+N"/>
                             <MenuItem Header="📂 Open Project" Click="OnOpenProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+O"/>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
@@ -170,7 +169,7 @@
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="Edit" Style="{StaticResource ModernMenuItemStyle}">
+                        <MenuItem Header="✏️ Edit" Style="{StaticResource ModernMenuItemStyle}">
                             <MenuItem Header="✂️ Cut" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+X"/>
                             <MenuItem Header="📋 Copy" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+C"/>
                             <MenuItem Header="📌 Paste" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+V"/>
@@ -181,7 +180,7 @@
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="View" Style="{StaticResource ModernMenuItemStyle}">
+                        <MenuItem Header="👁️ View" Style="{StaticResource ModernMenuItemStyle}">
                             <MenuItem Header="🖥️ Toggle Full Screen" Click="OnToggleFullScreenClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F11"/>
                             <MenuItem Header="🔄 Reset Layout" Click="OnResetLayoutClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
@@ -192,7 +191,7 @@
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="Project" Style="{StaticResource ModernMenuItemStyle}">
+                        <MenuItem Header="📁 Project" Style="{StaticResource ModernMenuItemStyle}">
                             <MenuItem Header="🆕 New Project" Click="OnNewProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
                             <MenuItem Header="📂 Open Project" Click="OnOpenProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
                             <MenuItem Header="🕒 Recent Projects" Click="OnRecentProjectsClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
@@ -203,7 +202,7 @@
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="Build" Style="{StaticResource ModernMenuItemStyle}">
+                        <MenuItem Header="🔧 Build" Style="{StaticResource ModernMenuItemStyle}">
                             <MenuItem Header="🔨 Build Project" Click="OnBuildClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F7"/>
                             <MenuItem Header="▶️ Run Project" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F5"/>
                             <MenuItem Header="🐛 Debug Project" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F6"/>
@@ -214,7 +213,7 @@
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="Tools" Style="{StaticResource ModernMenuItemStyle}">
+                        <MenuItem Header="🛠️ Tools" Style="{StaticResource ModernMenuItemStyle}">
                             <MenuItem Header="📦 Package Manager" Click="OnPackageManagerClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
                             <MenuItem Header="🧩 Extensions" Click="OnExtensionsClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
@@ -224,7 +223,7 @@
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="Terminal" Style="{StaticResource ModernMenuItemStyle}">
+                        <MenuItem Header=">_ Terminal" Style="{StaticResource ModernMenuItemStyle}">
                             <MenuItem Header="🖥️ Open Terminal" Click="OnOpenTerminalClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+`"/>
                             <MenuItem Header="⚡ Run Command" Click="OnRunCommandClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+P"/>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
@@ -234,7 +233,7 @@
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="Help" Style="{StaticResource ModernMenuItemStyle}">
+                        <MenuItem Header="❓ Help" Style="{StaticResource ModernMenuItemStyle}">
                             <MenuItem Header="📚 Documentation" Click="OnDocumentationClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F1"/>
                             <MenuItem Header="💡 Tips and Tricks" Style="{StaticResource ModernSubMenuItemStyle}"/>
                             <MenuItem Header="🐛 Report Issue" Style="{StaticResource ModernSubMenuItemStyle}"/>
@@ -245,20 +244,20 @@
                 </StackPanel>
 
                 <!-- Settings Button with animation -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0">
                     <Button x:Name="SettingsButton"
-            Background="Transparent" 
-            BorderThickness="0" 
-            Cursor="Hand"
-            Click="OnSettingsIconClicked"
-            Width="32"
-            Height="32"
-            Margin="0,0,10,0">
+                                Background="Transparent" 
+                                BorderThickness="0" 
+                                Cursor="Hand"
+                                Click="OnSettingsIconClicked"
+                                Width="100"
+                                Height="32"
+                                Margin="0,0,10,0">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="Border" 
                         Background="{TemplateBinding Background}" 
-                        CornerRadius="4">
+                        CornerRadius="3">
                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -272,7 +271,7 @@
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                         </Button.RenderTransform>
                         <StackPanel>
-                            <TextBlock Text="⚙️" FontSize="18" Foreground="#cccccc"/>
+                            <TextBlock Text="⚙️ Settings" FontSize="12" Foreground="#cccccc"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>

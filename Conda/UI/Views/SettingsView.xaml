@@ -41,7 +41,7 @@
         <!-- Card Style -->
         <Style x:Key="SettingsCardStyle" TargetType="Border">
             <Setter Property="Background" Value="#252526"/>
-            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="CornerRadius" Value="3"/>
             <Setter Property="Margin" Value="0,0,0,15"/>
             <Setter Property="Padding" Value="20,15"/>
         </Style>
@@ -106,7 +106,7 @@
                                                 Background="{TemplateBinding Background}"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                                CornerRadius="4">
+                                                CornerRadius="3">
                                             <Grid>
                                                 <ContentPresenter HorizontalAlignment="Left" 
                                                                   VerticalAlignment="Center"
@@ -137,7 +137,7 @@
                                         Background="#252526"
                                         BorderBrush="#3c3c3c"
                                         BorderThickness="1"
-                                        CornerRadius="4"
+                                        CornerRadius="3"
                                         Margin="0,2,0,0">
                                     <Border.Effect>
                                         <DropShadowEffect BlurRadius="10" Opacity="0.3" ShadowDepth="2"/>
@@ -207,7 +207,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Border" 
                                 Background="{TemplateBinding Background}" 
-                                CornerRadius="4">
+                                CornerRadius="3">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -239,7 +239,7 @@
                                 Background="{TemplateBinding Background}" 
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4">
+                                CornerRadius="3">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -269,7 +269,7 @@
                                 Width="50" 
                                 Height="26" 
                                 Background="#3c3c3c" 
-                                CornerRadius="13"
+                                CornerRadius="3"
                                 Cursor="Hand">
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="3" Opacity="0.2"/>
@@ -278,7 +278,7 @@
                                     Width="22" 
                                     Height="22" 
                                     Background="#888888" 
-                                    CornerRadius="11"
+                                    CornerRadius="3"
                                     HorizontalAlignment="Left"
                                     Margin="2">
                                 <Border.RenderTransform>
@@ -325,7 +325,7 @@
         <Style x:Key="NavButtonStyle" TargetType="Border">
             <Setter Property="Margin" Value="20,0,20,5"/>
             <Setter Property="Padding" Value="12,10"/>
-            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="CornerRadius" Value="3"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -347,18 +347,11 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="0,20,0,20">
                     <!-- Logo Section -->
-                    <Border Background="#2d2d30" Margin="20,0,20,20" Padding="15" CornerRadius="6">
+                    <Border Background="#2d2d30" Margin="20,0,20,20" Padding="15" CornerRadius="3">
                         <StackPanel HorizontalAlignment="Center">
-                            <TextBlock Text="⚙️" FontSize="48" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Conda Settings" 
-                                       Foreground="White" 
-                                       FontSize="18" 
-                                       FontWeight="SemiBold"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,10,0,0"/>
                             <TextBlock Text="Configure your IDE" 
                                        Foreground="#888888" 
-                                       FontSize="12"
+                                       FontSize="20"
                                        HorizontalAlignment="Center"
                                        Margin="0,5,0,0"/>
                         </StackPanel>
@@ -449,10 +442,11 @@
 
                 <!-- Header -->
                 <TextBlock Text="⚙️ Settings" 
-                           FontSize="28" 
+                           FontSize="24" 
                            Foreground="White" 
                            FontWeight="Bold"
                            Margin="0,0,0,5"/>
+                
                 <TextBlock Text="Customize your Conda IDE experience" 
                            FontSize="14" 
                            Foreground="#888888"
@@ -598,27 +592,27 @@
                                         <TextBlock Text="Primary UI accent color" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Border Width="30" Height="30" CornerRadius="4" Background="#007acc" Margin="0,0,5,0" Cursor="Hand">
+                                        <Border Width="30" Height="30" CornerRadius="3" Background="#007acc" Margin="0,0,5,0" Cursor="Hand">
                                             <Border.ToolTip>
                                                 <ToolTip>Blue (Default)</ToolTip>
                                             </Border.ToolTip>
                                         </Border>
-                                        <Border Width="30" Height="30" CornerRadius="4" Background="#28a745" Margin="0,0,5,0" Cursor="Hand">
+                                        <Border Width="30" Height="30" CornerRadius="3" Background="#28a745" Margin="0,0,5,0" Cursor="Hand">
                                             <Border.ToolTip>
                                                 <ToolTip>Green</ToolTip>
                                             </Border.ToolTip>
                                         </Border>
-                                        <Border Width="30" Height="30" CornerRadius="4" Background="#dc3545" Margin="0,0,5,0" Cursor="Hand">
+                                        <Border Width="30" Height="30" CornerRadius="3" Background="#dc3545" Margin="0,0,5,0" Cursor="Hand">
                                             <Border.ToolTip>
                                                 <ToolTip>Red</ToolTip>
                                             </Border.ToolTip>
                                         </Border>
-                                        <Border Width="30" Height="30" CornerRadius="4" Background="#fd7e14" Margin="0,0,5,0" Cursor="Hand">
+                                        <Border Width="30" Height="30" CornerRadius="3" Background="#fd7e14" Margin="0,0,5,0" Cursor="Hand">
                                             <Border.ToolTip>
                                                 <ToolTip>Orange</ToolTip>
                                             </Border.ToolTip>
                                         </Border>
-                                        <Border Width="30" Height="30" CornerRadius="4" Background="#6f42c1" Margin="0,0,5,0" Cursor="Hand">
+                                        <Border Width="30" Height="30" CornerRadius="3" Background="#6f42c1" Margin="0,0,5,0" Cursor="Hand">
                                             <Border.ToolTip>
                                                 <ToolTip>Purple</ToolTip>
                                             </Border.ToolTip>
@@ -1018,7 +1012,7 @@
                                         <TextBlock Text="📦 Installed" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Currently installed extensions" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <Border Grid.Column="1" Background="#1e1e1e" CornerRadius="4" Padding="10" Margin="0,0,0,0">
+                                    <Border Grid.Column="1" Background="#1e1e1e" CornerRadius="3" Padding="10" Margin="0,0,0,0">
                                         <StackPanel>
                                             <CheckBox Content="Python Language Support" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
                                             <CheckBox Content="Pygame Snippets" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
@@ -1110,7 +1104,7 @@
                 </Grid>
 
                 <!-- Bottom Action Buttons -->
-                <Border Background="#252526" CornerRadius="6" Padding="20,15" Margin="0,30,0,0">
+                <Border Background="#252526" CornerRadius="3" Padding="20,15" Margin="0,30,0,0">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Content="Reset to Defaults" Style="{StaticResource SecondaryButtonStyle}" Width="130" Margin="0,0,10,0"/>
                         <Button Content="Cancel" Style="{StaticResource SecondaryButtonStyle}" Width="100" Margin="0,0,10,0"/>
