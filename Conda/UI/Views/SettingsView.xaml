@@ -79,7 +79,7 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
 
-        <!-- ComboBox Style -->
+        <!-- Consistent ComboBox Style with fixed width -->
         <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
             <Setter Property="Background" Value="#1e1e1e"/>
             <Setter Property="Foreground" Value="#e0e0e0"/>
@@ -88,6 +88,8 @@
             <Setter Property="Padding" Value="10,8"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Height" Value="35"/>
+            <Setter Property="Width" Value="280"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
@@ -346,7 +348,6 @@
         <Border Grid.Column="0" Background="#252526">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="0,20,0,20">
-                    <!-- Logo Section -->
                     <Border Background="#2d2d30" Margin="20,0,20,20" Padding="15" CornerRadius="3">
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Text="Configure your IDE" 
@@ -360,72 +361,63 @@
                     <!-- Navigation Items -->
                     <Border x:Name="NavGeneral" Style="{StaticResource NavButtonStyle}" Background="#2d2d30" MouseLeftButtonDown="NavItem_Click" Tag="General">
                         <StackPanel>
-                            <TextBlock Text="⚡" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="General" Foreground="White" FontSize="13" Margin="0,0,0,3"/>
+                            <TextBlock Text="⚡ General" Foreground="White" FontSize="13" Margin="0,0,0,3"/>
                             <TextBlock Text="Appearance, language and behavior" Foreground="#888888" FontSize="10"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavTheme" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Theme">
                         <StackPanel>
-                            <TextBlock Text="🎨" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Theme and Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <TextBlock Text="🎨 Theme and Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
                             <TextBlock Text="Colors, fonts and layout" Foreground="#888888" FontSize="10"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavPython" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Python">
                         <StackPanel>
-                            <TextBlock Text="🐍" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Python" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <TextBlock Text="🐍 Python" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
                             <TextBlock Text="Interpreter and environment" Foreground="#888888" FontSize="10"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavEditor" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Editor">
                         <StackPanel>
-                            <TextBlock Text="📝" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <TextBlock Text="📝 Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
                             <TextBlock Text="Code editing and formatting" Foreground="#888888" FontSize="10"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavGameEngine" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="GameEngine">
                         <StackPanel>
-                            <TextBlock Text="🎮" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Game Engine" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <TextBlock Text="🎮 Game Engine" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
                             <TextBlock Text="Scene and physics settings" Foreground="#888888" FontSize="10"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavTools" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Tools">
                         <StackPanel>
-                            <TextBlock Text="🔧" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Tools" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <TextBlock Text="🔧 Tools" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
                             <TextBlock Text="Terminal and external tools" Foreground="#888888" FontSize="10"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavExtensions" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Extensions">
                         <StackPanel>
-                            <TextBlock Text="🔌" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Extensions" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <TextBlock Text="🔌 Extensions" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
                             <TextBlock Text="Manage plugins" Foreground="#888888" FontSize="10"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavKeymap" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Keymap">
                         <StackPanel>
-                            <TextBlock Text="⌨️" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Keymap" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <TextBlock Text="⌨️ Keymap" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
                             <TextBlock Text="Keyboard shortcuts" Foreground="#888888" FontSize="10"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavAbout" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="About">
                         <StackPanel>
-                            <TextBlock Text="ℹ️" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="About" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <TextBlock Text="ℹ️ About" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
                             <TextBlock Text="Version and updates" Foreground="#888888" FontSize="10"/>
                         </StackPanel>
                     </Border>
@@ -446,7 +438,7 @@
                            Foreground="White" 
                            FontWeight="Bold"
                            Margin="0,0,0,5"/>
-                
+
                 <TextBlock Text="Customize your Conda IDE experience" 
                            FontSize="14" 
                            Foreground="#888888"
@@ -476,7 +468,7 @@
                                         <TextBlock Text="🌐 Language" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Select interface language" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
                                         <ComboBoxItem IsSelected="True">English (US)</ComboBoxItem>
                                         <ComboBoxItem>Spanish</ComboBoxItem>
                                         <ComboBoxItem>French</ComboBoxItem>
@@ -496,7 +488,7 @@
                                         <TextBlock Text="🚀 Startup Behavior" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="What to show on IDE startup" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Width="250" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
                                         <ComboBoxItem IsSelected="True">Show Dashboard</ComboBoxItem>
                                         <ComboBoxItem>Open Last Project</ComboBoxItem>
                                         <ComboBoxItem>Show Welcome Screen</ComboBoxItem>
@@ -572,7 +564,7 @@
                                         <TextBlock Text="🎨 Theme" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Choose your preferred theme" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
                                         <ComboBoxItem IsSelected="True">Dark (Default)</ComboBoxItem>
                                         <ComboBoxItem>Light</ComboBoxItem>
                                         <ComboBoxItem>High Contrast</ComboBoxItem>
@@ -630,12 +622,15 @@
                                         <TextBlock Text="🔤 Font Family" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Editor font family" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Width="250" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
                                         <ComboBoxItem IsSelected="True">Consolas</ComboBoxItem>
-                                        <ComboBoxItem>Fira Code</ComboBoxItem>
                                         <ComboBoxItem>Cascadia Code</ComboBoxItem>
+                                        <ComboBoxItem>Consolas</ComboBoxItem>
+                                        <ComboBoxItem>Fira Code</ComboBoxItem>
                                         <ComboBoxItem>JetBrains Mono</ComboBoxItem>
+                                        <ComboBoxItem>Segoe UI</ComboBoxItem>
                                         <ComboBoxItem>Source Code Pro</ComboBoxItem>
+                                        <ComboBoxItem>Tomorrow</ComboBoxItem>
                                     </ComboBox>
                                 </Grid>
 
@@ -829,7 +824,7 @@
                                         <TextBlock Text="📏 Tab Size" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Number of spaces per tab" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Width="100" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
                                         <ComboBoxItem IsSelected="True">2</ComboBoxItem>
                                         <ComboBoxItem>4</ComboBoxItem>
                                         <ComboBoxItem>6</ComboBoxItem>
@@ -856,7 +851,7 @@
                                         <TextBlock Text="🎮 Default Resolution" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Default game window size" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
                                         <ComboBoxItem IsSelected="True">800x600</ComboBoxItem>
                                         <ComboBoxItem>1024x768</ComboBoxItem>
                                         <ComboBoxItem>1280x720</ComboBoxItem>
@@ -916,7 +911,7 @@
                                         <TextBlock Text="⚡ Physics Engine" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Choose physics backend" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
                                         <ComboBoxItem IsSelected="True">Pymunk</ComboBoxItem>
                                         <ComboBoxItem>Box2D</ComboBoxItem>
                                         <ComboBoxItem>None</ComboBoxItem>
@@ -972,7 +967,7 @@
                                         <TextBlock Text="🔨 Build Tool" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Default build tool" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
                                         <ComboBoxItem IsSelected="True">PyInstaller</ComboBoxItem>
                                         <ComboBoxItem>cx_Freeze</ComboBoxItem>
                                         <ComboBoxItem>Nuitka</ComboBoxItem>
@@ -1041,7 +1036,7 @@
                                         <TextBlock Text="⌨️ Keymap Preset" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Keyboard shortcut scheme" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource ModernComboBoxStyle}">
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
                                         <ComboBoxItem IsSelected="True">Conda Default</ComboBoxItem>
                                         <ComboBoxItem>VS Code</ComboBoxItem>
                                         <ComboBoxItem>Sublime Text</ComboBoxItem>
@@ -1116,4 +1111,3 @@
         </ScrollViewer>
     </Grid>
 </Page>
-    

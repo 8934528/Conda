@@ -76,9 +76,19 @@
         │   └── Services/
         │
         ├── Assets/
-        │   ├── monaco.html
-        │   └── logo/
-        │       └── FirstIcon.png
+        │   ├── font/
+        │   │   ├── cascadia_code/
+        │   │   ├── consolas/
+        │   │   ├── fira_code/
+        │   │   ├── jetbrains_mono/
+        │   │   ├── segoe_ui/
+        │   │   ├── source_code_pro/
+        │   │   └── tomorrow/
+        |   |
+        │   ├── logo/
+        │   |   └── FirstIcon.png
+        |   |
+        │   └── monaco.html
         │
         ├── App.xaml
         └── App.xaml.cs
