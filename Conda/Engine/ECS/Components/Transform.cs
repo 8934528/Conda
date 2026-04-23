@@ -1,10 +1,11 @@
 namespace Conda.Engine.ECS.Components
 {
-    public class Transform : Component
+    public class Transform : IComponent
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Rotation { get; set; }
-        public double Scale { get; set; } = 1;
+        public double X;
+        public double Y;
+        public double Rotation;
+        public double ScaleX = 1;
+        public double ScaleY = 1;
     }
 }

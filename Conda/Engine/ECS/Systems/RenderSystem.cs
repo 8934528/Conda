@@ -1,38 +1,38 @@
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using System;
-using Conda.Engine.ECS;
+using System.Windows.Media;
 using Conda.Engine.ECS.Components;
+using WpfRectangle = System.Windows.Shapes.Rectangle;
+using WpfBrushes = System.Windows.Media.Brushes;
+using EcsTransform = Conda.Engine.ECS.Components.Transform;
 
 namespace Conda.Engine.ECS.Systems
 {
-    public class RenderSystem(Canvas canvas)
+    public class RenderSystem
     {
-        private readonly Canvas canvas = canvas;
-
-        public void Render(World world)
+        public static void Render(World world, Canvas canvas)
         {
             canvas.Children.Clear();
 
-            foreach (var entity in world.Entities)
+            foreach (var (_, transform, sprite) in world.Query<EcsTransform, Sprite>())
             {
-                if (!entity.Has<Transform>() || !entity.Has<Sprite>())
-                    continue;
-
-                var transform = entity.Get<Transform>();
-                var sprite = entity.Get<Sprite>();
-
-                var img = new System.Windows.Controls.Image
+                var rect = new WpfRectangle
                 {
-                    Source = new BitmapImage(new Uri(sprite.ImagePath, UriKind.RelativeOrAbsolute)),
                     Width = sprite.Width,
-                    Height = sprite.Height
+                    Height = sprite.Height,
+                    Fill = WpfBrushes.White,
+                    Stroke = WpfBrushes.DeepSkyBlue,
+                    StrokeThickness = 1,
+                    RenderTransform = new RotateTransform(
+                        transform.Rotation,
+                        sprite.Width / 2,
+                        sprite.Height / 2
+                    )
                 };
 
-                Canvas.SetLeft(img, transform.X);
-                Canvas.SetTop(img, transform.Y);
+                Canvas.SetLeft(rect, transform.X);
+                Canvas.SetTop(rect, transform.Y);
 
-                canvas.Children.Add(img);
+                canvas.Children.Add(rect);
             }
         }
     }

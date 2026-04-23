@@ -4,6 +4,6 @@ namespace Conda.Engine.VisualScripting
 {
     public class NodeGraph
     {
-        public List<Node> Nodes { get; set; } = new();
+        public List<Node> Nodes { get; set; } = [];
     }
 }

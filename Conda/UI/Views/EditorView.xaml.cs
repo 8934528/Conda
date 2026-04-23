@@ -1,7 +1,5 @@
 using System;
-using System.Net.WebSockets;
-using Conda.Engine.Prefabs;
-using Conda.Engine.Networking;
+using Conda.Engine.SceneSystem;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
 using System.IO;
@@ -13,16 +11,11 @@ using System.Collections.ObjectModel;
 using System.Windows.Media;
 using System.Linq;
 using System.Windows.Input;
-using Conda.Engine.SceneSystem;
-using Conda.Engine;
 using Conda.Engine.VisualScripting;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Conda.UI.Views; // for customdialog and animatedmodal
-using Conda.Engine.ECS;
-using Conda.Engine.ECS.Components;
-using Conda.Engine.ECS.Systems;
+using Conda.UI.Views; 
 
 using Point = System.Windows.Point;
 using Color = System.Windows.Media.Color;
@@ -33,7 +26,6 @@ using DataFormats = System.Windows.DataFormats;
 using Cursors = System.Windows.Input.Cursors;
 
 using Button = System.Windows.Controls.Button;
-using EngineTransform = Conda.Engine.ECS.Components.Transform;
 using TextBox = System.Windows.Controls.TextBox;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using VerticalAlignment = System.Windows.VerticalAlignment;
@@ -46,7 +38,7 @@ namespace Conda.UI.Views
         private readonly string projectPath;
         private string currentFilePath = string.Empty;
         private Process? currentProcess;
-        private readonly ClientWebSocket syncSocket = new();
+
         private bool isWebViewReady = false;
         private bool isVenvActive = false;
         private bool isFullScreen = false;
@@ -55,31 +47,45 @@ namespace Conda.UI.Views
 
         // Play Mode & Scene Objects
         private bool isPlaying = false;
-        private readonly List<GameObject> sceneObjects = [];
+        private Scene currentScene = new();
 
         // Visual Scripting
         private readonly List<Node> nodes = [];
         private Node? selectedNode;
-        private NodeGraph currentGraph = new NodeGraph();
+        private readonly NodeGraph currentGraph = new();
 
         private static readonly JsonSerializerOptions JsonIndentedOptions = new() { WriteIndented = true };
 
-        private World world = new();
-        private GameLoop loop = null!;
-        private RenderSystem renderer = null!;
-
-        private Scene currentScene = new();
-        private GameObject? selectedGameObject;
+        // Gizmo & Camera Fields
+        private SceneObject? selectedGameObject;
         private bool isDragging = false;
+        private Point dragOffset;
+
+        private double zoom = 1.0;
+        private double camX = 0;
+        private double camY = 0;
+        private bool isPanning = false;
+        private Point lastPanPoint;
+
+        private System.Windows.Threading.DispatcherTimer gameLoop = null!;
+        private const int GridSize = 20;
+
+        // GIZMO STATE SYSTEM
+        private enum GizmoMode
+        {
+            None,
+            MoveX,
+            MoveY,
+            Rotate
+        }
+
+        private GizmoMode currentGizmo = GizmoMode.None;
         private Point lastMousePos;
 
-        private FrameworkElement? selectedElement;
-        private readonly List<System.Windows.Shapes.Rectangle> resizeHandles = [];
-        private System.Windows.Shapes.Ellipse? rotationHandle;
-        private bool isResizing = false;
-        private bool isRotating = false;
-        private Point resizeStart;
-        private const int GridSize = 20;
+        // ECS CORE
+        private readonly Conda.Engine.ECS.World world = new();
+        private readonly Conda.Engine.ECS.Systems.ScriptSystem scriptSystem = new();
+        private readonly Conda.Engine.Plugins.PluginLoader pluginLoader = new();
 
 
 
@@ -134,56 +140,30 @@ namespace Conda.UI.Views
             OutputConsole.Text += "🐍 Python virtual environment support enabled\n";
             OutputConsole.Text += "-----------------------------------------------------------------------------\n\n";
 
-            try
-            {
-                await syncSocket.ConnectAsync(new Uri("ws://localhost:5000/ws"), System.Threading.CancellationToken.None);
-                _ = ReceiveUpdatesLoop();
-                OutputConsole.Text += "🌐 Connected to Multiplayer Scene Sync!\n";
-            }
-            catch
-            {
-                OutputConsole.Text += "⚠️ Multiplayer Scene Sync server not running (ws://localhost:5000/ws).\n";
-            }
+
 
             InitEngine();
             CreateTestEntity();
         }
 
+
         private void InitEngine()
         {
-            renderer = new RenderSystem(GameCanvas);
-
-            loop = new();
-
-            loop.OnUpdate = (dt) =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    renderer.Render(world);
-                });
-            };
-
-            loop.Start();
+            pluginLoader.LoadPlugins("Plugins");
+            StartGameLoop();
         }
 
         private void CreateTestEntity()
         {
-            var entity = new Entity();
-
-            entity.Add(new Conda.Engine.ECS.Components.Transform
-            {
-                X = 100,
-                Y = 100
+            currentScene.Objects.Add(new SceneObject 
+            { 
+                Name = "Test Object", 
+                X = 100, 
+                Y = 100, 
+                Width = 100, 
+                Height = 100 
             });
-
-            entity.Add(new Sprite
-            {
-                ImagePath = "Assets/logo/test.png",
-                Width = 100,
-                Height = 100
-            });
-
-            world.Entities.Add(entity);
+            RedrawScene();
         }
 
         private void CheckVenvStatus()
@@ -368,6 +348,7 @@ namespace Conda.UI.Views
         {
             if (currentContextItem?.DataContext is FileNode node && !node.IsDirectory)
             {
+                OnShowCodeEditor(null!, null!);
                 OpenFileInTab(node.FullPath);
             }
         }
@@ -526,6 +507,7 @@ namespace Conda.UI.Views
         {
             if (e.NewValue is FileNode node && node != null && !node.IsDirectory)
             {
+                OnShowCodeEditor(null!, null!);
                 OpenFileInTab(node.FullPath);
             }
         }
@@ -1002,7 +984,7 @@ namespace Conda.UI.Views
             VisualScriptingToggle.Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
         }
 
-        private async void OnPlayToggle(object sender, RoutedEventArgs e)
+        private void OnPlayToggle(object sender, RoutedEventArgs e)
         {
             isPlaying = !isPlaying;
 
@@ -1010,282 +992,36 @@ namespace Conda.UI.Views
             {
                 PlayToggle.Content = "⏹ Stop";
                 PlayToggle.Background = Brushes.Red;
-                await StartPlayMode();
+                // Start logic if needed
             }
             else
             {
                 PlayToggle.Content = "▶ Play";
                 PlayToggle.Background = new SolidColorBrush(Color.FromRgb(40, 167, 69)); // #28a745
-                StopPlayMode();
             }
         }
 
-        private static string ExportNodeGraph(NodeGraph graph)
+        private void StartGameLoop()
         {
-            return JsonSerializer.Serialize(graph, JsonIndentedOptions);
-        }
-
-        private string ExportSceneToJson()
-        {
-            var objects = SceneCanvas.Children.OfType<Border>()
-                .Where(b => b.Tag is GameObject)
-                .Select(obj =>
-                {
-                    var go = (GameObject)obj.Tag;
-                    var t = go.GetComponent<EngineTransform>()!;
-                    var s = go.GetComponent<Sprite>()!;
-                    var script = go.GetComponent<ScriptComponent>();
-
-                    return new
-                    {
-                        name = go.Name,
-                        x = t.X,
-                        y = t.Y,
-                        width = s.Width,
-                        height = s.Height,
-                        color = s.Color,
-                        rotation = t.Rotation,
-                        ImagePath = s.ImagePath,
-                        graph = script?.Graph
-                    };
-                });
-
-            return JsonSerializer.Serialize(objects, JsonIndentedOptions);
-        }
-
-        private async Task StartPlayMode()
-        {
-            try
+            gameLoop = new()
             {
-                string json = ExportSceneToJson();
-                string sceneFile = System.IO.Path.Combine(projectPath, "scene_runtime.json");
-                File.WriteAllText(sceneFile, json);
-
-                OutputConsole.Text += "▶ Running scene...\n";
-
-                string pythonPath = GetPythonPath() ?? "python";
-                string mainScript = System.IO.Path.Combine(projectPath, "main.py");
-
-                // Ensure main.py exists
-                if (!File.Exists(mainScript))
+                Interval = TimeSpan.FromMilliseconds(16) // ~60 FPS
+            };
+            gameLoop.Tick += (s, e) =>
+            {
+                if (isPlaying)
                 {
-                    await CreateDefaultRuntimeScript(mainScript);
+                    Conda.Engine.ECS.Systems.ScriptSystem.Update(world);
                 }
 
-                ProcessStartInfo psi = new()
+                foreach (var plugin in pluginLoader.Plugins)
                 {
-                    FileName = pythonPath,
-                    Arguments = $"\"{mainScript}\"",
-                    WorkingDirectory = projectPath,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
+                    plugin.Update();
+                }
 
-                currentProcess = new Process { StartInfo = psi };
-
-                currentProcess.OutputDataReceived += (s, e) =>
-                {
-                    if (!string.IsNullOrEmpty(e.Data))
-                        Dispatcher.Invoke(() => OutputConsole.Text += e.Data + "\n");
-                };
-
-                currentProcess.ErrorDataReceived += (s, e) =>
-                {
-                    if (!string.IsNullOrEmpty(e.Data))
-                        Dispatcher.Invoke(() => OutputConsole.Text += "❌ " + e.Data + "\n");
-                };
-
-                currentProcess.Start();
-                currentProcess.BeginOutputReadLine();
-                currentProcess.BeginErrorReadLine();
-            }
-            catch (Exception ex)
-            {
-                await CustomDialog.ShowAsync(Window.GetWindow(this), ex.Message, "Error", DialogIcon.Error);
-            }
-        }
-
-        private void StopPlayMode()
-        {
-            if (currentProcess != null && !currentProcess.HasExited)
-            {
-                currentProcess.Kill();
-                OutputConsole.Text += "\n[Stopped]\n";
-            }
-        }
-
-        private void SyncSceneWhilePlaying()
-        {
-            if (!isPlaying) return;
-
-            string json = ExportSceneToJson();
-            string sceneFile = System.IO.Path.Combine(projectPath, "scene_runtime.json");
-            File.WriteAllText(sceneFile, json);
-        }
-
-        private async Task CreateDefaultRuntimeScript(string path)
-        {
-            string script = @"import pygame
-import json
-import os
-
-pygame.init()
-
-WIDTH, HEIGHT = 800, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption(""Conda Runtime"")
-
-clock = pygame.time.Clock()
-
-# Load scene
-scene = []
-if os.path.exists(""scene_runtime.json""):
-    with open(""scene_runtime.json"") as f:
-        scene = json.load(f)
-
-# Load node graph
-graph = {}
-if os.path.exists(""node_graph.json""):
-    with open(""node_graph.json"") as f:
-        graph = json.load(f)
-
-def execute_node(node_id, obj, nodes):
-    node = nodes.get(node_id)
-    if not node:
-        return
-
-    node_type = node[""Type""]
-    props = node.get(""Properties"", {})
-
-    # === NODE TYPES ===
-    if node_type == ""Move"":
-        obj[""x""] += float(props.get(""dx"", 0))
-        obj[""y""] += float(props.get(""dy"", 0))
-
-    elif node_type == ""Rotate"":
-        obj[""rotation""] += float(props.get(""angle"", 1))
-
-    elif node_type == ""Print"":
-        print(props.get(""text"", ""Hello""))
-
-    # === FLOW ===
-    for out in node.get(""Outputs"", []):
-        execute_node(out, obj, nodes)
-
-image_cache = {}
-
-def load_image(path):
-    if path not in image_cache:
-        image_cache[path] = pygame.image.load(path)
-    return image_cache[path]
-
-running = True
-
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    screen.fill((30, 30, 30))
-
-    for obj in scene:
-        obj_graph = obj.get(""graph"")
-        if obj_graph:
-            obj_nodes = {n[""Id""]: n for n in obj_graph.get(""Nodes"", [])}
-        else:
-            obj_nodes = {n[""Id""]: n for n in graph.get(""Nodes"", [])}
-
-        start_nodes = [n for n in obj_nodes.values() if n[""Type""] == ""Start""]
-
-        for start in start_nodes:
-            execute_node(start[""Id""], obj, obj_nodes)
-
-        # Rendering
-        if ""ImagePath"" in obj and obj[""ImagePath""]:
-            img = load_image(obj[""ImagePath""])
-            # Apply rotation if needed (simplified here based on tutorial)
-            rotated_img = pygame.transform.rotate(img, -obj.get(""rotation"", 0))
-            new_rect = rotated_img.get_rect(center=(obj[""x""] + obj[""width""]/2, obj[""y""] + obj[""height""]/2))
-            screen.blit(rotated_img, new_rect.topleft)
-        else:
-            s = pygame.Surface((obj[""width""], obj[""height""]), pygame.SRCALPHA)
-            color = pygame.Color(obj.get(""color"", ""#00C8FF""))
-            pygame.draw.rect(s, color, (0, 0, obj[""width""], obj[""height""]))
-            
-            # Rotate
-            rotated_s = pygame.transform.rotate(s, -obj.get(""rotation"", 0))
-            new_rect = rotated_s.get_rect(center=(obj[""x""] + obj[""width""]/2, obj[""y""] + obj[""height""]/2))
-            
-            screen.blit(rotated_s, new_rect.topleft)
-
-    pygame.display.flip()
-    clock.tick(60)
-
-pygame.quit()
-";
-            await File.WriteAllTextAsync(path, script);
-            LoadFiles(); // Refresh explorer
-        }
-
-        private void AddGameObject()
-        {
-            var go = new GameObject { Name = "GameObject" };
-
-            var transform = go.AddComponent<EngineTransform>();
-            transform.X = 100;
-            transform.Y = 100;
-
-            _ = go.AddComponent<Sprite>();
-            var script = go.AddComponent<ScriptComponent>();
-            script.Graph = currentGraph;
-
-            sceneObjects.Add(go);
-            RenderGameObject(go);
-            RefreshHierarchy();
-        }
-
-        private void RenderGameObject(GameObject go)
-        {
-            var transform = go.GetComponent<EngineTransform>()!;
-            var sprite = go.GetComponent<Sprite>()!;
-
-            var rect = new Border
-            {
-                Width = sprite.Width,
-                Height = sprite.Height,
-                Background = new BrushConverter().ConvertFromString(sprite.Color) as SolidColorBrush ?? Brushes.Transparent,
-                Tag = go,
-                BorderBrush = Brushes.White,
-                BorderThickness = new Thickness(1)
+                RedrawScene();
             };
-
-            Canvas.SetLeft(rect, transform.X);
-            Canvas.SetTop(rect, transform.Y);
-
-            rect.MouseLeftButtonDown += OnObjectSelected;
-            rect.MouseMove += OnObjectMouseMove;
-            rect.MouseLeftButtonUp += OnObjectMouseUp;
-
-            SceneCanvas.Children.Add(rect);
-        }
-
-        private void AddField(string label, string value, Action<string> onUpdate)
-        {
-            var stack = new StackPanel { Margin = new Thickness(0, 5, 0, 5) };
-            stack.Children.Add(new TextBlock { Text = label, Foreground = Brushes.Gray, FontSize = 11 });
-            var box = new TextBox
-            {
-                Text = value,
-                Background = new SolidColorBrush(Color.FromRgb(45, 45, 48)),
-                Foreground = Brushes.White,
-                BorderThickness = new Thickness(1),
-                Padding = new Thickness(5, 2, 5, 2)
-            };
-            box.TextChanged += (s, e) => onUpdate(box.Text);
-            stack.Children.Add(box);
-            InspectorPanel.Children.Add(stack);
+            gameLoop.Start();
         }
 
         private void OnAddGameObject(object sender, RoutedEventArgs e)
@@ -1295,124 +1031,82 @@ pygame.quit()
 
         private void OnSavePrefab(object sender, RoutedEventArgs e)
         {
-            if (selectedGameObject == null)
-            {
-                ShowToast("Select an object to save as Prefab", false);
-                return;
-            }
-            var prefabManager = new PrefabManager(projectPath);
-            prefabManager.SavePrefab(selectedGameObject.Name, selectedGameObject);
-            ShowToast($"Saved Prefab: {selectedGameObject.Name}");
+            // TODO: Implement prefab saving
+            ShowToast("Save Prefab not implemented yet");
         }
 
         private void OnLoadPrefab(object sender, RoutedEventArgs e)
         {
-            string prefabName = Microsoft.VisualBasic.Interaction.InputBox("Enter Prefab name to load:", "Load Prefab", "GameObject");
-            if (!string.IsNullOrWhiteSpace(prefabName))
-            {
-                var prefabManager = new PrefabManager(projectPath);
-                var loaded = prefabManager.LoadPrefab<GameObject>(prefabName);
-                if (loaded != null)
-                {
-                    loaded.Id = Guid.NewGuid().ToString(); // New ID for instance
-                    sceneObjects.Add(loaded);
-                    
-                    if (loaded.GetComponent<Sprite>()?.ImagePath != null)
-                        RenderSprite(loaded);
-                    else
-                        RenderGameObject(loaded);
-                        
-                    RefreshHierarchy();
-                    ShowToast($"Loaded Prefab: {prefabName}");
-                }
-                else
-                {
-                    ShowToast($"Failed to load Prefab: {prefabName}", false);
-                }
-            }
+            // TODO: Implement prefab loading
+            ShowToast("Load Prefab not implemented yet");
         }
 
-        private void UpdateInspector(GameObject go)
+        private void GameLoop_Tick(object? sender, EventArgs e)
+        {
+            if (!isPlaying) return;
+
+            foreach (var obj in currentScene.Objects)
+            {
+                RunPython(obj);
+            }
+
+            RedrawScene();
+        }
+
+        private static void RunPython(SceneObject obj)
+        {
+            if (string.IsNullOrEmpty(obj.ScriptPath) || !File.Exists(obj.ScriptPath))
+                return;
+
+            try
+            {
+                ProcessStartInfo psi = new()
+                {
+                    FileName = "python",
+                    Arguments = $"\"{obj.ScriptPath}\" {obj.X} {obj.Y}",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using var process = Process.Start(psi);
+                if (process == null) return;
+
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                var parts = output.Split(',');
+
+                if (parts.Length == 2)
+                {
+                    if (double.TryParse(parts[0], out double newX)) obj.X = newX;
+                    if (double.TryParse(parts[1], out double newY)) obj.Y = newY;
+                }
+            }
+            catch { }
+        }
+
+        private void AddGameObject()
+        {
+            var go = new SceneObject { Name = "GameObject_" + (currentScene.Objects.Count + 1), X = 100, Y = 100 };
+            currentScene.Objects.Add(go);
+            RefreshHierarchy();
+            RedrawScene();
+        }
+
+        private void UpdateInspector(SceneObject obj)
         {
             InspectorPanel.Children.Clear();
 
-            // Show name
-            InspectorPanel.Children.Add(new TextBlock { Text = go.Name, Foreground = Brushes.Cyan, FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 10) });
+            InspectorPanel.Children.Add(new TextBlock { Text = obj.Name, Foreground = Brushes.Cyan, FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 10) });
 
-            foreach (var comp in go.GetAllComponents())
-            {
-                var sectionHeader = new Border
-                {
-                    Background = new SolidColorBrush(Color.FromRgb(50, 50, 60)),
-                    CornerRadius = new CornerRadius(3),
-                    Margin = new Thickness(0, 8, 0, 4),
-                    Padding = new Thickness(6, 4, 6, 4),
-                    Child = new TextBlock
-                    {
-                        Text = "▸ " + comp.GetType().Name.ToUpper(),
-                        Foreground = new SolidColorBrush(Color.FromRgb(100, 180, 255)),
-                        FontWeight = FontWeights.Bold,
-                        FontSize = 11
-                    }
-                };
-                InspectorPanel.Children.Add(sectionHeader);
-
-                if (comp is EngineTransform t)
-                {
-                    AddField("X", t.X.ToString("F1"), v => { if (double.TryParse(v, out double res)) { t.X = res; UpdateElementPosition(go); SyncSceneWhilePlaying(); } });
-                    AddField("Y", t.Y.ToString("F1"), v => { if (double.TryParse(v, out double res)) { t.Y = res; UpdateElementPosition(go); SyncSceneWhilePlaying(); } });
-                    AddField("Rotation", t.Rotation.ToString("F1"), v => { if (double.TryParse(v, out double res)) { t.Rotation = res; UpdateElementRotation(go); SyncSceneWhilePlaying(); } });
-                }
-
-                if (comp is Sprite s)
-                {
-                    AddField("Width", s.Width.ToString("F0"), v => { if (double.TryParse(v, out double res)) { s.Width = res; UpdateElementSize(go); SyncSceneWhilePlaying(); } });
-                    AddField("Height", s.Height.ToString("F0"), v => { if (double.TryParse(v, out double res)) { s.Height = res; UpdateElementSize(go); SyncSceneWhilePlaying(); } });
-                    AddField("Color", s.Color, v => { s.Color = v; UpdateElementColor(go); SyncSceneWhilePlaying(); });
-                }
-            }
-        }
-
-        private void UpdateElementPosition(GameObject go)
-        {
-            var element = SceneCanvas.Children.OfType<Border>().FirstOrDefault(b => b.Tag == go);
-            if (element != null)
-            {
-                var t = go.GetComponent<EngineTransform>()!;
-                Canvas.SetLeft(element, t.X);
-                Canvas.SetTop(element, t.Y);
-            }
-        }
-
-        private void UpdateElementRotation(GameObject go)
-        {
-            var element = SceneCanvas.Children.OfType<Border>().FirstOrDefault(b => b.Tag == go);
-            if (element != null)
-            {
-                var t = go.GetComponent<EngineTransform>()!;
-                element.RenderTransform = new RotateTransform(t.Rotation);
-            }
-        }
-
-        private void UpdateElementSize(GameObject go)
-        {
-            var element = SceneCanvas.Children.OfType<Border>().FirstOrDefault(b => b.Tag == go);
-            if (element != null)
-            {
-                var s = go.GetComponent<Sprite>()!;
-                element.Width = s.Width;
-                element.Height = s.Height;
-            }
-        }
-
-        private void UpdateElementColor(GameObject go)
-        {
-            var element = SceneCanvas.Children.OfType<Border>().FirstOrDefault(b => b.Tag == go);
-            if (element != null)
-            {
-                var s = go.GetComponent<Sprite>()!;
-                try { element.Background = new BrushConverter().ConvertFromString(s.Color) as SolidColorBrush ?? Brushes.Transparent; } catch { }
-            }
+            AddField("Name", obj.Name, v => { obj.Name = v; RefreshHierarchy(); });
+            AddField("X", obj.X.ToString("F1"), v => { if (double.TryParse(v, out double res)) { obj.X = res; RedrawScene(); } });
+            AddField("Y", obj.Y.ToString("F1"), v => { if (double.TryParse(v, out double res)) { obj.Y = res; RedrawScene(); } });
+            AddField("Width", obj.Width.ToString("F1"), v => { if (double.TryParse(v, out double res)) { obj.Width = res; RedrawScene(); } });
+            AddField("Height", obj.Height.ToString("F1"), v => { if (double.TryParse(v, out double res)) { obj.Height = res; RedrawScene(); } });
+            AddField("Sprite Path", obj.SpritePath, v => { obj.SpritePath = v; RedrawScene(); });
+            AddField("Script Path", obj.ScriptPath, v => { obj.ScriptPath = v; });
         }
 
         // --- Visual Scripting Methods ---
@@ -1519,57 +1213,20 @@ pygame.quit()
 
         private void CreateSpriteFromImage(string path)
         {
-            var go = new GameObject { Name = "Sprite" };
+            var go = new SceneObject 
+            { 
+                Name = System.IO.Path.GetFileNameWithoutExtension(path),
+                X = 200, 
+                Y = 200,
+                SpritePath = path
+            };
 
-            var t = go.AddComponent<EngineTransform>();
-            t.X = 200;
-            t.Y = 200;
-
-            var s = go.AddComponent<Sprite>();
-            s.ImagePath = path;
-
-            var script = go.AddComponent<ScriptComponent>();
-            script.Graph = currentGraph;
-
-            sceneObjects.Add(go);
-            RenderSprite(go);
+            currentScene.Objects.Add(go);
             RefreshHierarchy();
+            RedrawScene();
         }
 
-        private void RenderSprite(GameObject go)
-        {
-            var t = go.GetComponent<EngineTransform>()!;
-            var s = go.GetComponent<Sprite>()!;
 
-            var img = new System.Windows.Controls.Image
-            {
-                Width = s.Width,
-                Height = s.Height,
-                Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(s.ImagePath)),
-                Tag = go
-            };
-
-            // wrap in a border for standard selection highlighting
-            var border = new Border
-            {
-                Width = s.Width,
-                Height = s.Height,
-                Background = Brushes.Transparent,
-                Tag = go,
-                BorderBrush = Brushes.Transparent,
-                BorderThickness = new Thickness(1),
-                Child = img
-            };
-
-            Canvas.SetLeft(border, t.X);
-            Canvas.SetTop(border, t.Y);
-
-            border.MouseLeftButtonDown += OnObjectSelected;
-            border.MouseMove += OnObjectMouseMove;
-            border.MouseLeftButtonUp += OnObjectMouseUp;
-
-            SceneCanvas.Children.Add(border);
-        }
 
         private static bool IsImageFile(string path)
         {
@@ -1577,329 +1234,182 @@ pygame.quit()
             return ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" || ext == ".gif";
         }
 
-        private void DrawObject(SceneObject obj)
+        private void OnHierarchySelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            FrameworkElement element;
-
-            if (obj.Type == "Image" && File.Exists(obj.AssetPath))
+            if (SceneHierarchy.SelectedItem is SceneObject obj)
             {
-                try
-                {
-                    element = new System.Windows.Controls.Image
-                    {
-                        Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(obj.AssetPath)),
-                        Width = obj.Width,
-                        Height = obj.Height,
-                        Stretch = Stretch.Fill
-                    };
-                }
-                catch
-                {
-                    element = CreatePlaceholderBorder(obj);
-                }
+                foreach (var item in currentScene.Objects) item.IsSelected = false;
+                obj.IsSelected = true;
+                selectedGameObject = obj;
+                UpdateInspector(obj);
+                RedrawScene();
             }
-            else
-            {
-                element = CreatePlaceholderBorder(obj);
-            }
-
-            Canvas.SetLeft(element, obj.X);
-            Canvas.SetTop(element, obj.Y);
-
-            element.Tag = obj;
-            element.RenderTransformOrigin = new Point(0.5, 0.5);
-            element.RenderTransform = new RotateTransform(obj.Rotation);
-
-            element.MouseLeftButtonDown += OnObjectSelected;
-            element.MouseMove += OnObjectMouseMove;
-            element.MouseLeftButtonUp += OnObjectMouseUp;
-
-            SceneCanvas.Children.Add(element);
         }
 
-        private static Border CreatePlaceholderBorder(SceneObject obj)
+        private void RedrawScene()
         {
-            return new Border
+            SceneCanvas.Children.Clear();
+
+            // Draw ECS World
+            Conda.Engine.ECS.Systems.RenderSystem.Render(world, SceneCanvas);
+
+            // Draw Legacy SceneObjects (if any)
+            foreach (var obj in currentScene.Objects)
             {
-                Width = obj.Width,
-                Height = obj.Height,
-                Background = Brushes.Blue,
-                BorderBrush = Brushes.White,
-                BorderThickness = new Thickness(1)
-            };
+                var rect = new System.Windows.Shapes.Rectangle
+                {
+                    Width = obj.Width * zoom,
+                    Height = obj.Height * zoom,
+                    Fill = Brushes.White,
+                    RenderTransform = new RotateTransform(
+                        obj.Rotation,
+                        (obj.Width * zoom) / 2,
+                        (obj.Height * zoom) / 2
+                    )
+                };
+
+                Canvas.SetLeft(rect, obj.X * zoom + camX);
+                Canvas.SetTop(rect, obj.Y * zoom + camY);
+
+                SceneCanvas.Children.Add(rect);
+
+                if (obj.IsSelected)
+                {
+                    DrawMoveGizmo(obj);
+                    DrawRotationGizmo(obj);
+                }
+            }
         }
 
-        private void OnObjectSelected(object sender, MouseButtonEventArgs e)
+        private void SceneCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            selectedElement = sender as FrameworkElement;
-            selectedGameObject = selectedElement?.Tag as GameObject;
+            Point click = e.GetPosition(SceneCanvas);
+            lastMousePos = click;
+
+            if (e.MiddleButton == MouseButtonState.Pressed)
+            {
+                isPanning = true;
+                lastPanPoint = click;
+                return;
+            }
+
+            if (selectedGameObject != null)
+            {
+                double cx = selectedGameObject.X * zoom + camX + (selectedGameObject.Width * zoom) / 2;
+                double cy = selectedGameObject.Y * zoom + camY + (selectedGameObject.Height * zoom) / 2;
+
+                // X Axis hit
+                if (DistanceToLine(click, cx, cy, cx + 40, cy) < 5)
+                {
+                    currentGizmo = GizmoMode.MoveX;
+                    return;
+                }
+
+                // Y Axis hit
+                if (DistanceToLine(click, cx, cy, cx, cy - 40) < 5)
+                {
+                    currentGizmo = GizmoMode.MoveY;
+                    return;
+                }
+
+                // Rotation hit (near circle)
+                double dist = Math.Sqrt(Math.Pow(click.X - cx, 2) + Math.Pow(click.Y - cy, 2));
+                if (Math.Abs(dist - 40) < 5)
+                {
+                    currentGizmo = GizmoMode.Rotate;
+                    return;
+                }
+            }
+
+            // Normal selection hit detection
+            foreach (var obj in currentScene.Objects)
+            {
+                double screenX = obj.X * zoom + camX;
+                double screenY = obj.Y * zoom + camY;
+                double screenW = obj.Width * zoom;
+                double screenH = obj.Height * zoom;
+
+                if (click.X >= screenX && click.X <= screenX + screenW &&
+                    click.Y >= screenY && click.Y <= screenY + screenH)
+                {
+                    foreach (var other in currentScene.Objects) other.IsSelected = false;
+                    selectedGameObject = obj;
+                    obj.IsSelected = true;
+                    currentGizmo = GizmoMode.None;
+                    
+                    dragOffset = new Point(click.X - screenX, click.Y - screenY);
+                    isDragging = true;
+
+                    RedrawScene();
+                    RefreshHierarchy();
+                    return;
+                }
+            }
+
+            selectedGameObject = null;
+            currentGizmo = GizmoMode.None;
+            foreach (var obj in currentScene.Objects) obj.IsSelected = false;
+            RedrawScene();
+        }
+
+        private void SceneCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point current = e.GetPosition(SceneCanvas);
+            double dx = current.X - lastMousePos.X;
+            double dy = current.Y - lastMousePos.Y;
+
+            if (isPanning)
+            {
+                camX += dx;
+                camY += dy;
+                lastMousePos = current;
+                RedrawScene();
+                return;
+            }
 
             if (selectedGameObject == null) return;
 
-            HighlightSelection();
-            RemoveHandles();
-            CreateResizeHandles();
-            CreateRotationHandle();
-            UpdateInspector(selectedGameObject);
+            switch (currentGizmo)
+            {
+                case GizmoMode.MoveX:
+                    selectedGameObject.X += dx / zoom;
+                    break;
 
-            isDragging = true;
-            lastMousePos = e.GetPosition(SceneCanvas);
+                case GizmoMode.MoveY:
+                    selectedGameObject.Y += dy / zoom;
+                    break;
 
-            selectedElement?.CaptureMouse();
-            e.Handled = true;
+                case GizmoMode.Rotate:
+                    RotateObject(selectedGameObject, current);
+                    break;
+
+                case GizmoMode.None:
+                    if (isDragging)
+                    {
+                        double newScreenX = current.X - dragOffset.X;
+                        double newScreenY = current.Y - dragOffset.Y;
+                        selectedGameObject.X = (newScreenX - camX) / zoom;
+                        selectedGameObject.Y = (newScreenY - camY) / zoom;
+                    }
+                    break;
+            }
+
+            lastMousePos = current;
+            RedrawScene();
         }
 
-        private void OnObjectMouseMove(object sender, MouseEventArgs e)
-        {
-            if (!isDragging || selectedGameObject == null || selectedElement == null) return;
-
-            var pos = e.GetPosition(SceneCanvas);
-
-            double dx = pos.X - lastMousePos.X;
-            double dy = pos.Y - lastMousePos.Y;
-
-            var transform = selectedGameObject.GetComponent<EngineTransform>()!;
-            transform.X = Snap(transform.X + dx);
-            transform.Y = Snap(transform.Y + dy);
-
-            Canvas.SetLeft(selectedElement, transform.X);
-            Canvas.SetTop(selectedElement, transform.Y);
-
-            lastMousePos = pos;
-            UpdateHandlePositions();
-            UpdateRotationHandle();
-            UpdateInspector(selectedGameObject);
-            SyncSceneWhilePlaying();
-            SendSyncUpdate("Move", selectedGameObject);
-        }
-
-        private void OnObjectMouseUp(object sender, MouseButtonEventArgs e)
+        private void SceneCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
             isDragging = false;
-            selectedElement?.ReleaseMouseCapture();
+            isPanning = false;
         }
 
-        private void HighlightSelection()
+        private void SceneCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            foreach (UIElement child in SceneCanvas.Children)
-            {
-                if (child is Border b && b.Tag != null)
-                {
-                    b.BorderThickness = new Thickness(1);
-                    b.BorderBrush = Brushes.White;
-                }
-            }
-
-            if (selectedElement is Border border)
-            {
-                border.BorderBrush = Brushes.Yellow;
-                border.BorderThickness = new Thickness(2);
-            }
-        }
-
-        private void RemoveHandles()
-        {
-            foreach (var h in resizeHandles)
-                SceneCanvas.Children.Remove(h);
-
-            resizeHandles.Clear();
-
-            if (rotationHandle != null)
-            {
-                SceneCanvas.Children.Remove(rotationHandle);
-                rotationHandle = null;
-            }
-        }
-
-        private void CreateResizeHandles()
-        {
-            if (selectedElement == null) return;
-
-            double size = 8;
-            var positions = new[] { new Point(0, 0), new Point(1, 0), new Point(0, 1), new Point(1, 1) };
-
-            foreach (var pos in positions)
-            {
-                var handle = new System.Windows.Shapes.Rectangle
-                {
-                    Width = size,
-                    Height = size,
-                    Fill = Brushes.White,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 1,
-                    Cursor = Cursors.SizeAll,
-                    Tag = pos
-                };
-
-                handle.MouseDown += OnResizeStart;
-                handle.MouseMove += OnResizeMove;
-                handle.MouseUp += OnResizeEnd;
-
-                resizeHandles.Add(handle);
-                SceneCanvas.Children.Add(handle);
-            }
-
-            UpdateHandlePositions();
-        }
-
-        private void UpdateHandlePositions()
-        {
-            if (selectedElement == null) return;
-
-            double x = Canvas.GetLeft(selectedElement);
-            double y = Canvas.GetTop(selectedElement);
-            double w = selectedElement.Width;
-            double h = selectedElement.Height;
-
-            foreach (var handle in resizeHandles)
-            {
-                var pos = (Point)handle.Tag;
-                double hx = x + (pos.X * w);
-                double hy = y + (pos.Y * h);
-
-                Canvas.SetLeft(handle, hx - 4);
-                Canvas.SetTop(handle, hy - 4);
-            }
-        }
-
-        private void OnResizeStart(object sender, MouseButtonEventArgs e)
-        {
-            isResizing = true;
-            resizeStart = e.GetPosition(SceneCanvas);
-            (sender as UIElement)?.CaptureMouse();
-            e.Handled = true;
-        }
-
-        private void OnResizeMove(object sender, MouseEventArgs e)
-        {
-            if (!isResizing || selectedGameObject == null || selectedElement == null) return;
-
-            var pos = e.GetPosition(SceneCanvas);
-            var handle = sender as FrameworkElement;
-            var handlePos = (Point)handle!.Tag;
-
-            double dx = pos.X - resizeStart.X;
-            double dy = pos.Y - resizeStart.Y;
-
-            var sprite = selectedGameObject.GetComponent<Sprite>()!;
-            if (handlePos.X == 1) sprite.Width = Math.Max(10, Snap(sprite.Width + dx));
-            if (handlePos.Y == 1) sprite.Height = Math.Max(10, Snap(sprite.Height + dy));
-
-            selectedElement.Width = sprite.Width;
-            selectedElement.Height = sprite.Height;
-
-            resizeStart = pos;
-            UpdateHandlePositions();
-            UpdateRotationHandle();
-            UpdateInspector(selectedGameObject);
-            SyncSceneWhilePlaying();
-        }
-
-        private void OnResizeEnd(object sender, MouseButtonEventArgs e)
-        {
-            isResizing = false;
-            (sender as UIElement)?.ReleaseMouseCapture();
-        }
-
-        private void CreateRotationHandle()
-        {
-            if (selectedElement == null) return;
-
-            rotationHandle = new System.Windows.Shapes.Ellipse
-            {
-                Width = 12,
-                Height = 12,
-                Fill = Brushes.Orange,
-                Stroke = Brushes.Black,
-                StrokeThickness = 1,
-                Cursor = Cursors.Hand
-            };
-
-            rotationHandle.MouseDown += OnRotateStart;
-            rotationHandle.MouseMove += OnRotateMove;
-            rotationHandle.MouseUp += OnRotateEnd;
-
-            SceneCanvas.Children.Add(rotationHandle);
-            UpdateRotationHandle();
-        }
-
-        private void UpdateRotationHandle()
-        {
-            if (selectedElement == null || rotationHandle == null) return;
-
-            double x = Canvas.GetLeft(selectedElement);
-            double y = Canvas.GetTop(selectedElement);
-
-            Canvas.SetLeft(rotationHandle, x + selectedElement.Width / 2 - 6);
-            Canvas.SetTop(rotationHandle, y - 25);
-        }
-
-        private void OnRotateStart(object sender, MouseButtonEventArgs e)
-        {
-            isRotating = true;
-            (sender as UIElement)?.CaptureMouse();
-            e.Handled = true;
-        }
-
-        private void OnRotateMove(object sender, MouseEventArgs e)
-        {
-            if (!isRotating || selectedElement == null || selectedGameObject == null) return;
-
-            var pos = e.GetPosition(SceneCanvas);
-            double centerX = Canvas.GetLeft(selectedElement) + selectedElement.Width / 2;
-            double centerY = Canvas.GetTop(selectedElement) + selectedElement.Height / 2;
-
-            double angle = Math.Atan2(pos.Y - centerY, pos.X - centerX) * (180 / Math.PI);
-            angle += 90; // Offset to make 0 up
-
-            var transform = selectedGameObject.GetComponent<EngineTransform>()!;
-            transform.Rotation = angle;
-            selectedElement.RenderTransform = new RotateTransform(angle);
-            UpdateInspector(selectedGameObject);
-            SyncSceneWhilePlaying();
-        }
-
-        private void OnRotateEnd(object sender, MouseButtonEventArgs e)
-        {
-            isRotating = false;
-            (sender as UIElement)?.ReleaseMouseCapture();
-        }
-
-        private void DrawGrid()
-        {
-            SceneCanvas.Children.Clear();
-            double width = Math.Max(SceneCanvas.ActualWidth, 2000);
-            double height = Math.Max(SceneCanvas.ActualHeight, 2000);
-
-            for (int x = 0; x < width; x += GridSize)
-            {
-                var line = new System.Windows.Shapes.Line
-                {
-                    X1 = x,
-                    Y1 = 0,
-                    X2 = x,
-                    Y2 = height,
-                    Stroke = new SolidColorBrush(Color.FromRgb(40, 40, 40)),
-                    StrokeThickness = 1
-                };
-                SceneCanvas.Children.Add(line);
-            }
-
-            for (int y = 0; y < height; y += GridSize)
-            {
-                var line = new System.Windows.Shapes.Line
-                {
-                    X1 = 0,
-                    Y1 = y,
-                    X2 = width,
-                    Y2 = y,
-                    Stroke = new SolidColorBrush(Color.FromRgb(40, 40, 40)),
-                    StrokeThickness = 1
-                };
-                SceneCanvas.Children.Add(line);
-            }
-
-            foreach (var obj in currentScene.Objects) DrawObject(obj);
+            double zoomFactor = 1.1;
+            if (e.Delta > 0) zoom *= zoomFactor;
+            else zoom /= zoomFactor;
+            RedrawScene();
         }
 
         private static double Snap(double value) => Math.Round(value / GridSize) * GridSize;
@@ -1916,7 +1426,7 @@ pygame.quit()
         private void RefreshHierarchy()
         {
             SceneHierarchy.ItemsSource = null;
-            SceneHierarchy.ItemsSource = sceneObjects;
+            SceneHierarchy.ItemsSource = currentScene.Objects;
         }
 
         private async void OnSaveScene(object sender, RoutedEventArgs e)
@@ -1957,6 +1467,34 @@ pygame.quit()
                 {
                     await CustomDialog.ShowAsync(Window.GetWindow(this), $"Error loading scene: {ex.Message}", "Error", DialogIcon.Error);
                 }
+            }
+        }
+
+        private void DrawGrid()
+        {
+            double width = SceneCanvas.ActualWidth > 0 ? SceneCanvas.ActualWidth : 2000;
+            double height = SceneCanvas.ActualHeight > 0 ? SceneCanvas.ActualHeight : 2000;
+
+            for (double x = 0; x < width; x += GridSize)
+            {
+                var line = new System.Windows.Shapes.Line
+                {
+                    X1 = x, Y1 = 0, X2 = x, Y2 = height,
+                    Stroke = new SolidColorBrush(Color.FromArgb(30, 255, 255, 255)),
+                    StrokeThickness = 0.5
+                };
+                SceneCanvas.Children.Add(line);
+            }
+
+            for (double y = 0; y < height; y += GridSize)
+            {
+                var line = new System.Windows.Shapes.Line
+                {
+                    X1 = 0, Y1 = y, X2 = width, Y2 = y,
+                    Stroke = new SolidColorBrush(Color.FromArgb(30, 255, 255, 255)),
+                    StrokeThickness = 0.5
+                };
+                SceneCanvas.Children.Add(line);
             }
         }
 
@@ -2017,50 +1555,105 @@ pygame.quit()
             timer.Start();
         }
 
-        // --- MULTIPLAYER SYNC METHODS ---
-        private async void SendSyncUpdate(string type, GameObject obj)
+        private void AddField(string label, string value, Action<string> onUpdate)
         {
-            if (syncSocket.State != WebSocketState.Open) return;
-            var transform = obj.GetComponent<EngineTransform>();
-            if (transform == null) return;
-            
-            var msg = JsonSerializer.Serialize(new SceneSyncMessage
+            var stack = new StackPanel { Margin = new Thickness(0, 5, 0, 5) };
+            stack.Children.Add(new TextBlock { Text = label, Foreground = Brushes.Gray, FontSize = 11 });
+            var box = new TextBox
             {
-                Type = type,
-                ObjectId = obj.Id,
-                X = transform.X,
-                Y = transform.Y
-            });
-            var bytes = System.Text.Encoding.UTF8.GetBytes(msg);
-            await syncSocket.SendAsync(bytes, WebSocketMessageType.Text, true, System.Threading.CancellationToken.None);
+                Text = value,
+                Background = new SolidColorBrush(Color.FromRgb(45, 45, 48)),
+                Foreground = Brushes.White,
+                BorderThickness = new Thickness(1),
+                Padding = new Thickness(5, 2, 5, 2)
+            };
+            box.TextChanged += (s, e) => onUpdate(box.Text);
+            stack.Children.Add(box);
+            InspectorPanel.Children.Add(stack);
         }
 
-        private async Task ReceiveUpdatesLoop()
+        private void DrawMoveGizmo(SceneObject obj)
         {
-            var buffer = new byte[1024];
-            while (syncSocket.State == WebSocketState.Open)
+            double centerX = obj.X * zoom + camX + (obj.Width * zoom) / 2;
+            double centerY = obj.Y * zoom + camY + (obj.Height * zoom) / 2;
+
+            double size = 40;
+
+            // X Axis (RED)
+            var xLine = new System.Windows.Shapes.Line
             {
-                var result = await syncSocket.ReceiveAsync(buffer, System.Threading.CancellationToken.None);
-                if (result.MessageType == WebSocketMessageType.Close) break;
-                string json = System.Text.Encoding.UTF8.GetString(buffer, 0, result.Count);
-                var update = JsonSerializer.Deserialize<SceneSyncMessage>(json);
-                if (update != null) Dispatcher.Invoke(() => ApplySyncUpdate(update));
-            }
+                X1 = centerX,
+                Y1 = centerY,
+                X2 = centerX + size,
+                Y2 = centerY,
+                Stroke = Brushes.Red,
+                StrokeThickness = 3
+            };
+
+            // Y Axis (GREEN)
+            var yLine = new System.Windows.Shapes.Line
+            {
+                X1 = centerX,
+                Y1 = centerY,
+                X2 = centerX,
+                Y2 = centerY - size,
+                Stroke = Brushes.LimeGreen,
+                StrokeThickness = 3
+            };
+
+            SceneCanvas.Children.Add(xLine);
+            SceneCanvas.Children.Add(yLine);
         }
 
-        private void ApplySyncUpdate(SceneSyncMessage msg)
+        private void DrawRotationGizmo(SceneObject obj)
         {
-            var obj = sceneObjects.FirstOrDefault(o => o.Id == msg.ObjectId);
-            if (obj != null)
+            double centerX = obj.X * zoom + camX + (obj.Width * zoom) / 2;
+            double centerY = obj.Y * zoom + camY + (obj.Height * zoom) / 2;
+
+            var circle = new System.Windows.Shapes.Ellipse
             {
-                var t = obj.GetComponent<EngineTransform>();
-                if (t != null)
-                {
-                    t.X = msg.X;
-                    t.Y = msg.Y;
-                    UpdateElementPosition(obj);
-                }
-            }
+                Width = 80,
+                Height = 80,
+                Stroke = Brushes.Gold,
+                StrokeThickness = 2
+            };
+
+            Canvas.SetLeft(circle, centerX - 40);
+            Canvas.SetTop(circle, centerY - 40);
+
+            SceneCanvas.Children.Add(circle);
+        }
+
+        private void RotateObject(SceneObject obj, Point mouse)
+        {
+            double cx = obj.X * zoom + camX + (obj.Width * zoom) / 2;
+            double cy = obj.Y * zoom + camY + (obj.Height * zoom) / 2;
+
+            double angle = Math.Atan2(mouse.Y - cy, mouse.X - cx);
+            obj.Rotation = angle * (180 / Math.PI);
+        }
+
+        private static double DistanceToLine(Point p, double x1, double y1, double x2, double y2)
+        {
+            double A = p.X - x1;
+            double B = p.Y - y1;
+            double C = x2 - x1;
+            double D = y2 - y1;
+
+            double dot = A * C + B * D;
+            double lenSq = C * C + D * D;
+            double param = lenSq != 0 ? dot / lenSq : -1;
+
+            double xx, yy;
+
+            if (param < 0) { xx = x1; yy = y1; }
+            else if (param > 1) { xx = x2; yy = y2; }
+            else { xx = x1 + param * C; yy = y1 + param * D; }
+
+            double dx = p.X - xx;
+            double dy = p.Y - yy;
+
+            return Math.Sqrt(dx * dx + dy * dy);
         }
     }
 }

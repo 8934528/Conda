@@ -349,7 +349,27 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="📝 EDITOR" Style="{StaticResource SectionHeaderStyle}"/>
+                        <Grid Grid.Row="0">
+                            <TextBlock Text="📝 EDITOR" Style="{StaticResource SectionHeaderStyle}"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,10,15,0">
+                                <Button x:Name="SaveButton" 
+                                        Content="💾" 
+                                        Click="OnSaveClicked" 
+                                        Style="{StaticResource SceneToolButton}" 
+                                        ToolTip="Save File (Ctrl+S)"
+                                        Width="32" Height="32"
+                                        FontSize="16"/>
+                                <Button x:Name="RunButton" 
+                                        Content="▶" 
+                                        Click="OnRunClicked" 
+                                        Style="{StaticResource SceneToolButton}" 
+                                        ToolTip="Run Script (F5)" 
+                                        Margin="8,0,0,0" 
+                                        Background="#28a745"
+                                        Width="32" Height="32"
+                                        FontSize="16"/>
+                            </StackPanel>
+                        </Grid>
 
                         <TabControl x:Name="FileTabs"
                                     Grid.Row="1"
@@ -442,10 +462,14 @@
                                 AllowDrop="True"
                                 Drop="OnAssetDropped"
                                 Grid.Column="0"
-                                ClipToBounds="True"/>
+                                ClipToBounds="True"
+                                MouseLeftButtonDown="SceneCanvas_MouseDown"
+                                MouseMove="SceneCanvas_MouseMove"
+                                MouseLeftButtonUp="SceneCanvas_MouseUp"
+                                MouseWheel="SceneCanvas_MouseWheel"/>
 
                         <!-- HIERARCHY & INSPECTOR PANEL -->
-                        <Border Grid.Column="1" Background="#252526" BorderBrush="#3c3c3c" BorderThickness="1,0,0,0">
+                        <Border x:Name="InspectorContainer" Grid.Column="1" Background="#252526" BorderBrush="#3c3c3c" BorderThickness="1,0,0,0">
                             <DockPanel>
                                 <!-- Hierarchy Section -->
                                 <Border DockPanel.Dock="Top" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
@@ -463,11 +487,12 @@
                                 </Border>
 
                                 <ListBox x:Name="SceneHierarchy"
-                 Background="#1e1e1e"
-                 Foreground="White"
-                 BorderThickness="0"
-                 DisplayMemberPath="Name"
-                 Margin="0,0,0,5"/>
+                                         Background="#1e1e1e"
+                                         Foreground="White"
+                                         BorderThickness="0"
+                                         DisplayMemberPath="Name"
+                                         Margin="0,0,0,5"
+                                         SelectionChanged="OnHierarchySelectionChanged"/>
 
                                 <!-- Inspector Section -->
                                 <Border DockPanel.Dock="Bottom" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,1,0,0" Margin="0,5,0,0">
@@ -478,7 +503,7 @@
                                 </Border>
 
                                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                    <StackPanel x:Name="SceneInspectorPanel" Margin="10">
+                                    <StackPanel x:Name="InspectorPanel" Margin="10">
                                         <!-- inspector content -->
                                     </StackPanel>
                                 </ScrollViewer>
@@ -585,25 +610,7 @@
                     </DockPanel>
                 </Border>
 
-                <!-- INSPECTOR PANEL -->
-                <Border x:Name="InspectorContainer" 
-                        Background="#252526"
-                        BorderBrush="#3c3c3c"
-                        BorderThickness="1,0,0,0"
-                        Visibility="Collapsed">
-                    <DockPanel>
-                        <Border DockPanel.Dock="Top" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
-                            <StackPanel>
-                                <TextBlock Text="🔍 INSPECTOR" Foreground="#aaaaaa" FontSize="11" FontWeight="Bold" Margin="10,10,10,5"/>
-                                <Button Content="➕ Add Component" Click="OnAddGameObject" Margin="10,0,10,8" Background="#007acc" Foreground="White" BorderThickness="0" Padding="8,4" FontSize="11" Cursor="Hand"/>
-                            </StackPanel>
-                        </Border>
 
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <StackPanel x:Name="InspectorPanel" Margin="10"/>
-                        </ScrollViewer>
-                    </DockPanel>
-                </Border>
             </Grid>
 
             <!-- OUTPUT CONSOLE -->

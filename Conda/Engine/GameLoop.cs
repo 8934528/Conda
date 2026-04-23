@@ -6,7 +6,7 @@ namespace Conda.Engine
 {
     public class GameLoop
     {
-        private Stopwatch stopwatch = new();
+        private readonly Stopwatch stopwatch = new();
         private DispatcherTimer? timer;
 
         public Action<float>? OnUpdate;
@@ -15,8 +15,10 @@ namespace Conda.Engine
         {
             stopwatch.Start();
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(16); // ~60 FPS
+            timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(16) // ~60 FPS
+            };
             timer.Tick += Loop;
             timer.Start();
         }

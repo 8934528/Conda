@@ -1,10 +1,10 @@
 namespace Conda.Engine.ECS.Components
 {
-    public class Sprite : Component
+    public class Sprite : IComponent
     {
-        public string ImagePath { get; set; } = string.Empty;
-        public double Width { get; set; } = 64;
-        public double Height { get; set; } = 64;
-        public string Color { get; set; } = "#00C8FF";
+        public string Path = "";
+        public double Width = 100;
+        public double Height = 100;
+        public string Color { get; set; } = "";
     }
 }
