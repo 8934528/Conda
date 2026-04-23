@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +8,8 @@ namespace Conda.Engine.Physics
 {
     public class PhysicsEngine
     {
-        public List<Rigidbody> Bodies { get; set; } = new();
-        public List<Collider> Colliders { get; set; } = new();
+        public List<Rigidbody> Bodies { get; set; } = [];
+        public List<Collider> Colliders { get; set; } = [];
 
         public void Update(float deltaTime)
         {

@@ -15,12 +15,14 @@ using System.Linq;
 using System.Windows.Input;
 using Conda.Engine.SceneSystem;
 using Conda.Engine;
-using Conda.Engine.Components;
 using Conda.Engine.VisualScripting;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Conda.UI.Views; // for customdialog and animatedmodal
+using Conda.Engine.ECS;
+using Conda.Engine.ECS.Components;
+using Conda.Engine.ECS.Systems;
 
 using Point = System.Windows.Point;
 using Color = System.Windows.Media.Color;
@@ -31,7 +33,7 @@ using DataFormats = System.Windows.DataFormats;
 using Cursors = System.Windows.Input.Cursors;
 
 using Button = System.Windows.Controls.Button;
-using EngineTransform = Conda.Engine.Components.Transform;
+using EngineTransform = Conda.Engine.ECS.Components.Transform;
 using TextBox = System.Windows.Controls.TextBox;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using VerticalAlignment = System.Windows.VerticalAlignment;
@@ -44,7 +46,7 @@ namespace Conda.UI.Views
         private readonly string projectPath;
         private string currentFilePath = string.Empty;
         private Process? currentProcess;
-        private ClientWebSocket syncSocket = new ClientWebSocket();
+        private readonly ClientWebSocket syncSocket = new();
         private bool isWebViewReady = false;
         private bool isVenvActive = false;
         private bool isFullScreen = false;
@@ -62,8 +64,9 @@ namespace Conda.UI.Views
 
         private static readonly JsonSerializerOptions JsonIndentedOptions = new() { WriteIndented = true };
 
-
-
+        private World world = new();
+        private GameLoop loop = null!;
+        private RenderSystem renderer = null!;
 
         private Scene currentScene = new();
         private GameObject? selectedGameObject;
@@ -141,6 +144,46 @@ namespace Conda.UI.Views
             {
                 OutputConsole.Text += "⚠️ Multiplayer Scene Sync server not running (ws://localhost:5000/ws).\n";
             }
+
+            InitEngine();
+            CreateTestEntity();
+        }
+
+        private void InitEngine()
+        {
+            renderer = new RenderSystem(GameCanvas);
+
+            loop = new();
+
+            loop.OnUpdate = (dt) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    renderer.Render(world);
+                });
+            };
+
+            loop.Start();
+        }
+
+        private void CreateTestEntity()
+        {
+            var entity = new Entity();
+
+            entity.Add(new Conda.Engine.ECS.Components.Transform
+            {
+                X = 100,
+                Y = 100
+            });
+
+            entity.Add(new Sprite
+            {
+                ImagePath = "Assets/logo/test.png",
+                Width = 100,
+                Height = 100
+            });
+
+            world.Entities.Add(entity);
         }
 
         private void CheckVenvStatus()
@@ -977,7 +1020,7 @@ namespace Conda.UI.Views
             }
         }
 
-        private string ExportNodeGraph(NodeGraph graph)
+        private static string ExportNodeGraph(NodeGraph graph)
         {
             return JsonSerializer.Serialize(graph, JsonIndentedOptions);
         }

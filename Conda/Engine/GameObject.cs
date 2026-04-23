@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Conda.Engine.Components;
+using Conda.Engine.ECS.Components;
 using Conda.Engine.Physics;
 
 namespace Conda.Engine

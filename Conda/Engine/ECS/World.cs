@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +8,6 @@ namespace Conda.Engine.ECS
 {
     public class World
     {
-        public List<Entity> Entities { get; set; } = new();
+        public List<Entity> Entities { get; set; } = [];
     }
 }

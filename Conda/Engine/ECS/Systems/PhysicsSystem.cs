@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Conda.Engine.ECS;
+using Conda.Engine.Physics;
 
 namespace Conda.Engine.ECS.Systems
 {
-    internal class PhysicsSystem
+    public class PhysicsSystem(PhysicsEngine physics)
     {
+        private readonly PhysicsEngine physics = physics;
+
+        public void Update(float deltaTime)
+        {
+            physics.Update(deltaTime);
+        }
     }
 }

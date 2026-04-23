@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,18 +10,19 @@ namespace Conda.Engine.ECS
     {
         public Guid Id { get; private set; } = Guid.NewGuid();
 
-        private Dictionary<Type, object> components = new();
+        private readonly Dictionary<Type, object> components = [];
 
         public void Add<T>(T component)
         {
-            components[typeof(T)] = component;
+            if (component != null)
+                components[typeof(T)] = component;
         }
 
         public T Get<T>()
         {
             return components.ContainsKey(typeof(T))
                 ? (T)components[typeof(T)]
-                : default;
+                : default!;
         }
 
         public bool Has<T>()

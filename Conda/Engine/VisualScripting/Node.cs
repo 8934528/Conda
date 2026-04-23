@@ -12,8 +12,8 @@ namespace Conda.Engine.VisualScripting
         public double X { get; set; }
         public double Y { get; set; }
 
-        public Dictionary<string, string> Properties { get; set; } = new();
+        public Dictionary<string, string> Properties { get; set; } = [];
 
-        public List<string> Outputs { get; set; } = new();
+        public List<string> Outputs { get; set; } = [];
     }
 }

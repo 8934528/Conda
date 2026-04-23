@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +10,8 @@ namespace Conda.Engine.Prefabs
 {
     public class PrefabManager
     {
-        private string prefabFolder;
+        private readonly string prefabFolder;
+        private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
         public PrefabManager(string projectPath)
         {
@@ -22,10 +23,7 @@ namespace Conda.Engine.Prefabs
 
         public void SavePrefab(string name, object gameObject)
         {
-            string json = JsonSerializer.Serialize(gameObject, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            string json = JsonSerializer.Serialize(gameObject, JsonOptions);
 
             File.WriteAllText(Path.Combine(prefabFolder, name + ".json"), json);
         }
@@ -35,10 +33,10 @@ namespace Conda.Engine.Prefabs
             string path = Path.Combine(prefabFolder, name + ".json");
 
             if (!File.Exists(path))
-                return default;
+                return default!;
 
             string json = File.ReadAllText(path);
-            return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<T>(json)!;
         }
     }
 }

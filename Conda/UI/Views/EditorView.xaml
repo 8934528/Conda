@@ -339,8 +339,9 @@
 
             <!-- EDITOR AREA -->
             <Grid Grid.Row="0" Grid.Column="1">
+                <Canvas x:Name="GameCanvas" Background="Black" Panel.ZIndex="99"/>
                 <!-- CODE EDITOR -->
-                <Border x:Name="CodeEditorContainer" Background="#1e1e1e" Visibility="Visible">
+                <Border x:Name="CodeEditorContainer" Background="#1e1e1e" Visibility="Collapsed">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
