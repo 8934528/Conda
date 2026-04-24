@@ -67,7 +67,7 @@
 
         <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#aaaaaa"/>
-            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Margin" Value="10,10,10,5"/>
         </Style>
@@ -77,7 +77,7 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="8,4"/>
-            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Margin" Value="2"/>
             <Setter Property="Template">
@@ -124,7 +124,7 @@
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="Foreground" Value="#cccccc"/>
                         <Setter Property="Padding" Value="12,8,12,8"/>
-                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="FontSize" Value="14"/>
                         <Setter Property="Cursor" Value="Hand"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="Template">
@@ -186,7 +186,7 @@
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="Foreground" Value="#e0e0e0"/>
                         <Setter Property="Padding" Value="12,8,12,8"/>
-                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="FontSize" Value="14"/>
                         <Setter Property="Cursor" Value="Hand"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="Margin" Value="0"/>
@@ -651,7 +651,7 @@
                         </Button.RenderTransform>
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="Cog" Width="14" Height="14" Foreground="#cccccc" Margin="0,0,8,0"/>
-                            <TextBlock Text="Settings" FontSize="12" Foreground="#cccccc"/>
+                            <TextBlock Text="Settings" FontSize="14" Foreground="#cccccc"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -673,33 +673,33 @@
             <!-- SIDEBAR -->
             <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Background="#252526" BorderBrush="#3c3c3c" BorderThickness="0,0,1,0">
                 <StackPanel Margin="0,15,0,0">
-                    <TextBlock Foreground="#aaaaaa" FontSize="11" FontWeight="Bold" Margin="15,0,0,15">
+                    <TextBlock Foreground="#aaaaaa" FontSize="14" FontWeight="Bold" Margin="15,0,0,15">
                         EDITOR TOOLS
                     </TextBlock>
                     
                     <Border x:Name="NavCodeEditor" Style="{StaticResource NavButtonStyle}" Background="#2d2d30" MouseLeftButtonDown="NavItem_Click" Tag="CodeEditor">
                         <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="CodeBraces" Width="18" Height="18" Foreground="White" Margin="0,0,10,0"/>
+                            <iconPacks:PackIconMaterial Kind="CodeBraces" Width="14" Height="14" Foreground="White" Margin="0,0,10,0"/>
                             <StackPanel>
-                                <TextBlock Text="Code Editor" Foreground="White" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                                <TextBlock Text="Code Editor" Foreground="White" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,2"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavSceneEditor" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="SceneEditor">
                         <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="Palette" Width="18" Height="18" Foreground="#e0e0e0" Margin="0,0,10,0"/>
+                            <iconPacks:PackIconMaterial Kind="Palette" Width="14" Height="14" Foreground="#e0e0e0" Margin="0,0,10,0"/>
                             <StackPanel>
-                                <TextBlock Text="Scene Editor" Foreground="#e0e0e0" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                                <TextBlock Text="Scene Editor" Foreground="#e0e0e0" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,2"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavVisualScripting" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="VisualScripting">
                         <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="ShareVariant" Width="18" Height="18" Foreground="#e0e0e0" Margin="0,0,10,0"/>
+                            <iconPacks:PackIconMaterial Kind="ShareVariant" Width="14" Height="14" Foreground="#e0e0e0" Margin="0,0,10,0"/>
                             <StackPanel>
-                                <TextBlock Text="Visual Scripting" Foreground="#e0e0e0" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                                <TextBlock Text="Visual Scripting" Foreground="#e0e0e0" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,2"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -729,7 +729,7 @@
                                         Style="{StaticResource SceneToolButton}" 
                                         ToolTip="Save File (Ctrl+S)"
                                         Width="32" Height="32">
-                                    <iconPacks:PackIconMaterial Kind="ContentSave" Width="18" Height="18" />
+                                    <iconPacks:PackIconMaterial Kind="ContentSave" Width="14" Height="14" />
                                 </Button>
                                 <Button x:Name="RunButton" 
                                         Click="OnRunClicked" 
@@ -738,7 +738,7 @@
                                         Margin="8,0,0,0" 
                                         Background="#28a745"
                                         Width="32" Height="32">
-                                    <iconPacks:PackIconMaterial Kind="Play" Width="16" Height="16"/>
+                                    <iconPacks:PackIconMaterial Kind="Play" Width="14" Height="14"/>
                                 </Button>
                             </StackPanel>
                         </Grid>
@@ -751,10 +751,10 @@
                             <TabControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <iconPacks:PackIconMaterial Kind="{Binding Icon}" Width="12" Height="12" Margin="5,0,5,0"/>
+                                        <iconPacks:PackIconMaterial Kind="{Binding Icon}" Width="14" Height="14" Margin="5,0,5,0"/>
                                         <TextBlock Text="{Binding Name}" Margin="0,0,5,0"/>
                                         <Button Width="16" Height="16" Background="Transparent" BorderThickness="0" Foreground="#888" Cursor="Hand" Click="OnCloseTabClick" Tag="{Binding}">
-                                            <iconPacks:PackIconMaterial Kind="Close" Width="10" Height="10"/>
+                                            <iconPacks:PackIconMaterial Kind="Close" Width="14" Height="14"/>
                                         </Button>
                                     </StackPanel>
                                 </DataTemplate>
@@ -916,7 +916,7 @@
                                 <!-- Hierarchy Section -->
                                 <Border DockPanel.Dock="Top" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
                                     <StackPanel>
-                                        <TextBlock Foreground="#aaaaaa" FontSize="11" FontWeight="Bold" Margin="10,8,10,5">
+                                        <TextBlock Foreground="#aaaaaa" FontSize="14" FontWeight="Bold" Margin="10,8,10,5">
                                             HIERARCHY
                                         </TextBlock>
                                         <TextBox x:Name="SearchHierarchy" 
@@ -925,10 +925,10 @@
                          BorderBrush="#3c3c3c"
                          Margin="10,0,10,8"
                          Padding="5"
-                         FontSize="11">
+                         FontSize="14">
                                             <TextBox.Tag>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <iconPacks:PackIconMaterial Kind="Magnify" Width="12" Height="12" Margin="0,0,5,0"/>
+                                                    <iconPacks:PackIconMaterial Kind="Magnify" Width="14" Height="14" Margin="0,0,5,0"/>
                                                     <TextBlock Text="Search objects..."/>
                                                 </StackPanel>
                                             </TextBox.Tag>
@@ -947,12 +947,12 @@
                                 <!-- Inspector Section -->
                                 <Border DockPanel.Dock="Bottom" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,1,0,0" Margin="0,5,0,0">
                                     <StackPanel>
-                                        <TextBlock Foreground="#aaaaaa" FontSize="11" FontWeight="Bold" Margin="10,8,10,5">
+                                        <TextBlock Foreground="#aaaaaa" FontSize="14" FontWeight="Bold" Margin="10,8,10,5">
                                             INSPECTOR
                                         </TextBlock>
                                         <Button Style="{StaticResource SceneToolButton}" Margin="10,0,10,8" Background="#007acc">
                                             <StackPanel Orientation="Horizontal">
-                                                <iconPacks:PackIconMaterial Kind="Plus" Width="12" Height="12" Margin="0,0,5,0"/>
+                                                <iconPacks:PackIconMaterial Kind="Plus" Width="14" Height="14" Margin="0,0,5,0"/>
                                                 <TextBlock Text="Add Component"/>
                                             </StackPanel>
                                         </Button>
@@ -1029,12 +1029,12 @@
                         <!-- Node Properties -->
                         <Border Grid.Row="2" Background="#252526" BorderBrush="#3c3c3c" BorderThickness="0,1,0,0" Height="150">
                             <StackPanel Margin="10">
-                                <TextBlock Foreground="#aaaaaa" FontSize="11" FontWeight="Bold" Margin="0,0,0,10">
+                                <TextBlock Foreground="#aaaaaa" FontSize="14" FontWeight="Bold" Margin="0,0,0,10">
                                     NODE PROPERTIES
                                 </TextBlock>
-                                <TextBlock Text="Node Name:" Foreground="#888888" FontSize="11"/>
+                                <TextBlock Text="Node Name:" Foreground="#888888" FontSize="14"/>
                                 <TextBox Text="New Node" Background="#1e1e1e" Foreground="White" BorderBrush="#3c3c3c" Margin="0,5,0,10" Padding="5"/>
-                                <TextBlock Text="Node Type:" Foreground="#888888" FontSize="11"/>
+                                <TextBlock Text="Node Type:" Foreground="#888888" FontSize="14"/>
                                 <ComboBox Background="#1e1e1e" Foreground="White" BorderBrush="#3c3c3c" Margin="0,5,0,0">
                                     <ComboBoxItem>Action</ComboBoxItem>
                                     <ComboBoxItem>Condition</ComboBoxItem>

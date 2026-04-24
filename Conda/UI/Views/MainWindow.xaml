@@ -53,7 +53,7 @@
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="Foreground" Value="#cccccc"/>
                         <Setter Property="Padding" Value="12,8,12,8"/>
-                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="FontSize" Value="14"/>
                         <Setter Property="Cursor" Value="Hand"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="Template">
@@ -115,7 +115,7 @@
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="Foreground" Value="#e0e0e0"/>
                         <Setter Property="Padding" Value="12,8,12,8"/>
-                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="FontSize" Value="14"/>
                         <Setter Property="Cursor" Value="Hand"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="Margin" Value="0"/>
@@ -580,7 +580,7 @@
                         </Button.RenderTransform>
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="Cog" Width="14" Height="14" Foreground="#cccccc" Margin="0,0,8,0"/>
-                            <TextBlock Text="Settings" FontSize="12" Foreground="#cccccc"/>
+                            <TextBlock Text="Settings" FontSize="14" Foreground="#cccccc"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -593,7 +593,7 @@
                 
                 <!-- Welcome Section -->
                 <TextBlock Text="Project Dashboard" 
-                           FontSize="24" 
+                           FontSize="14" 
                            Foreground="White" 
                            FontWeight="Bold"
                            Margin="0,0,0,10"/>
@@ -605,7 +605,7 @@
 
                 <!-- Quick Actions -->
                 <TextBlock Text="Quick Actions" 
-                           FontSize="16" 
+                           FontSize="14" 
                            Foreground="White" 
                            FontWeight="SemiBold"
                            Margin="0,0,0,15"/>
@@ -618,7 +618,7 @@
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="13">
+                            FontSize="14">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="Plus" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="New Project"/>
@@ -632,7 +632,7 @@
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="13">
+                            FontSize="14">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="FolderOpen" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="Open Project"/>
@@ -646,7 +646,7 @@
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="13">
+                            FontSize="14">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="PackageDown" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="Install Dep..."/>
@@ -660,7 +660,7 @@
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="13">
+                            FontSize="14">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="LanguagePython" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="Check Python"/>
@@ -670,7 +670,7 @@
 
                 <!-- Recent Projects -->
                 <TextBlock Text="Recent Projects" 
-                           FontSize="16" 
+                           FontSize="14" 
                            Foreground="White" 
                            FontWeight="SemiBold"
                            Margin="0,20,0,15"/>
@@ -683,14 +683,14 @@
                     <ListBox x:Name="RecentProjectsList"
                              Background="Transparent"
                              BorderThickness="0"
-                             FontSize="13"
+                             FontSize="14"
                              SelectionChanged="OnProjectSelected">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="10,8">
                                 <iconPacks:PackIconMaterial Kind="Folder" Width="14" Height="14" Margin="0,0,10,0" Foreground="#888888"/>
                                 <TextBlock Text="{Binding Name}" Foreground="White" Width="120"/>
-                                <TextBlock Text="{Binding Path}" Foreground="#888888" FontSize="11"/>
+                                <TextBlock Text="{Binding Path}" Foreground="#888888" FontSize="14"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -705,9 +705,9 @@
                             Height="30"
                             Margin="5"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="12">
+                            FontSize="14">
                         <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="FolderOpen" Width="12" Height="12" Margin="0,0,5,0"/>
+                            <iconPacks:PackIconMaterial Kind="FolderOpen" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="Open Selected"/>
                         </StackPanel>
                     </Button>
@@ -718,9 +718,9 @@
                             Height="30"
                             Margin="5"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="12">
+                            FontSize="14">
                         <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="Refresh" Width="12" Height="12" Margin="0,0,5,0"/>
+                            <iconPacks:PackIconMaterial Kind="Refresh" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="Refresh"/>
                         </StackPanel>
                     </Button>
@@ -792,7 +792,7 @@
                     <DropShadowEffect BlurRadius="15" Opacity="0.5" Direction="270" ShadowDepth="2"/>
                 </Border.Effect>
                 <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconMaterial x:Name="ToastIcon" Kind="CheckCircle" Width="18" Height="18" Foreground="#4ec9b0" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <iconPacks:PackIconMaterial x:Name="ToastIcon" Kind="CheckCircle" Width="14" Height="14" Foreground="#4ec9b0" Margin="0,0,10,0" VerticalAlignment="Center"/>
                     <TextBlock x:Name="ToastMessage" Text="Project created successfully!" Foreground="White" FontSize="14" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>

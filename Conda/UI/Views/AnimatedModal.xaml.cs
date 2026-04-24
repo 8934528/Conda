@@ -74,7 +74,7 @@ namespace Conda.UI.Views
                 Margin = new Thickness(5, 0, 0, 0),
                 Background = System.Windows.Media.Brushes.Gray,
                 Foreground = System.Windows.Media.Brushes.White,
-                FontSize = 13,
+                FontSize = 14,
                 Cursor = System.Windows.Input.Cursors.Hand
             };
 

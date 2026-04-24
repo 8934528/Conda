@@ -966,7 +966,7 @@ namespace Conda.UI.Views
                         {
                             foreach (var textBlock in child.Children.OfType<TextBlock>())
                             {
-                                if (textBlock.FontSize == 13) // Title text
+                                if (textBlock.FontSize == 14) // Title text
                                     textBlock.Foreground = new SolidColorBrush(Color.FromRgb(224, 224, 224));
                             }
                         }
@@ -981,7 +981,7 @@ namespace Conda.UI.Views
                     {
                         foreach (var textBlock in child.Children.OfType<TextBlock>())
                         {
-                            if (textBlock.FontSize == 13) // Title text
+                            if (textBlock.FontSize == 14) // Title text
                                 textBlock.Foreground = Brushes.White;
                         }
                     }
@@ -1608,7 +1608,7 @@ namespace Conda.UI.Views
         private void AddField(string label, string value, Action<string> onUpdate)
         {
             var stack = new StackPanel { Margin = new Thickness(0, 5, 0, 5) };
-            stack.Children.Add(new TextBlock { Text = label, Foreground = Brushes.Gray, FontSize = 11 });
+            stack.Children.Add(new TextBlock { Text = label, Foreground = Brushes.Gray, FontSize = 14 });
             var box = new TextBox
             {
                 Text = value,

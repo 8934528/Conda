@@ -125,7 +125,7 @@ namespace Conda
                 Text = "Project Name:",
                 Foreground = Brushes.White,
                 Margin = new Thickness(0, 0, 0, 8),
-                FontSize = 13,
+                FontSize = 14,
                 FontWeight = FontWeights.SemiBold
             };
             Grid.SetRow(nameLabel, 0);
@@ -135,7 +135,7 @@ namespace Conda
             {
                 Text = "MyGame",
                 Margin = new Thickness(0, 0, 0, 15),
-                FontSize = 13,
+                FontSize = 14,
                 Height = 35,
                 Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
                 Foreground = Brushes.White,
@@ -152,7 +152,7 @@ namespace Conda
                 Text = "Save Location:",
                 Foreground = Brushes.White,
                 Margin = new Thickness(0, 0, 0, 8),
-                FontSize = 13,
+                FontSize = 14,
                 FontWeight = FontWeights.SemiBold
             };
             Grid.SetRow(locationLabel, 2);
@@ -166,7 +166,7 @@ namespace Conda
             var locationTextBox = new TextBox
             {
                 Margin = new Thickness(0, 0, 8, 0),
-                FontSize = 12,
+                FontSize = 14,
                 Height = 35,
                 Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
                 Foreground = Brushes.White,
@@ -184,7 +184,7 @@ namespace Conda
                 Height = 35,
                 Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
                 Foreground = Brushes.White,
-                FontSize = 12,
+                FontSize = 14,
                 Cursor = System.Windows.Input.Cursors.Hand
             };
             Grid.SetColumn(browseBtn, 1);
@@ -199,7 +199,7 @@ namespace Conda
                 Content = "Use default location (CondaProjects folder in user home directory)",
                 Margin = new Thickness(0, 15, 0, 0),
                 Foreground = Brushes.White,
-                FontSize = 11,
+                FontSize = 14,
                 IsChecked = true
             };
             Grid.SetRow(useDefaultCheck, 4);
@@ -350,7 +350,7 @@ namespace Conda
                 Text = "Select a project to open:",
                 Foreground = Brushes.White,
                 Margin = new Thickness(0, 0, 0, 15),
-                FontSize = 13,
+                FontSize = 14,
                 FontWeight = FontWeights.SemiBold
             };
             selectionPanel.Children.Add(label);
@@ -361,7 +361,7 @@ namespace Conda
                 Background = new SolidColorBrush(Color.FromRgb(30, 30, 30)),
                 Foreground = Brushes.White,
                 BorderBrush = new SolidColorBrush(Color.FromRgb(85, 85, 85)),
-                FontSize = 13
+                FontSize = 14
             };
 
             foreach (var project in projects)
@@ -377,7 +377,7 @@ namespace Conda
                 Height = 35,
                 Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
                 Foreground = Brushes.White,
-                FontSize = 13,
+                FontSize = 14,
                 Cursor = System.Windows.Input.Cursors.Hand
             };
             selectionPanel.Children.Add(browseOtherBtn);

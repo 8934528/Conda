@@ -29,7 +29,6 @@ namespace Conda.Core.ProjectSystem
             var dirs = Directory.GetDirectories(projectsPath);
             foreach (var dir in dirs)
             {
-                // Check if it's a valid project (has main.py)
                 if (File.Exists(Path.Combine(dir, "main.py")))
                 {
                     projects.Add(new ProjectModel

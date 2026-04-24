@@ -26,7 +26,7 @@
         <!-- Section Header Style -->
         <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#4ec9b0"/>
-            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Margin" Value="0,20,0,15"/>
         </Style>
@@ -55,14 +55,14 @@
         <!-- Label Style -->
         <Style x:Key="SettingLabelStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#e0e0e0"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
 
         <!-- Description Style -->
         <Style x:Key="SettingDescriptionStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#888888"/>
-            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="Margin" Value="0,3,0,0"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
@@ -74,7 +74,7 @@
             <Setter Property="BorderBrush" Value="#3c3c3c"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="10,8"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="CaretBrush" Value="#e0e0e0"/>
             <Setter Property="Height" Value="35"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -87,7 +87,7 @@
             <Setter Property="BorderBrush" Value="#3c3c3c"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="10,8"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="Height" Value="35"/>
             <Setter Property="Width" Value="280"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -159,7 +159,7 @@
         <!-- CheckBox Style -->
         <Style x:Key="ModernCheckBoxStyle" TargetType="CheckBox">
             <Setter Property="Foreground" Value="#e0e0e0"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="Margin" Value="0,5"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Template">
@@ -203,7 +203,7 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="15,8"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Height" Value="35"/>
             <Setter Property="Template">
@@ -233,7 +233,7 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="BorderBrush" Value="#555555"/>
             <Setter Property="Padding" Value="15,8"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Height" Value="35"/>
             <Setter Property="Template">
@@ -354,7 +354,7 @@
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Text="Configure your IDE" 
                                        Foreground="#888888" 
-                                       FontSize="20"
+                                       FontSize="14"
                                        HorizontalAlignment="Center"
                                        Margin="0,5,0,0"/>
                         </StackPanel>
@@ -363,91 +363,91 @@
                     <!-- Navigation Items -->
                     <Border x:Name="NavGeneral" Style="{StaticResource NavButtonStyle}" Background="#2d2d30" MouseLeftButtonDown="NavItem_Click" Tag="General">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Cog" Width="16" Height="16" Foreground="White" Margin="0,0,8,0"/>
-                                <TextBlock Text="General" Foreground="White" FontSize="13" Margin="0,0,0,3"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconMaterial Kind="Cog" Width="16" Height="16" Foreground="White" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="General" Foreground="White" FontSize="14" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Appearance, language and behavior" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
+                            <TextBlock Text="Appearance, language and behavior" Foreground="#888888" FontSize="10" Margin="24,2,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavTheme" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Theme">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Palette" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
-                                <TextBlock Text="Theme and Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconMaterial Kind="Palette" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Theme and Editor" Foreground="#e0e0e0" FontSize="14" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Colors, fonts and layout" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
+                            <TextBlock Text="Colors, fonts and layout" Foreground="#888888" FontSize="10" Margin="24,2,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavPython" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Python">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="LanguagePython" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
-                                <TextBlock Text="Python" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconMaterial Kind="LanguagePython" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Python" Foreground="#e0e0e0" FontSize="14" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Interpreter and environment" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
+                            <TextBlock Text="Interpreter and environment" Foreground="#888888" FontSize="10" Margin="24,2,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavEditor" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Editor">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="CodeBraces" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
-                                <TextBlock Text="Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconMaterial Kind="CodeBraces" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Editor" Foreground="#e0e0e0" FontSize="14" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Code editing and formatting" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
+                            <TextBlock Text="Code editing and formatting" Foreground="#888888" FontSize="10" Margin="24,2,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavGameEngine" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="GameEngine">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Controller" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
-                                <TextBlock Text="Game Engine" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconMaterial Kind="Gamepad" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Game Engine" Foreground="#e0e0e0" FontSize="14" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Scene and physics settings" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
+                            <TextBlock Text="Scene and physics settings" Foreground="#888888" FontSize="10" Margin="24,2,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavTools" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Tools">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Wrench" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
-                                <TextBlock Text="Tools" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconMaterial Kind="Wrench" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Tools" Foreground="#e0e0e0" FontSize="14" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Terminal and external tools" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
+                            <TextBlock Text="Terminal and external tools" Foreground="#888888" FontSize="10" Margin="24,2,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavExtensions" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Extensions">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Puzzle" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
-                                <TextBlock Text="Extensions" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconMaterial Kind="Puzzle" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Extensions" Foreground="#e0e0e0" FontSize="14" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Manage plugins" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
+                            <TextBlock Text="Manage plugins" Foreground="#888888" FontSize="10" Margin="24,2,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavKeymap" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Keymap">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Keyboard" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
-                                <TextBlock Text="Keymap" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconMaterial Kind="Keyboard" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Keymap" Foreground="#e0e0e0" FontSize="14" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Keyboard shortcuts" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
+                            <TextBlock Text="Keyboard shortcuts" Foreground="#888888" FontSize="10" Margin="24,2,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavAbout" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="About">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="Information" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
-                                <TextBlock Text="About" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <iconPacks:PackIconMaterial Kind="Information" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="About" Foreground="#e0e0e0" FontSize="14" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Version and updates" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
+                            <TextBlock Text="Version and updates" Foreground="#888888" FontSize="10" Margin="24,2,0,0"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -463,7 +463,7 @@
 
                 <!-- Header -->
                 <TextBlock x:Name="MainHeader" 
-                           FontSize="24" 
+                           FontSize="14" 
                            Foreground="White" 
                            FontWeight="Bold"
                            Margin="0,0,0,5">
@@ -705,7 +705,7 @@
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                                         <Slider Width="200" Minimum="10" Maximum="24" Value="{Binding FontSize, Mode=TwoWay}" Style="{StaticResource ModernSliderStyle}"/>
-                                        <TextBlock Text="{Binding FontSize}" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
+                                        <TextBlock Text="{Binding FontSize}" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="14"/>
                                     </StackPanel>
                                 </Grid>
 
@@ -724,7 +724,7 @@
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                                         <Slider Width="200" Minimum="1" Maximum="2" Value="{Binding LineSpacing, Mode=TwoWay}" Style="{StaticResource ModernSliderStyle}"/>
-                                        <TextBlock Text="{Binding LineSpacing, StringFormat=N1}" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
+                                        <TextBlock Text="{Binding LineSpacing, StringFormat=N1}" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="14"/>
                                     </StackPanel>
                                 </Grid>
 
@@ -1004,7 +1004,7 @@
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                                         <Slider Width="200" Minimum="0" Maximum="240" Value="60" Style="{StaticResource ModernSliderStyle}"/>
-                                        <TextBlock Text="60 FPS" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
+                                        <TextBlock Text="60 FPS" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="14"/>
                                     </StackPanel>
                                 </Grid>
 
@@ -1209,7 +1209,7 @@
                                         <iconPacks:PackIconMaterial Kind="InformationOutline" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
                                         <TextBlock Text="Version" Style="{StaticResource SettingLabelStyle}"/>
                                     </StackPanel>
-                                    <TextBlock Grid.Column="1" Text="1.0.0" Foreground="#4ec9b0" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Column="1" Text="1.0.0" Foreground="#4ec9b0" FontSize="14" FontWeight="SemiBold"/>
                                 </Grid>
 
                                 <Grid Style="{StaticResource SettingRowStyle}">
@@ -1221,7 +1221,7 @@
                                         <iconPacks:PackIconMaterial Kind="Calendar" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
                                         <TextBlock Text="Build Date" Style="{StaticResource SettingLabelStyle}"/>
                                     </StackPanel>
-                                    <TextBlock Grid.Column="1" Text="2026" Foreground="#e0e0e0" FontSize="13"/>
+                                    <TextBlock Grid.Column="1" Text="2026" Foreground="#e0e0e0" FontSize="14"/>
                                 </Grid>
 
                                 <!-- Action Buttons -->

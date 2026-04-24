@@ -53,7 +53,7 @@ namespace Conda.Core.Settings
                 if (directory != null && !Directory.Exists(directory))
                 {
                     Directory.CreateDirectory(directory);
-                    // Hide the .conda folder on Windows if possible
+                    // Hide the .conda folder on Windows
                     try { File.SetAttributes(directory, File.GetAttributes(directory) | FileAttributes.Hidden); } catch { }
                 }
 
