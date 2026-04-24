@@ -1,4 +1,5 @@
 using System;
+using Conda.Core.Settings;
 using Conda.Engine.SceneSystem;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
@@ -796,20 +797,8 @@ namespace Conda.UI.Views
                 DialogIcon.Info);
         }
 
-        private void OnSettingsClicked(object sender, RoutedEventArgs e)
-        {
-            var settingsView = new SettingsView();
-            var settingsWindow = new Window
-            {
-                Title = "Conda IDE - Settings",
-                Content = settingsView,
-                Width = 1200,
-                Height = 800,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30))
-            };
-            settingsWindow.ShowDialog();
-        }
+        private void OnSettingsClicked(object sender, RoutedEventArgs e) => OnSettingsIconClicked(sender, e);
+        private void OnPreferencesClicked(object sender, RoutedEventArgs e) => OnSettingsIconClicked(sender, e);
 
         private async void OnNewFileToolbarClick(object sender, RoutedEventArgs e)
         {
@@ -845,8 +834,7 @@ namespace Conda.UI.Views
         private void OnExitClicked(object sender, RoutedEventArgs e)
             => System.Windows.Application.Current.Shutdown();
 
-        private async void OnPreferencesClicked(object sender, RoutedEventArgs e)
-            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Preferences dialog would open here.", "Preferences", DialogIcon.Info);
+
 
         private async void OnResetLayoutClicked(object sender, RoutedEventArgs e)
             => await CustomDialog.ShowAsync(Window.GetWindow(this), "Layout reset.", "Reset Layout", DialogIcon.Info);
@@ -854,8 +842,21 @@ namespace Conda.UI.Views
         private async void OnRecentProjectsClicked(object sender, RoutedEventArgs e)
             => await CustomDialog.ShowAsync(Window.GetWindow(this), "Recent projects list would appear here.", "Recent Projects", DialogIcon.Info);
 
-        private async void OnProjectSettingsClicked(object sender, RoutedEventArgs e)
-            => await CustomDialog.ShowAsync(Window.GetWindow(this), "Project settings dialog would open here.", "Project Settings", DialogIcon.Info);
+        private void OnProjectSettingsClicked(object sender, RoutedEventArgs e)
+        {
+            var folderSettings = new FolderSettings(projectPath);
+            var settingsView = new SettingsView(folderSettings);
+            var settingsWindow = new Window
+            {
+                Title = $"Project Settings - {Path.GetFileName(projectPath)}",
+                Content = settingsView,
+                Width = 1200,
+                Height = 800,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30))
+            };
+            settingsWindow.ShowDialog();
+        }
 
         private async void OnBuildClicked(object sender, RoutedEventArgs e)
             => await CustomDialog.ShowAsync(Window.GetWindow(this), "Build process would start here.", "Build", DialogIcon.Info);

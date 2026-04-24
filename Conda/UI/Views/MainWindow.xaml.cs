@@ -1,5 +1,6 @@
 using Conda.Core.Environment;
 using Conda.Core.ProjectSystem;
+using Conda.Core.Settings;
 using Conda.UI.Views;
 using Microsoft.Win32;
 using System;
@@ -428,12 +429,33 @@ namespace Conda
 
         // Navigation Menu Handlers
         private void OnExitClicked(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
-        private async void OnPreferencesClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Preferences dialog would open here.", "Preferences", DialogIcon.Info);
-        private async void OnSettingsClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Settings dialog would open here.", "Settings", DialogIcon.Info);
+        private void OnPreferencesClicked(object sender, RoutedEventArgs e) => OnSettingsIconClicked(sender, e);
+        private void OnSettingsClicked(object sender, RoutedEventArgs e) => OnSettingsIconClicked(sender, e);
         private void OnToggleFullScreenClicked(object sender, RoutedEventArgs e) => ToggleFullScreen();
         private async void OnResetLayoutClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Layout reset.", "Reset Layout", DialogIcon.Info);
         private async void OnRecentProjectsClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Recent projects list would appear here.", "Recent Projects", DialogIcon.Info);
-        private async void OnProjectSettingsClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Project settings dialog would open here.", "Project Settings", DialogIcon.Info);
+        private async void OnProjectSettingsClicked(object sender, RoutedEventArgs e)
+        {
+            if (RecentProjectsList.SelectedItem is ProjectModel project)
+            {
+                var folderSettings = new FolderSettings(project.Path);
+                var settingsView = new SettingsView(folderSettings);
+                var settingsWindow = new Window
+                {
+                    Title = $"Project Settings - {project.Name}",
+                    Content = settingsView,
+                    Width = 1200,
+                    Height = 800,
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                    Background = new SolidColorBrush(Color.FromRgb(30, 30, 30))
+                };
+                settingsWindow.ShowDialog();
+            }
+            else
+            {
+                await CustomDialog.ShowAsync(this, "Please select a project from the list to view its settings.", "No Selection", DialogIcon.Info);
+            }
+        }
         private async void OnBuildClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Build process would start here.", "Build", DialogIcon.Info);
         private async void OnExportClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Export options would appear here.", "Export", DialogIcon.Info);
         private async void OnPackageManagerClicked(object sender, RoutedEventArgs e) => await CustomDialog.ShowAsync(this, "Package manager would open here.", "Package Manager", DialogIcon.Info);

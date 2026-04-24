@@ -1,4 +1,4 @@
-﻿<Page x:Class="Conda.UI.Views.SettingsView"
+<Page x:Class="Conda.UI.Views.SettingsView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -433,13 +433,13 @@
             <StackPanel Margin="30,20,30,30">
 
                 <!-- Header -->
-                <TextBlock Text="⚙️ Settings" 
+                <TextBlock x:Name="MainHeader" Text="⚙️ Settings" 
                            FontSize="24" 
                            Foreground="White" 
                            FontWeight="Bold"
                            Margin="0,0,0,5"/>
 
-                <TextBlock Text="Customize your Conda IDE experience" 
+                <TextBlock x:Name="SubHeader" Text="Customize your Conda IDE experience" 
                            FontSize="14" 
                            Foreground="#888888"
                            Margin="0,0,0,30"/>
@@ -468,8 +468,8 @@
                                         <TextBlock Text="🌐 Language" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Select interface language" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
-                                        <ComboBoxItem IsSelected="True">English (US)</ComboBoxItem>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding Language, Mode=TwoWay}" SelectedValuePath="Content">
+                                        <ComboBoxItem>English (US)</ComboBoxItem>
                                         <ComboBoxItem>Spanish</ComboBoxItem>
                                         <ComboBoxItem>French</ComboBoxItem>
                                         <ComboBoxItem>German</ComboBoxItem>
@@ -488,8 +488,8 @@
                                         <TextBlock Text="🚀 Startup Behavior" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="What to show on IDE startup" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
-                                        <ComboBoxItem IsSelected="True">Show Dashboard</ComboBoxItem>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding StartupBehavior, Mode=TwoWay}" SelectedValuePath="Content">
+                                        <ComboBoxItem>Show Dashboard</ComboBoxItem>
                                         <ComboBoxItem>Open Last Project</ComboBoxItem>
                                         <ComboBoxItem>Show Welcome Screen</ComboBoxItem>
                                         <ComboBoxItem>Empty Workspace</ComboBoxItem>
@@ -507,9 +507,9 @@
                                         <TextBlock Text="💾 Auto Save" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Automatically save files" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
-                                    <ComboBox Grid.Column="2" Width="150" Margin="15,0,0,0" Style="{StaticResource ModernComboBoxStyle}">
-                                        <ComboBoxItem IsSelected="True">Every 30 seconds</ComboBoxItem>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding AutoSave, Mode=TwoWay}"/>
+                                    <ComboBox Grid.Column="2" Width="150" Margin="15,0,0,0" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding AutoSaveInterval, Mode=TwoWay}" SelectedValuePath="Content">
+                                        <ComboBoxItem>Every 30 seconds</ComboBoxItem>
                                         <ComboBoxItem>Every 1 minute</ComboBoxItem>
                                         <ComboBoxItem>Every 5 minutes</ComboBoxItem>
                                         <ComboBoxItem>On focus loss</ComboBoxItem>
@@ -527,7 +527,7 @@
                                         <TextBlock Text="🔄 Check for Updates" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Automatically check for updates" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding CheckForUpdates, Mode=TwoWay}"/>
                                     <Button Grid.Column="2" Content="Check Now" Width="100" Margin="15,0,0,0" 
                                             Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left"/>
                                 </Grid>
@@ -542,7 +542,7 @@
                                         <TextBlock Text="📊 Telemetry" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Send anonymous usage data" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="False"/>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding Telemetry, Mode=TwoWay}"/>
                                 </Grid>
                             </StackPanel>
                         </Border>
@@ -564,8 +564,8 @@
                                         <TextBlock Text="🎨 Theme" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Choose your preferred theme" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
-                                        <ComboBoxItem IsSelected="True">Dark (Default)</ComboBoxItem>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding Theme, Mode=TwoWay}" SelectedValuePath="Content">
+                                        <ComboBoxItem>Dark (Default)</ComboBoxItem>
                                         <ComboBoxItem>Light</ComboBoxItem>
                                         <ComboBoxItem>High Contrast</ComboBoxItem>
                                         <ComboBoxItem>Monokai</ComboBoxItem>
@@ -622,10 +622,9 @@
                                         <TextBlock Text="🔤 Font Family" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Editor font family" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
-                                        <ComboBoxItem IsSelected="True">Consolas</ComboBoxItem>
-                                        <ComboBoxItem>Cascadia Code</ComboBoxItem>
+                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding FontFamily, Mode=TwoWay}" SelectedValuePath="Content">
                                         <ComboBoxItem>Consolas</ComboBoxItem>
+                                        <ComboBoxItem>Cascadia Code</ComboBoxItem>
                                         <ComboBoxItem>Fira Code</ComboBoxItem>
                                         <ComboBoxItem>JetBrains Mono</ComboBoxItem>
                                         <ComboBoxItem>Segoe UI</ComboBoxItem>
@@ -645,8 +644,8 @@
                                         <TextBlock Text="Editor font size in pixels" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Slider Width="200" Minimum="10" Maximum="24" Value="14" Style="{StaticResource ModernSliderStyle}"/>
-                                        <TextBlock Text="14" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
+                                        <Slider Width="200" Minimum="10" Maximum="24" Value="{Binding FontSize, Mode=TwoWay}" Style="{StaticResource ModernSliderStyle}"/>
+                                        <TextBlock Text="{Binding FontSize}" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
                                     </StackPanel>
                                 </Grid>
 
@@ -661,8 +660,8 @@
                                         <TextBlock Text="Line height multiplier" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Slider Width="200" Minimum="1" Maximum="2" Value="1.4" Style="{StaticResource ModernSliderStyle}"/>
-                                        <TextBlock Text="1.4" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
+                                        <Slider Width="200" Minimum="1" Maximum="2" Value="{Binding LineSpacing, Mode=TwoWay}" Style="{StaticResource ModernSliderStyle}"/>
+                                        <TextBlock Text="{Binding LineSpacing, StringFormat=N1}" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="13"/>
                                     </StackPanel>
                                 </Grid>
 
@@ -676,7 +675,7 @@
                                         <TextBlock Text="🗺️ Minimap" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Show code minimap" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding ShowMinimap, Mode=TwoWay}"/>
                                 </Grid>
 
                                 <!-- Word Wrap -->
@@ -689,7 +688,7 @@
                                         <TextBlock Text="📝 Word Wrap" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Wrap long lines" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="False"/>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding WordWrap, Mode=TwoWay}"/>
                                 </Grid>
 
                                 <!-- Line Numbers -->
@@ -702,7 +701,7 @@
                                         <TextBlock Text="🔢 Line Numbers" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Show line numbers in editor" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding ShowLineNumbers, Mode=TwoWay}"/>
                                 </Grid>
                             </StackPanel>
                         </Border>
@@ -725,8 +724,8 @@
                                         <TextBlock Text="🐍 Python Interpreter" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Path to Python executable" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <TextBox Grid.Column="1" Text="C:\Python39\python.exe" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
-                                    <Button Grid.Column="2" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
+                                    <TextBox Grid.Column="1" Text="{Binding PythonInterpreter, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
+                                    <Button Grid.Column="2" x:Name="BrowsePythonButton" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90" Click="BrowsePythonButton_Click"/>
                                 </Grid>
 
                                 <!-- Default Virtual Environment -->
@@ -739,7 +738,7 @@
                                         <TextBlock Text="📦 Virtual Environment" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Auto-create venv for new projects" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding AutoCreateVenv, Mode=TwoWay}"/>
                                 </Grid>
 
                                 <!-- Pip Index -->
@@ -752,7 +751,7 @@
                                         <TextBlock Text="📦 Pip Index URL" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Custom package index URL" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <TextBox Grid.Column="1" Text="https://pypi.org/simple" Style="{StaticResource ModernTextBoxStyle}"/>
+                                    <TextBox Grid.Column="1" Text="{Binding PipIndexUrl, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}"/>
                                 </Grid>
 
                                 <!-- Default Packages -->
@@ -766,7 +765,7 @@
                                         <TextBlock Text="📦 Default Packages" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Auto-install for new projects" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <TextBox Grid.Column="1" Text="pygame, arcade, numpy" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
+                                    <TextBox Grid.Column="1" Text="{Binding DefaultPackages, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
                                     <Button Grid.Column="2" Content="Manage" Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
                                 </Grid>
                             </StackPanel>
@@ -788,7 +787,7 @@
                                         <TextBlock Text="✨ Auto Completion" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Enable code completion" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding AutoCompletion, Mode=TwoWay}"/>
                                 </Grid>
 
                                 <Grid Style="{StaticResource SettingRowStyle}">
@@ -800,7 +799,7 @@
                                         <TextBlock Text="🔍 Linting" Style="{StaticResource SettingLabelStyle}"/>
                                         <TextBlock Text="Enable code linting" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding Linting, Mode=TwoWay}"/>
                                 </Grid>
 
                                 <Grid Style="{StaticResource SettingRowStyle}">
@@ -1101,9 +1100,9 @@
                 <!-- Bottom Action Buttons -->
                 <Border Background="#252526" CornerRadius="3" Padding="20,15" Margin="0,30,0,0">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="Reset to Defaults" Style="{StaticResource SecondaryButtonStyle}" Width="130" Margin="0,0,10,0"/>
-                        <Button Content="Cancel" Style="{StaticResource SecondaryButtonStyle}" Width="100" Margin="0,0,10,0"/>
-                        <Button Content="Apply Changes" Style="{StaticResource PrimaryButtonStyle}" Width="120"/>
+                        <Button x:Name="ResetButton" Content="Reset to Defaults" Style="{StaticResource SecondaryButtonStyle}" Width="130" Margin="0,0,10,0" Click="ResetButton_Click"/>
+                        <Button x:Name="CancelButton" Content="Cancel" Style="{StaticResource SecondaryButtonStyle}" Width="100" Margin="0,0,10,0" Click="CancelButton_Click"/>
+                        <Button x:Name="ApplyButton" Content="Apply Changes" Style="{StaticResource PrimaryButtonStyle}" Width="120" Click="ApplyButton_Click"/>
                     </StackPanel>
                 </Border>
 
