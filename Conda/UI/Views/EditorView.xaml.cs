@@ -55,6 +55,7 @@ namespace Conda.UI.Views
         private Node? selectedNode;
         private readonly NodeGraph currentGraph = new();
 
+        private Border? currentSelectedNav;
         private static readonly JsonSerializerOptions JsonIndentedOptions = new() { WriteIndented = true };
 
         // Gizmo & Camera Fields
@@ -112,6 +113,7 @@ namespace Conda.UI.Views
             Loaded += EditorView_Loaded;
             currentGraph.Nodes = nodes;
             SceneCanvas.Loaded += (s, e) => DrawGrid();
+            currentSelectedNav = (Border)FindName("NavCodeEditor");
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -946,28 +948,79 @@ namespace Conda.UI.Views
 
         // --- SCENE EDITOR LOGIC ---
 
+        private void NavItem_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Border clickedNav)
+            {
+                string? tag = clickedNav.Tag?.ToString();
+                if (string.IsNullOrEmpty(tag)) return;
+
+                // Reset previous selection
+                if (currentSelectedNav != null)
+                {
+                    currentSelectedNav.Background = Brushes.Transparent;
+                    if (currentSelectedNav.Child is StackPanel sp)
+                    {
+                        foreach (var child in sp.Children.OfType<StackPanel>())
+                        {
+                            foreach (var textBlock in child.Children.OfType<TextBlock>())
+                            {
+                                if (textBlock.FontSize == 13) // Title text
+                                    textBlock.Foreground = new SolidColorBrush(Color.FromRgb(224, 224, 224));
+                            }
+                        }
+                    }
+                }
+
+                // Highlight new selection
+                clickedNav.Background = new SolidColorBrush(Color.FromRgb(45, 45, 48));
+                if (clickedNav.Child is StackPanel newSp)
+                {
+                    foreach (var child in newSp.Children.OfType<StackPanel>())
+                    {
+                        foreach (var textBlock in child.Children.OfType<TextBlock>())
+                        {
+                            if (textBlock.FontSize == 13) // Title text
+                                textBlock.Foreground = Brushes.White;
+                        }
+                    }
+                }
+                currentSelectedNav = clickedNav;
+
+                // Switch view based on tag
+                switch (tag)
+                {
+                    case "CodeEditor":
+                        OnShowCodeEditor(null!, null!);
+                        break;
+                    case "SceneEditor":
+                        OnShowSceneEditor(null!, null!);
+                        break;
+                    case "VisualScripting":
+                        OnShowVisualScripting(null!, null!);
+                        break;
+                }
+            }
+        }
+
         private void OnShowCodeEditor(object sender, RoutedEventArgs e)
         {
             CodeEditorContainer.Visibility = Visibility.Visible;
             SceneEditorContainer.Visibility = Visibility.Collapsed;
+            VisualScriptingContainer.Visibility = Visibility.Collapsed;
+            
             ExplorerContainer.Visibility = Visibility.Visible;
             InspectorContainer.Visibility = Visibility.Collapsed;
-
-            CodeEditorToggle.Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
-            SceneEditorToggle.Background = Brushes.Transparent;
         }
 
         private void OnShowSceneEditor(object sender, RoutedEventArgs e)
         {
             CodeEditorContainer.Visibility = Visibility.Collapsed;
             SceneEditorContainer.Visibility = Visibility.Visible;
+            VisualScriptingContainer.Visibility = Visibility.Collapsed;
+            
             ExplorerContainer.Visibility = Visibility.Collapsed;
             InspectorContainer.Visibility = Visibility.Visible;
-            VisualScriptingContainer.Visibility = Visibility.Collapsed;
-
-            CodeEditorToggle.Background = Brushes.Transparent;
-            SceneEditorToggle.Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
-            VisualScriptingToggle.Background = Brushes.Transparent;
 
             RefreshHierarchy();
         }
@@ -977,12 +1030,9 @@ namespace Conda.UI.Views
             CodeEditorContainer.Visibility = Visibility.Collapsed;
             SceneEditorContainer.Visibility = Visibility.Collapsed;
             VisualScriptingContainer.Visibility = Visibility.Visible;
+            
             ExplorerContainer.Visibility = Visibility.Visible;
             InspectorContainer.Visibility = Visibility.Collapsed;
-
-            CodeEditorToggle.Background = Brushes.Transparent;
-            SceneEditorToggle.Background = Brushes.Transparent;
-            VisualScriptingToggle.Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
         }
 
         private void OnPlayToggle(object sender, RoutedEventArgs e)

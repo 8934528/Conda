@@ -68,6 +68,17 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="NavButtonStyle" TargetType="Border">
+            <Setter Property="Margin" Value="10,2,10,2"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="CornerRadius" Value="3"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#3e3e42"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Page.Resources>
 
     <Grid>
@@ -313,7 +324,7 @@
         <!-- MAIN CONTENT -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="140"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="280"/>
             </Grid.ColumnDefinitions>
@@ -323,23 +334,38 @@
             </Grid.RowDefinitions>
 
             <!-- SIDEBAR -->
-            <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Background="#333333" BorderBrush="#3c3c3c" BorderThickness="0,0,1,0">
-                <StackPanel>
-                    <Button x:Name="CodeEditorToggle" ToolTip="Code Editor" Click="OnShowCodeEditor" Height="50" Background="#1e1e1e" BorderThickness="0" Cursor="Hand">
-                        <TextBlock Text="💻" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Button>
-                    <Button x:Name="SceneEditorToggle" ToolTip="Scene Editor" Click="OnShowSceneEditor" Height="50" Background="Transparent" BorderThickness="0" Cursor="Hand">
-                        <TextBlock Text="🎨" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Button>
-                    <Button x:Name="VisualScriptingToggle" ToolTip="Visual Scripting" Click="OnShowVisualScripting" Height="50" Background="Transparent" BorderThickness="0" Cursor="Hand">
-                        <TextBlock Text="🧠" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Button>
+            <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Background="#252526" BorderBrush="#3c3c3c" BorderThickness="0,0,1,0">
+                <StackPanel Margin="0,15,0,0">
+                    <TextBlock Text="🛠️ EDITOR TOOLS" Foreground="#aaaaaa" FontSize="11" FontWeight="Bold" Margin="20,0,0,15"/>
+                    
+                    <Border x:Name="NavCodeEditor" Style="{StaticResource NavButtonStyle}" Background="#2d2d30" MouseLeftButtonDown="NavItem_Click" Tag="CodeEditor">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel>
+                                <TextBlock Text="💻 Code Editor" Foreground="White" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="NavSceneEditor" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="SceneEditor">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel>
+                                <TextBlock Text="🎨 Scene Editor" Foreground="#e0e0e0" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="NavVisualScripting" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="VisualScripting">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel>
+                                <TextBlock Text="🧠 Visual Scripting" Foreground="#e0e0e0" FontSize="10" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </Border>
 
             <!-- EDITOR AREA -->
             <Grid Grid.Row="0" Grid.Column="1">
-                <Canvas x:Name="GameCanvas" Background="Black" Panel.ZIndex="99"/>
                 <!-- CODE EDITOR -->
                 <Border x:Name="CodeEditorContainer" Background="#1e1e1e" Visibility="Collapsed">
                     <Grid>
@@ -393,14 +419,14 @@
                     </Grid>
                 </Border>
 
-                <!-- SCENE EDITOR - Enhanced with more controls -->
+                <!-- SCENE EDITOR -->
                 <Grid x:Name="SceneEditorContainer" Visibility="Collapsed">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- SCENE TOOLBAR - Enhanced -->
+                    <!-- SCENE TOOLBAR -->
                     <Border Grid.Row="0" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1" Padding="5">
                         <WrapPanel>
                             <Button Content="💾 Save Scene" Click="OnSaveScene" Style="{StaticResource SceneToolButton}"/>
