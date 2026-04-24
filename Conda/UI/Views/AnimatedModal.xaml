@@ -96,7 +96,7 @@
                             <TextBlock x:Name="TitleText" 
                                        Text="Create New Project" 
                                        Foreground="White" 
-                                       FontSize="14" 
+                                       FontSize="12" 
                                        Margin="4"
                                        FontWeight="SemiBold"/>
                         </StackPanel>

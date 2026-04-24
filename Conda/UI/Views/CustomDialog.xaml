@@ -74,7 +74,7 @@
                         <TextBlock x:Name="TitleText" 
                                    Text="Dialog" 
                                    Foreground="White" 
-                                   FontSize="14" 
+                                   FontSize="12" 
                                    Margin="4"
                                    FontWeight="SemiBold"/>
                     </StackPanel>
@@ -114,7 +114,7 @@
                     <TextBlock x:Name="MessageText" 
                                Text="Message" 
                                Foreground="#e0e0e0" 
-                               FontSize="14"
+                               FontSize="12"
                                TextWrapping="Wrap"
                                Margin="0,0,0,20"/>
 
@@ -139,7 +139,7 @@
                             Foreground="White"
                             BorderThickness="0"
                             Cursor="Hand"
-                            FontSize="14"
+                            FontSize="12"
                             Click="Button_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
@@ -166,7 +166,7 @@
                             Foreground="White"
                             BorderThickness="0"
                             Cursor="Hand"
-                            FontSize="14"
+                            FontSize="12"
                             Visibility="Collapsed"
                             Click="Button_Click">
                         <Button.Template>

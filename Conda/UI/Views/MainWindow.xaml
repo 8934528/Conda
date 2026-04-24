@@ -53,7 +53,7 @@
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="Foreground" Value="#cccccc"/>
                         <Setter Property="Padding" Value="12,8,12,8"/>
-                        <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="FontSize" Value="12"/>
                         <Setter Property="Cursor" Value="Hand"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="Template">
@@ -115,7 +115,7 @@
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="Foreground" Value="#e0e0e0"/>
                         <Setter Property="Padding" Value="12,8,12,8"/>
-                        <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="FontSize" Value="12"/>
                         <Setter Property="Cursor" Value="Hand"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="Margin" Value="0"/>
@@ -580,7 +580,7 @@
                         </Button.RenderTransform>
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="Cog" Width="14" Height="14" Foreground="#cccccc" Margin="0,0,8,0"/>
-                            <TextBlock Text="Settings" FontSize="14" Foreground="#cccccc"/>
+                            <TextBlock Text="Settings" FontSize="12" Foreground="#cccccc"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -593,19 +593,19 @@
                 
                 <!-- Welcome Section -->
                 <TextBlock Text="Project Dashboard" 
-                           FontSize="14" 
+                           FontSize="12" 
                            Foreground="White" 
                            FontWeight="Bold"
                            Margin="0,0,0,10"/>
                 
                 <TextBlock Text="Manage your Conda game projects from one place." 
-                           FontSize="14" 
+                           FontSize="12" 
                            Foreground="#aaaaaa"
                            Margin="0,0,0,30"/>
 
                 <!-- Quick Actions -->
                 <TextBlock Text="Quick Actions" 
-                           FontSize="14" 
+                           FontSize="12" 
                            Foreground="White" 
                            FontWeight="SemiBold"
                            Margin="0,0,0,15"/>
@@ -614,11 +614,11 @@
                     <Button Click="OnNewProjectClicked"
                             Background="#007acc"
                             Foreground="White"
-                            Width="120"
+                            Width="110"
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="14">
+                            FontSize="12">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="Plus" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="New Project"/>
@@ -628,11 +628,11 @@
                     <Button Click="OnOpenProjectClicked"
                             Background="#3c3c3c"
                             Foreground="White"
-                            Width="120"
+                            Width="110"
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="14">
+                            FontSize="12">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="FolderOpen" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="Open Project"/>
@@ -642,11 +642,11 @@
                     <Button Click="OnInstallDepsClicked"
                             Background="#2d5a2d"
                             Foreground="White"
-                            Width="130"
+                            Width="110"
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="14">
+                            FontSize="12">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="PackageDown" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="Install Dep..."/>
@@ -656,11 +656,11 @@
                     <Button Click="OnCheckPythonClicked"
                             Background="#6a1b9a"
                             Foreground="White"
-                            Width="130"
+                            Width="110"
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="14">
+                            FontSize="12">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="LanguagePython" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="Check Python"/>
@@ -670,7 +670,7 @@
 
                 <!-- Recent Projects -->
                 <TextBlock Text="Recent Projects" 
-                           FontSize="14" 
+                           FontSize="12" 
                            Foreground="White" 
                            FontWeight="SemiBold"
                            Margin="0,20,0,15"/>
@@ -683,14 +683,14 @@
                     <ListBox x:Name="RecentProjectsList"
                              Background="Transparent"
                              BorderThickness="0"
-                             FontSize="14"
+                             FontSize="12"
                              SelectionChanged="OnProjectSelected">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="10,8">
                                 <iconPacks:PackIconMaterial Kind="Folder" Width="14" Height="14" Margin="0,0,10,0" Foreground="#888888"/>
                                 <TextBlock Text="{Binding Name}" Foreground="White" Width="120"/>
-                                <TextBlock Text="{Binding Path}" Foreground="#888888" FontSize="14"/>
+                                <TextBlock Text="{Binding Path}" Foreground="#888888" FontSize="12"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -701,11 +701,11 @@
                     <Button Click="OnOpenSelectedProject"
                             Background="#007acc"
                             Foreground="White"
-                            Width="100"
+                            Width="110"
                             Height="30"
                             Margin="5"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="14">
+                            FontSize="12">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="FolderOpen" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="Open Selected"/>
@@ -714,11 +714,11 @@
                     <Button Click="OnRefreshClicked"
                             Background="#3c3c3c"
                             Foreground="White"
-                            Width="90"
+                            Width="110"
                             Height="30"
                             Margin="5"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="14">
+                            FontSize="12">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="Refresh" Width="14" Height="14" Margin="0,0,5,0"/>
                             <TextBlock Text="Refresh"/>
@@ -730,7 +730,7 @@
                 <Border Style="{StaticResource DashboardCardStyle}" Margin="0,20,0,0">
                     <StackPanel>
                         <TextBlock Text="System Status" 
-                                   FontSize="14" 
+                                   FontSize="12" 
                                    Foreground="White" 
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,10"/>
@@ -761,7 +761,7 @@
                 <!-- Tips Section -->
                 <Border Style="{StaticResource DashboardCardStyle}" Margin="0,10,0,0">
                     <StackPanel>
-                        <TextBlock FontSize="14" Foreground="White" FontWeight="SemiBold" Margin="0,0,0,10">
+                        <TextBlock FontSize="12" Foreground="White" FontWeight="SemiBold" Margin="0,0,0,10">
                             <Run Text="Tips"/>
                         </TextBlock>
                         <StackPanel Margin="0,2" Orientation="Horizontal">
@@ -793,7 +793,7 @@
                 </Border.Effect>
                 <StackPanel Orientation="Horizontal">
                     <iconPacks:PackIconMaterial x:Name="ToastIcon" Kind="CheckCircle" Width="14" Height="14" Foreground="#4ec9b0" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="ToastMessage" Text="Project created successfully!" Foreground="White" FontSize="14" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ToastMessage" Text="Project created successfully!" Foreground="White" FontSize="12" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
             
