@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:local="clr-namespace:Conda.UI.Views"
       mc:Ignorable="d" 
       d:DesignHeight="900" d:DesignWidth="1400">
@@ -172,13 +173,14 @@
                                     BorderThickness="1"
                                     CornerRadius="3"
                                     Margin="0,0,8,0">
-                                <TextBlock x:Name="CheckMark" 
-                                           Text="✓" 
-                                           Foreground="#007acc" 
-                                           FontSize="12"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Visibility="Collapsed"/>
+                                <iconPacks:PackIconMaterial x:Name="CheckMark" 
+                                                            Kind="Check" 
+                                                            Width="12" 
+                                                            Height="12" 
+                                                            Foreground="#007acc"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            Visibility="Collapsed"/>
                             </Border>
                             <ContentPresenter/>
                         </StackPanel>
@@ -361,64 +363,91 @@
                     <!-- Navigation Items -->
                     <Border x:Name="NavGeneral" Style="{StaticResource NavButtonStyle}" Background="#2d2d30" MouseLeftButtonDown="NavItem_Click" Tag="General">
                         <StackPanel>
-                            <TextBlock Text="⚡ General" Foreground="White" FontSize="13" Margin="0,0,0,3"/>
-                            <TextBlock Text="Appearance, language and behavior" Foreground="#888888" FontSize="10"/>
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="Cog" Width="16" Height="16" Foreground="White" Margin="0,0,8,0"/>
+                                <TextBlock Text="General" Foreground="White" FontSize="13" Margin="0,0,0,3"/>
+                            </StackPanel>
+                            <TextBlock Text="Appearance, language and behavior" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavTheme" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Theme">
                         <StackPanel>
-                            <TextBlock Text="🎨 Theme and Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
-                            <TextBlock Text="Colors, fonts and layout" Foreground="#888888" FontSize="10"/>
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="Palette" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
+                                <TextBlock Text="Theme and Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            </StackPanel>
+                            <TextBlock Text="Colors, fonts and layout" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavPython" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Python">
                         <StackPanel>
-                            <TextBlock Text="🐍 Python" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
-                            <TextBlock Text="Interpreter and environment" Foreground="#888888" FontSize="10"/>
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="LanguagePython" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
+                                <TextBlock Text="Python" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            </StackPanel>
+                            <TextBlock Text="Interpreter and environment" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavEditor" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Editor">
                         <StackPanel>
-                            <TextBlock Text="📝 Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
-                            <TextBlock Text="Code editing and formatting" Foreground="#888888" FontSize="10"/>
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="CodeBraces" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
+                                <TextBlock Text="Editor" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            </StackPanel>
+                            <TextBlock Text="Code editing and formatting" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavGameEngine" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="GameEngine">
                         <StackPanel>
-                            <TextBlock Text="🎮 Game Engine" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
-                            <TextBlock Text="Scene and physics settings" Foreground="#888888" FontSize="10"/>
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="Controller" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
+                                <TextBlock Text="Game Engine" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            </StackPanel>
+                            <TextBlock Text="Scene and physics settings" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavTools" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Tools">
                         <StackPanel>
-                            <TextBlock Text="🔧 Tools" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
-                            <TextBlock Text="Terminal and external tools" Foreground="#888888" FontSize="10"/>
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="Wrench" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
+                                <TextBlock Text="Tools" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            </StackPanel>
+                            <TextBlock Text="Terminal and external tools" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavExtensions" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Extensions">
                         <StackPanel>
-                            <TextBlock Text="🔌 Extensions" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
-                            <TextBlock Text="Manage plugins" Foreground="#888888" FontSize="10"/>
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="Puzzle" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
+                                <TextBlock Text="Extensions" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            </StackPanel>
+                            <TextBlock Text="Manage plugins" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavKeymap" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="Keymap">
                         <StackPanel>
-                            <TextBlock Text="⌨️ Keymap" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
-                            <TextBlock Text="Keyboard shortcuts" Foreground="#888888" FontSize="10"/>
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="Keyboard" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
+                                <TextBlock Text="Keymap" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            </StackPanel>
+                            <TextBlock Text="Keyboard shortcuts" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
                         </StackPanel>
                     </Border>
 
                     <Border x:Name="NavAbout" Style="{StaticResource NavButtonStyle}" Background="Transparent" MouseLeftButtonDown="NavItem_Click" Tag="About">
                         <StackPanel>
-                            <TextBlock Text="ℹ️ About" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
-                            <TextBlock Text="Version and updates" Foreground="#888888" FontSize="10"/>
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="Information" Width="16" Height="16" Foreground="#e0e0e0" Margin="0,0,8,0"/>
+                                <TextBlock Text="About" Foreground="#e0e0e0" FontSize="13" Margin="0,0,0,3"/>
+                            </StackPanel>
+                            <TextBlock Text="Version and updates" Foreground="#888888" FontSize="10" Margin="24,0,0,0"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -433,11 +462,15 @@
             <StackPanel Margin="30,20,30,30">
 
                 <!-- Header -->
-                <TextBlock x:Name="MainHeader" Text="⚙️ Settings" 
+                <TextBlock x:Name="MainHeader" 
                            FontSize="24" 
                            Foreground="White" 
                            FontWeight="Bold"
-                           Margin="0,0,0,5"/>
+                           Margin="0,0,0,5">
+                    <TextBlock.Inlines>
+                        <Run Text="Settings"/>
+                    </TextBlock.Inlines>
+                </TextBlock>
 
                 <TextBlock x:Name="SubHeader" Text="Customize your Conda IDE experience" 
                            FontSize="14" 
@@ -465,7 +498,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🌐 Language" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Translate" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Language" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Select interface language" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding Language, Mode=TwoWay}" SelectedValuePath="Content">
@@ -485,7 +521,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🚀 Startup Behavior" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="RocketLaunch" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Startup Behavior" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="What to show on IDE startup" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding StartupBehavior, Mode=TwoWay}" SelectedValuePath="Content">
@@ -504,7 +543,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="💾 Auto Save" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="ContentSave" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Auto Save" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Automatically save files" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding AutoSave, Mode=TwoWay}"/>
@@ -524,7 +566,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🔄 Check for Updates" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Update" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Check for Updates" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Automatically check for updates" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding CheckForUpdates, Mode=TwoWay}"/>
@@ -539,7 +584,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="📊 Telemetry" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="ChartLine" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Telemetry" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Send anonymous usage data" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding Telemetry, Mode=TwoWay}"/>
@@ -561,7 +609,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🎨 Theme" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Palette" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Theme" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Choose your preferred theme" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding Theme, Mode=TwoWay}" SelectedValuePath="Content">
@@ -580,7 +631,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🎨 Accent Color" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="PaletteSwatch" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Accent Color" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Primary UI accent color" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -619,7 +673,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🔤 Font Family" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="FormatFont" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Font Family" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Editor font family" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding FontFamily, Mode=TwoWay}" SelectedValuePath="Content">
@@ -640,7 +697,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="📏 Font Size" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="FormatSize" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Font Size" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Editor font size in pixels" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -656,7 +716,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="📐 Line Spacing" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="FormatLineSpacing" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Line Spacing" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Line height multiplier" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -672,7 +735,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🗺️ Minimap" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Map" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Minimap" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Show code minimap" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding ShowMinimap, Mode=TwoWay}"/>
@@ -685,7 +751,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="📝 Word Wrap" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Wrap" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Word Wrap" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Wrap long lines" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding WordWrap, Mode=TwoWay}"/>
@@ -698,7 +767,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🔢 Line Numbers" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="FormatListNumbered" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Line Numbers" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Show line numbers in editor" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding ShowLineNumbers, Mode=TwoWay}"/>
@@ -721,7 +793,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🐍 Python Interpreter" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="LanguagePython" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Python Interpreter" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Path to Python executable" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <TextBox Grid.Column="1" Text="{Binding PythonInterpreter, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
@@ -735,7 +810,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="📦 Virtual Environment" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Folder" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Virtual Environment" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Auto-create venv for new projects" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding AutoCreateVenv, Mode=TwoWay}"/>
@@ -748,7 +826,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="📦 Pip Index URL" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="PackageVariant" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Pip Index URL" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Custom package index URL" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <TextBox Grid.Column="1" Text="{Binding PipIndexUrl, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}"/>
@@ -762,7 +843,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="📦 Default Packages" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="PackageVariantClosed" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Default Packages" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Auto-install for new projects" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <TextBox Grid.Column="1" Text="{Binding DefaultPackages, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
@@ -784,7 +868,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="✨ Auto Completion" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="AutoFix" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Auto Completion" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Enable code completion" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding AutoCompletion, Mode=TwoWay}"/>
@@ -796,7 +883,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🔍 Linting" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="BugCheck" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Linting" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Enable code linting" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding Linting, Mode=TwoWay}"/>
@@ -808,7 +898,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🎨 Syntax Highlighting" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="FormatColorFill" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Syntax Highlighting" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Enable syntax highlighting" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
@@ -820,7 +913,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="📏 Tab Size" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Tab" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Tab Size" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Number of spaces per tab" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
@@ -847,7 +943,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🎮 Default Resolution" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="AspectRatio" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Default Resolution" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Default game window size" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
@@ -865,7 +964,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🖥️ Fullscreen Default" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Fullscreen" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Fullscreen Default" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Start games in fullscreen" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="False"/>
@@ -878,7 +980,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🔄 VSync" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Sync" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="VSync" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Enable vertical sync" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
@@ -891,7 +996,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🎬 Frame Rate Limit" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Speedometer" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Frame Rate Limit" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Maximum FPS (0 = unlimited)" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -907,7 +1015,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="⚡ Physics Engine" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Atom" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Physics Engine" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Choose physics backend" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
@@ -934,7 +1045,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🖥️ Terminal Path" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Console" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Terminal Path" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Path to terminal emulator" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <TextBox Grid.Column="1" Text="cmd.exe" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
@@ -949,7 +1063,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="📝 External Editor" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="FileCode" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="External Editor" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Fallback external editor" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <TextBox Grid.Column="1" Text="notepad.exe" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
@@ -963,7 +1080,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🔨 Build Tool" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Hammer" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Build Tool" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Default build tool" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
@@ -990,7 +1110,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="🔌 Manage Extensions" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Puzzle" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Manage Extensions" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Browse and install extensions" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <Button Grid.Column="1" Content="Open Extension Manager" Style="{StaticResource PrimaryButtonStyle}" Width="160"/>
@@ -1003,7 +1126,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="📦 Installed" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="PackageVariant" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Installed" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Currently installed extensions" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <Border Grid.Column="1" Background="#1e1e1e" CornerRadius="3" Padding="10" Margin="0,0,0,0">
@@ -1032,7 +1158,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="⌨️ Keymap Preset" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Keyboard" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Keymap Preset" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Keyboard shortcut scheme" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
@@ -1052,7 +1181,10 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel>
-                                        <TextBlock Text="⚙️ Custom Keybindings" Style="{StaticResource SettingLabelStyle}"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Tune" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Custom Keybindings" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
                                         <TextBlock Text="Edit custom shortcuts" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <Button Grid.Column="1" Content="Edit Keybindings" Style="{StaticResource SecondaryButtonStyle}" Width="120"/>
@@ -1073,7 +1205,10 @@
                                         <ColumnDefinition Width="200"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="ℹ️ Version" Style="{StaticResource SettingLabelStyle}"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="InformationOutline" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                        <TextBlock Text="Version" Style="{StaticResource SettingLabelStyle}"/>
+                                    </StackPanel>
                                     <TextBlock Grid.Column="1" Text="1.0.0" Foreground="#4ec9b0" FontSize="13" FontWeight="SemiBold"/>
                                 </Grid>
 
@@ -1082,7 +1217,10 @@
                                         <ColumnDefinition Width="200"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="📅 Build Date" Style="{StaticResource SettingLabelStyle}"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Calendar" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                        <TextBlock Text="Build Date" Style="{StaticResource SettingLabelStyle}"/>
+                                    </StackPanel>
                                     <TextBlock Grid.Column="1" Text="2026" Foreground="#e0e0e0" FontSize="13"/>
                                 </Grid>
 
@@ -1110,3 +1248,4 @@
         </ScrollViewer>
     </Grid>
 </Page>
+    

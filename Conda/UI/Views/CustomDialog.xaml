@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:local="clr-namespace:Conda.UI.Views"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
@@ -60,11 +61,16 @@
             <Border Grid.Row="0" 
                     Background="#252526" 
                     CornerRadius="3,3,0,0"
-                BorderBrush="#3c3c3c" 
+                    BorderBrush="#3c3c3c" 
                     Padding="20,12">
                 <Grid>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="TitleIcon" Text="ℹ️" FontSize="18" Margin="0,0,10,0"/>
+                        <iconPacks:PackIconMaterial x:Name="TitleIcon" 
+                                                    Kind="Information" 
+                                                    Width="18" 
+                                                    Height="18" 
+                                                    Margin="0,0,10,0"
+                                                    Foreground="#cccccc"/>
                         <TextBlock x:Name="TitleText" 
                                    Text="Dialog" 
                                    Foreground="White" 
@@ -83,8 +89,12 @@
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="Border" Background="Transparent" CornerRadius="3">
-                                    <TextBlock Text="✕" Foreground="#cccccc" FontSize="14" 
-                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <iconPacks:PackIconMaterial Kind="Close" 
+                                                               Width="14" 
+                                                               Height="14" 
+                                                               Foreground="#cccccc"
+                                                               HorizontalAlignment="Center" 
+                                                               VerticalAlignment="Center"/>
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">

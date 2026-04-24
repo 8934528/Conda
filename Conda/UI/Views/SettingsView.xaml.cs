@@ -51,7 +51,7 @@ namespace Conda.UI.Views
 
             // Change header to reflect project settings
             if (FindName("MainHeader") is TextBlock mainHeader)
-                mainHeader.Text = "⚙️ Project Settings";
+                mainHeader.Text = "Project Settings";
             if (FindName("SubHeader") is TextBlock subHeader)
                 subHeader.Text = "Customize settings for this project only";
         }

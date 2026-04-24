@@ -16,7 +16,8 @@ using Conda.Engine.VisualScripting;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Conda.UI.Views; 
+using Conda.UI.Views;
+using MahApps.Metro.IconPacks;
 
 using Point = System.Windows.Point;
 using Color = System.Windows.Media.Color;
@@ -99,7 +100,7 @@ namespace Conda.UI.Views
             public string Name { get; set; } = string.Empty;
             public string Content { get; set; } = string.Empty;
             public bool IsDirty { get; set; } = false;
-            public string Icon { get; set; } = "📄";
+            public string Icon { get; set; } = "File";
         }
 
         private readonly ObservableCollection<OpenTab> openTabs = [];
@@ -139,8 +140,8 @@ namespace Conda.UI.Views
             LoadFiles();
             CheckVenvStatus();
             OutputConsole.Text = "Conda Editor Ready!\n";
-            OutputConsole.Text += $"📁 Project: {projectPath}\n";
-            OutputConsole.Text += "🐍 Python virtual environment support enabled\n";
+            OutputConsole.Text += $"Project: {projectPath}\n";
+            OutputConsole.Text += "Python virtual environment support enabled\n";
             OutputConsole.Text += "-----------------------------------------------------------------------------\n\n";
 
 
@@ -266,7 +267,7 @@ namespace Conda.UI.Views
                 Name = dirInfo.Name,
                 FullPath = path,
                 IsDirectory = true,
-                Icon = GetFolderIcon(),
+                IconKind = GetFolderIcon(),
                 IsExpanded = true
             };
 
@@ -290,7 +291,7 @@ namespace Conda.UI.Views
                         Name = fileInfo.Name,
                         FullPath = file,
                         IsDirectory = false,
-                        Icon = GetFileIcon(fileInfo.Extension)
+                        IconKind = GetFileIcon(fileInfo.Extension)
                     });
                 }
             }
@@ -299,21 +300,21 @@ namespace Conda.UI.Views
             return node;
         }
 
-        private static string GetFolderIcon() => "📁";
+        private static string GetFolderIcon() => "Folder";
         private static string GetFileIcon(string extension)
 
         {
             return extension.ToLower() switch
             {
-                ".py" => "🐍",
-                ".txt" => "📄",
-                ".md" => "📝",
-                ".json" => "📋",
-                ".html" => "🌐",
-                ".css" => "🎨",
-                ".js" => "⚡",
-                ".png" or ".jpg" or ".jpeg" or ".gif" => "🖼️",
-                _ => "📄"
+                ".py" => "FilePython",
+                ".txt" => "FileDocument",
+                ".md" => "FileDocument",
+                ".json" => "FileCode",
+                ".html" => "LanguageHtml5",
+                ".css" => "LanguageCss3",
+                ".js" => "LanguageJavascript",
+                ".png" or ".jpg" or ".jpeg" or ".gif" => "FileImage",
+                _ => "File"
             };
         }
 
@@ -377,7 +378,7 @@ namespace Conda.UI.Views
                     Directory.CreateDirectory(folderPath);
                     LoadFiles();
                     ShowToast($"Created folder: {folderName}");
-                    OutputConsole.Text += $"📁 Created folder: {folderName}\n";
+                    OutputConsole.Text += $"Created folder: {folderName}\n";
                 }
             }
             await Task.CompletedTask;
@@ -399,7 +400,7 @@ namespace Conda.UI.Views
                             File.Move(node.FullPath, newPath);
                         LoadFiles();
                         ShowToast($"Renamed: {node.Name} → {newName}");
-                        OutputConsole.Text += $"✏️ Renamed: {node.Name} → {newName}\n";
+                        OutputConsole.Text += $"Renamed: {node.Name} → {newName}\n";
                     }
                     catch (Exception ex)
                     {
@@ -431,7 +432,7 @@ namespace Conda.UI.Views
                             File.Delete(node.FullPath);
                         LoadFiles();
                         ShowToast($"Deleted: {node.Name}");
-                        OutputConsole.Text += $"🗑️ Deleted: {node.Name}\n";
+                        OutputConsole.Text += $"Deleted: {node.Name}\n";
                     }
                     catch (Exception ex)
                     {
@@ -463,7 +464,7 @@ namespace Conda.UI.Views
                 }
                 catch (Exception ex)
                 {
-                    OutputConsole.Text += $"❌ Error opening explorer: {ex.Message}\n";
+                    OutputConsole.Text += $"Error opening explorer: {ex.Message}\n";
                 }
             }
         }
@@ -484,7 +485,7 @@ namespace Conda.UI.Views
                     if (File.Exists(file))
                     {
                         File.Copy(file, destPath, true);
-                        OutputConsole.Text += $"📄 Copied file: {System.IO.Path.GetFileName(file)}\n";
+                        OutputConsole.Text += $"Copied file: {System.IO.Path.GetFileName(file)}\n";
                     }
                 }
                 LoadFiles();
@@ -501,7 +502,7 @@ namespace Conda.UI.Views
                 LoadFiles();
                 OpenFileInTab(filePath);
                 ShowToast($"Created file: {fileName}");
-                OutputConsole.Text += $"📄 Created file: {fileName}\n";
+                OutputConsole.Text += $"Created file: {fileName}\n";
             }
             await Task.CompletedTask;
         }
@@ -534,7 +535,7 @@ namespace Conda.UI.Views
             };
             openTabs.Add(newTab);
             FileTabs.SelectedItem = newTab;
-            OutputConsole.Text += $"📂 Opened: {newTab.Name}\n";
+            OutputConsole.Text += $"Opened: {newTab.Name}\n";
         }
 
         private async void OnTabSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -571,7 +572,7 @@ namespace Conda.UI.Views
                     }
                 }
                 openTabs.Remove(tab);
-                OutputConsole.Text += $"❌ Closed: {tab.Name}\n";
+                OutputConsole.Text += $"Closed: {tab.Name}\n";
                 if (openTabs.Count > 0)
                     FileTabs.SelectedItem = openTabs.Last();
                 else
@@ -602,7 +603,7 @@ namespace Conda.UI.Views
                     tab.Content = code;
                     tab.IsDirty = false;
                     ShowToast($"Saved: {System.IO.Path.GetFileName(tab.FilePath)}");
-                    OutputConsole.Text += $"✅ Saved: {System.IO.Path.GetFileName(tab.FilePath)}\n";
+                    OutputConsole.Text += $"Saved: {System.IO.Path.GetFileName(tab.FilePath)}\n";
                 }
                 catch (Exception ex)
                 {
@@ -625,7 +626,7 @@ namespace Conda.UI.Views
                     return;
                 }
 
-                OutputConsole.Text += "\n🚀 Running game...\n";
+                OutputConsole.Text += "\nRunning game...\n";
                 string pythonPath = GetPythonPath() ?? "python";
 
                 ProcessStartInfo psi = new()
@@ -648,11 +649,11 @@ namespace Conda.UI.Views
                 currentProcess.ErrorDataReceived += (s, args) =>
                 {
                     if (!string.IsNullOrEmpty(args.Data))
-                        Dispatcher.Invoke(() => OutputConsole.Text += "❌ " + args.Data + "\n");
+                        Dispatcher.Invoke(() => OutputConsole.Text += "Error: " + args.Data + "\n");
                 };
                 currentProcess.Exited += (s, args) =>
                 {
-                    Dispatcher.Invoke(() => OutputConsole.Text += $"\n✅ Process exited with code: {currentProcess.ExitCode}\n");
+                    Dispatcher.Invoke(() => OutputConsole.Text += $"\nProcess exited with code: {currentProcess.ExitCode}\n");
                     Dispatcher.Invoke(() => OutputConsole.Text += "----------------------------------------------------------------------------------------\n\n");
                 };
 
@@ -673,12 +674,12 @@ namespace Conda.UI.Views
                 if (currentProcess != null && !currentProcess.HasExited)
                 {
                     currentProcess.Kill();
-                    OutputConsole.Text += "\n⛔ Process stopped.\n";
+                    OutputConsole.Text += "\nProcess stopped.\n";
                 }
             }
             catch (Exception ex)
             {
-                OutputConsole.Text += $"\n❌ Error: {ex.Message}\n";
+                OutputConsole.Text += $"\nError: {ex.Message}\n";
             }
         }
 
@@ -728,7 +729,7 @@ namespace Conda.UI.Views
                     tab.IsDirty = false;
                 }
             }
-            OutputConsole.Text += "💾 Saved all files\n";
+            OutputConsole.Text += "Saved all files\n";
         }
 
         private void OnUndoClicked(object sender, RoutedEventArgs e)
@@ -768,7 +769,7 @@ namespace Conda.UI.Views
 
         private void OnDebugClicked(object sender, RoutedEventArgs e)
         {
-            OutputConsole.Text += "🐛 Debug mode - Add breakpoints to debug your code\n";
+            OutputConsole.Text += "Debug mode - Add breakpoints to debug your code\n";
         }
 
         private void OnNewTerminalClicked(object sender, RoutedEventArgs e)
@@ -815,7 +816,7 @@ namespace Conda.UI.Views
                 string folderPath = System.IO.Path.Combine(projectPath, folderName);
                 Directory.CreateDirectory(folderPath);
                 LoadFiles();
-                OutputConsole.Text += $"📁 Created folder: {folderName}\n";
+                OutputConsole.Text += $"Created folder: {folderName}\n";
             }
             await Task.CompletedTask;
         }
@@ -823,7 +824,7 @@ namespace Conda.UI.Views
         private void OnRefreshClicked(object sender, RoutedEventArgs e)
         {
             LoadFiles();
-            OutputConsole.Text += "🔄 File explorer refreshed\n";
+            OutputConsole.Text += "File explorer refreshed\n";
         }
 
         // Updated Menu Handlers with CustomDialog
@@ -1041,13 +1042,13 @@ namespace Conda.UI.Views
 
             if (isPlaying)
             {
-                PlayToggle.Content = "⏹ Stop";
+                PlayToggle.Content = "Stop";
                 PlayToggle.Background = Brushes.Red;
                 // Start logic if needed
             }
             else
             {
-                PlayToggle.Content = "▶ Play";
+                PlayToggle.Content = "Play";
                 PlayToggle.Background = new SolidColorBrush(Color.FromRgb(40, 167, 69)); // #28a745
             }
         }
@@ -1489,7 +1490,7 @@ namespace Conda.UI.Views
                 try
                 {
                     currentScene.Save(dialog.FileName);
-                    OutputConsole.Text += $"💾 Scene saved: {System.IO.Path.GetFileName(dialog.FileName)}\n";
+                    OutputConsole.Text += $"Scene saved: {System.IO.Path.GetFileName(dialog.FileName)}\n";
                     await CustomDialog.ShowAsync(Window.GetWindow(this), "Scene saved successfully!", "Success", DialogIcon.Success);
                 }
                 catch (Exception ex)
@@ -1511,7 +1512,7 @@ namespace Conda.UI.Views
                     SceneCanvas.Children.Clear();
                     DrawGrid();
                     RefreshHierarchy();
-                    OutputConsole.Text += $"📂 Scene loaded: {System.IO.Path.GetFileName(dialog.FileName)}\n";
+                    OutputConsole.Text += $"Scene loaded: {System.IO.Path.GetFileName(dialog.FileName)}\n";
                     await CustomDialog.ShowAsync(Window.GetWindow(this), "Scene loaded successfully!", "Success", DialogIcon.Success);
                 }
                 catch (Exception ex)
@@ -1551,59 +1552,57 @@ namespace Conda.UI.Views
 
         private void ShowToast(string message, bool isSuccess = true)
         {
-            if (FindName("ToastMessage") is not TextBlock toastMessage ||
-                FindName("ToastIcon") is not TextBlock toastIcon ||
-                FindName("ToastOverlay") is not Grid toastOverlay ||
-                FindName("ToastTranslate") is not TranslateTransform toastTranslate)
+            if (FindName("ToastMessage") is TextBlock toastMessage &&
+                FindName("ToastIcon") is PackIconMaterial toastIcon &&
+                FindName("ToastOverlay") is Grid toastOverlay &&
+                FindName("ToastTranslate") is TranslateTransform toastTranslate)
             {
-                return;
-            }
+                toastMessage.Text = message;
+                toastIcon.Kind = isSuccess ? PackIconMaterialKind.CheckCircle : PackIconMaterialKind.CloseCircle;
+                toastOverlay.Visibility = Visibility.Visible;
 
-            toastMessage.Text = message;
-            toastIcon.Text = isSuccess ? "✅" : "❌";
-            toastOverlay.Visibility = Visibility.Visible;
-
-            DoubleAnimation slideUp = new()
-            {
-                From = 100,
-                To = 0,
-                Duration = TimeSpan.FromMilliseconds(400),
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
-            };
-
-            DoubleAnimation fadeIn = new()
-            {
-                From = 0,
-                To = 1,
-                Duration = TimeSpan.FromMilliseconds(400)
-            };
-
-            toastTranslate.BeginAnimation(TranslateTransform.YProperty, slideUp);
-            toastOverlay.BeginAnimation(OpacityProperty, fadeIn);
-
-            var timer = new System.Windows.Threading.DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(3)
-            };
-            timer.Tick += (s, args) =>
-            {
-                DoubleAnimation slideDown = new()
+                DoubleAnimation slideUp = new()
                 {
-                    To = 100,
-                    Duration = TimeSpan.FromMilliseconds(400),
-                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
-                };
-                DoubleAnimation fadeOut = new()
-                {
+                    From = 100,
                     To = 0,
+                    Duration = TimeSpan.FromMilliseconds(400),
+                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+                };
+
+                DoubleAnimation fadeIn = new()
+                {
+                    From = 0,
+                    To = 1,
                     Duration = TimeSpan.FromMilliseconds(400)
                 };
-                slideDown.Completed += (s2, args2) => toastOverlay.Visibility = Visibility.Collapsed;
-                toastTranslate.BeginAnimation(TranslateTransform.YProperty, slideDown);
-                toastOverlay.BeginAnimation(OpacityProperty, fadeOut);
-                timer.Stop();
-            };
-            timer.Start();
+
+                toastTranslate.BeginAnimation(TranslateTransform.YProperty, slideUp);
+                toastOverlay.BeginAnimation(OpacityProperty, fadeIn);
+
+                var timer = new System.Windows.Threading.DispatcherTimer
+                {
+                    Interval = TimeSpan.FromSeconds(3)
+                };
+                timer.Tick += (s, args) =>
+                {
+                    DoubleAnimation slideDown = new()
+                    {
+                        To = 100,
+                        Duration = TimeSpan.FromMilliseconds(400),
+                        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+                    };
+                    DoubleAnimation fadeOut = new()
+                    {
+                        To = 0,
+                        Duration = TimeSpan.FromMilliseconds(400)
+                    };
+                    slideDown.Completed += (s2, args2) => toastOverlay.Visibility = Visibility.Collapsed;
+                    toastTranslate.BeginAnimation(TranslateTransform.YProperty, slideDown);
+                    toastOverlay.BeginAnimation(OpacityProperty, fadeOut);
+                    timer.Stop();
+                };
+                timer.Start();
+            }
         }
 
         private void AddField(string label, string value, Action<string> onUpdate)

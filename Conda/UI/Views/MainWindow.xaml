@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         d:DesignHeight="900" d:DesignWidth="1400"
         Background="#1e1e1e"
@@ -157,93 +158,400 @@
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="450,0,0,0">
                     <Menu Background="Transparent" BorderThickness="0">
-                        <MenuItem Header="📄 File" Style="{StaticResource ModernMenuItemStyle}">
-                            <MenuItem Header="📁 New Project" Click="OnNewProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+N"/>
-                            <MenuItem Header="📂 Open Project" Click="OnOpenProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+O"/>
+                        <MenuItem Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="FileOutline" Width="14" Height="14" Margin="0,0,5,0"/>
+                                    <TextBlock Text="File"/>
+                                </StackPanel>
+                            </MenuItem.Header>
+                            <MenuItem Click="OnNewProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+N">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="FolderPlus" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="New Project"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Click="OnOpenProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+O">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="FolderOpen" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Open Project"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
-                            <MenuItem Header="💾 Save All" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+S"/>
-                            <MenuItem Header="🔄 Recent Projects" Click="OnRecentProjectsClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+S">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="ContentSaveAll" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Save All"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Click="OnRecentProjectsClicked" Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="History" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Recent Projects"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
-                            <MenuItem Header="❌ Exit" Click="OnExitClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Alt+F4"/>
+                            <MenuItem Click="OnExitClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Alt+F4">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="ExitToApp" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Exit"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="✏️ Edit" Style="{StaticResource ModernMenuItemStyle}">
-                            <MenuItem Header="✂️ Cut" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+X"/>
-                            <MenuItem Header="📋 Copy" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+C"/>
-                            <MenuItem Header="📌 Paste" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+V"/>
+                        <MenuItem Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Pencil" Width="14" Height="14" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Edit"/>
+                                </StackPanel>
+                            </MenuItem.Header>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+X">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="ContentCut" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Cut"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+C">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="ContentCopy" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Copy"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+V">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="ContentPaste" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Paste"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
-                            <MenuItem Header="⚙️ Preferences" Click="OnPreferencesClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+,"/>
-                            <MenuItem Header="🔧 Settings" Click="OnSettingsClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+,"/>
+                            <MenuItem Click="OnPreferencesClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+,">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Tune" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Preferences"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Click="OnSettingsClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+,">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Cog" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Settings"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="👁️ View" Style="{StaticResource ModernMenuItemStyle}">
-                            <MenuItem Header="🖥️ Toggle Full Screen" Click="OnToggleFullScreenClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F11"/>
-                            <MenuItem Header="🔄 Reset Layout" Click="OnResetLayoutClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
+                        <MenuItem Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Eye" Width="14" Height="14" Margin="0,0,5,0"/>
+                                    <TextBlock Text="View"/>
+                                </StackPanel>
+                            </MenuItem.Header>
+                            <MenuItem Click="OnToggleFullScreenClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F11">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Fullscreen" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Toggle Full Screen"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Click="OnResetLayoutClicked" Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Refresh" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Reset Layout"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
-                            <MenuItem Header="📊 Show Dashboard" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+1"/>
-                            <MenuItem Header="📝 Show Editor" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+2"/>
-                            <MenuItem Header="📟 Show Terminal" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+`"/>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+1">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="ViewDashboard" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Show Dashboard"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+2">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="CodeBraces" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Show Editor"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+`">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Console" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Show Terminal"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="📁 Project" Style="{StaticResource ModernMenuItemStyle}">
-                            <MenuItem Header="🆕 New Project" Click="OnNewProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
-                            <MenuItem Header="📂 Open Project" Click="OnOpenProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
-                            <MenuItem Header="🕒 Recent Projects" Click="OnRecentProjectsClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
+                        <MenuItem Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Folder" Width="14" Height="14" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Project"/>
+                                </StackPanel>
+                            </MenuItem.Header>
+                            <MenuItem Click="OnNewProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="FolderPlus" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="New Project"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Click="OnOpenProjectClicked" Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="FolderOpen" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Open Project"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Click="OnRecentProjectsClicked" Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="History" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Recent Projects"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
-                            <MenuItem Header="⚙️ Project Settings" Click="OnProjectSettingsClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
-                            <MenuItem Header="📦 Project Dependencies" Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Click="OnProjectSettingsClicked" Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Cog" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Project Settings"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="PackageVariant" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Project Dependencies"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="🔧 Build" Style="{StaticResource ModernMenuItemStyle}">
-                            <MenuItem Header="🔨 Build Project" Click="OnBuildClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F7"/>
-                            <MenuItem Header="▶️ Run Project" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F5"/>
-                            <MenuItem Header="🐛 Debug Project" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F6"/>
+                        <MenuItem Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="HammerWrench" Width="14" Height="14" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Build"/>
+                                </StackPanel>
+                            </MenuItem.Header>
+                            <MenuItem Click="OnBuildClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F7">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Hammer" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Build Project"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F5">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Play" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Run Project"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F6">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Bug" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Debug Project"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
-                            <MenuItem Header="📦 Export Game" Click="OnExportClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
-                            <MenuItem Header="📋 Build Settings" Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Click="OnExportClicked" Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Export" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Export Game"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="CogOutline" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Build Settings"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="🛠️ Tools" Style="{StaticResource ModernMenuItemStyle}">
-                            <MenuItem Header="📦 Package Manager" Click="OnPackageManagerClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
-                            <MenuItem Header="🧩 Extensions" Click="OnExtensionsClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
+                        <MenuItem Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Wrench" Width="14" Height="14" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Tools"/>
+                                </StackPanel>
+                            </MenuItem.Header>
+                            <MenuItem Click="OnPackageManagerClicked" Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="PackageVariantClosed" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Package Manager"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Click="OnExtensionsClicked" Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Puzzle" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Extensions"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
-                            <MenuItem Header="🐍 Python Environment" Style="{StaticResource ModernSubMenuItemStyle}"/>
-                            <MenuItem Header="🔍 Code Analysis" Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="LanguagePython" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Python Environment"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Magnify" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Code Analysis"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header=">_ Terminal" Style="{StaticResource ModernMenuItemStyle}">
-                            <MenuItem Header="🖥️ Open Terminal" Click="OnOpenTerminalClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+`"/>
-                            <MenuItem Header="⚡ Run Command" Click="OnRunCommandClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+P"/>
+                        <MenuItem Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Console" Width="14" Height="14" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Terminal"/>
+                                </StackPanel>
+                            </MenuItem.Header>
+                            <MenuItem Click="OnOpenTerminalClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+`">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Console" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Open Terminal"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Click="OnRunCommandClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+P">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Run" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Run Command"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
-                            <MenuItem Header="🧹 Clear Terminal" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+L"/>
-                            <MenuItem Header="📋 New Terminal Tab" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+T"/>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+L">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Eraser" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Clear Terminal"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="Ctrl+Shift+T">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="PlusBox" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="New Terminal Tab"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
 
                     <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
-                        <MenuItem Header="❓ Help" Style="{StaticResource ModernMenuItemStyle}">
-                            <MenuItem Header="📚 Documentation" Click="OnDocumentationClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F1"/>
-                            <MenuItem Header="💡 Tips and Tricks" Style="{StaticResource ModernSubMenuItemStyle}"/>
-                            <MenuItem Header="🐛 Report Issue" Style="{StaticResource ModernSubMenuItemStyle}"/>
+                        <MenuItem Style="{StaticResource ModernMenuItemStyle}">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="HelpCircle" Width="14" Height="14" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Help"/>
+                                </StackPanel>
+                            </MenuItem.Header>
+                            <MenuItem Click="OnDocumentationClicked" Style="{StaticResource ModernSubMenuItemStyle}" InputGestureText="F1">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="BookOpenPageVariant" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Documentation"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Lightbulb" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Tips and Tricks"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Bug" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Report Issue"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                             <Separator Style="{StaticResource ModernSeparatorStyle}"/>
-                            <MenuItem Header="ℹ️ About" Click="OnAboutClicked" Style="{StaticResource ModernSubMenuItemStyle}"/>
+                            <MenuItem Click="OnAboutClicked" Style="{StaticResource ModernSubMenuItemStyle}">
+                                <MenuItem.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Information" Width="14" Height="14" Margin="0,0,8,0"/>
+                                        <TextBlock Text="About"/>
+                                    </StackPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
                 </StackPanel>
 
-                <!-- Settings Button with animation -->
+                <!-- Settings Button -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0">
                     <Button x:Name="SettingsButton"
                                 Background="Transparent" 
@@ -270,8 +578,9 @@
                         <Button.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                         </Button.RenderTransform>
-                        <StackPanel>
-                            <TextBlock Text="⚙️ Settings" FontSize="12" Foreground="#cccccc"/>
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Cog" Width="14" Height="14" Foreground="#cccccc" Margin="0,0,8,0"/>
+                            <TextBlock Text="Settings" FontSize="12" Foreground="#cccccc"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -302,45 +611,61 @@
                            Margin="0,0,0,15"/>
 
                 <WrapPanel>
-                    <Button Content="➕ New Project" 
-                            Click="OnNewProjectClicked"
+                    <Button Click="OnNewProjectClicked"
                             Background="#007acc"
                             Foreground="White"
-                            Width="110"
+                            Width="120"
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="13"/>
+                            FontSize="13">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Plus" Width="14" Height="14" Margin="0,0,5,0"/>
+                            <TextBlock Text="New Project"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Content="📂 Open Project" 
-                            Click="OnOpenProjectClicked"
+                    <Button Click="OnOpenProjectClicked"
                             Background="#3c3c3c"
                             Foreground="White"
-                            Width="110"
+                            Width="120"
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="13"/>
+                            FontSize="13">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="FolderOpen" Width="14" Height="14" Margin="0,0,5,0"/>
+                            <TextBlock Text="Open Project"/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Content="📦 Install Dep..." 
-                            Click="OnInstallDepsClicked"
+                    <Button Click="OnInstallDepsClicked"
                             Background="#2d5a2d"
                             Foreground="White"
-                            Width="110"
+                            Width="130"
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="13"/>
+                            FontSize="13">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="PackageDown" Width="14" Height="14" Margin="0,0,5,0"/>
+                            <TextBlock Text="Install Dep..."/>
+                        </StackPanel>
+                    </Button>
                     
-                    <Button Content="🐍 Check Python" 
-                            Click="OnCheckPythonClicked"
+                    <Button Click="OnCheckPythonClicked"
                             Background="#6a1b9a"
                             Foreground="White"
-                            Width="110"
+                            Width="130"
                             Height="35"
                             Margin="0,0,10,10"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="13"/>
+                            FontSize="13">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="LanguagePython" Width="14" Height="14" Margin="0,0,5,0"/>
+                            <TextBlock Text="Check Python"/>
+                        </StackPanel>
+                    </Button>
                 </WrapPanel>
 
                 <!-- Recent Projects -->
@@ -363,7 +688,7 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="10,8">
-                                <TextBlock Text="📁" FontSize="14" Margin="0,0,10,0"/>
+                                <iconPacks:PackIconMaterial Kind="Folder" Width="14" Height="14" Margin="0,0,10,0" Foreground="#888888"/>
                                 <TextBlock Text="{Binding Name}" Foreground="White" Width="120"/>
                                 <TextBlock Text="{Binding Path}" Foreground="#888888" FontSize="11"/>
                             </StackPanel>
@@ -373,24 +698,32 @@
                 </Border>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                    <Button Content="Open Selected" 
-                            Click="OnOpenSelectedProject"
+                    <Button Click="OnOpenSelectedProject"
                             Background="#007acc"
                             Foreground="White"
-                            Width="90"
+                            Width="100"
                             Height="30"
                             Margin="5"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="12"/>
-                    <Button Content="Refresh" 
-                            Click="OnRefreshClicked"
+                            FontSize="12">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="FolderOpen" Width="12" Height="12" Margin="0,0,5,0"/>
+                            <TextBlock Text="Open Selected"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="OnRefreshClicked"
                             Background="#3c3c3c"
                             Foreground="White"
                             Width="90"
                             Height="30"
                             Margin="5"
                             Style="{StaticResource CommonRoundedButtonStyle}"
-                            FontSize="12"/>
+                            FontSize="12">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Refresh" Width="12" Height="12" Margin="0,0,5,0"/>
+                            <TextBlock Text="Refresh"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
 
                 <!-- Status Section -->
@@ -428,19 +761,25 @@
                 <!-- Tips Section -->
                 <Border Style="{StaticResource DashboardCardStyle}" Margin="0,10,0,0">
                     <StackPanel>
-                        <TextBlock Text="💡 Tips" 
-                                   FontSize="14" 
-                                   Foreground="White" 
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,10"/>
-                        <TextBlock Text="• Use the file explorer to manage your project files" 
-                                   Foreground="#aaaaaa" Margin="0,2"/>
-                        <TextBlock Text="• Press F5 to run your game" 
-                                   Foreground="#aaaaaa" Margin="0,2"/>
-                        <TextBlock Text="• Install pygame using: pip install pygame" 
-                                   Foreground="#aaaaaa" Margin="0,2"/>
-                        <TextBlock Text="• Create a virtual environment for dependency isolation" 
-                                   Foreground="#aaaaaa" Margin="0,2"/>
+                        <TextBlock FontSize="14" Foreground="White" FontWeight="SemiBold" Margin="0,0,0,10">
+                            <Run Text="Tips"/>
+                        </TextBlock>
+                        <StackPanel Margin="0,2" Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Information" Width="14" Height="14" Foreground="#aaaaaa" Margin="0,0,8,0"/>
+                            <TextBlock Text="Use the file explorer to manage your project files" Foreground="#aaaaaa"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,2" Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Keyboard" Width="14" Height="14" Foreground="#aaaaaa" Margin="0,0,8,0"/>
+                            <TextBlock Text="Press F5 to run your game" Foreground="#aaaaaa"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,2" Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="PackageVariant" Width="14" Height="14" Foreground="#aaaaaa" Margin="0,0,8,0"/>
+                            <TextBlock Text="Install pygame using: pip install pygame" Foreground="#aaaaaa"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,2" Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="HexagonOutline" Width="14" Height="14" Foreground="#aaaaaa" Margin="0,0,8,0"/>
+                            <TextBlock Text="Create a virtual environment for dependency isolation" Foreground="#aaaaaa"/>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -453,7 +792,7 @@
                     <DropShadowEffect BlurRadius="15" Opacity="0.5" Direction="270" ShadowDepth="2"/>
                 </Border.Effect>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="ToastIcon" Text="✅" FontSize="18" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <iconPacks:PackIconMaterial x:Name="ToastIcon" Kind="CheckCircle" Width="18" Height="18" Foreground="#4ec9b0" Margin="0,0,10,0" VerticalAlignment="Center"/>
                     <TextBlock x:Name="ToastMessage" Text="Project created successfully!" Foreground="White" FontSize="14" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>

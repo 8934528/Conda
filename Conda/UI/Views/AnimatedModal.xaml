@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:local="clr-namespace:Conda.UI.Views"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
@@ -55,11 +56,11 @@
 
     <Grid>
         <!-- Overlay background -->
-        <Border Background="#252526"  Opacity="0.5"/>
+        <Border Background="#252526" Opacity="0.5"/>
 
         <!-- Modal content -->
         <Border Background="#2d2d30" 
-                    CornerRadius="3,3,0,0"
+                CornerRadius="3,3,0,0"
                 BorderBrush="#3c3c3c" 
                 BorderThickness="1"
                 Width="550"
@@ -86,7 +87,12 @@
                         Padding="15,5">
                     <Grid>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock x:Name="TitleIcon" Text="📁" FontSize="20" Margin="0,0,8,0"/>
+                            <iconPacks:PackIconMaterial x:Name="TitleIcon" 
+                                                        Kind="FolderPlus" 
+                                                        Width="20" 
+                                                        Height="20" 
+                                                        Margin="0,0,8,0"
+                                                        Foreground="#cccccc"/>
                             <TextBlock x:Name="TitleText" 
                                        Text="Create New Project" 
                                        Foreground="White" 
@@ -105,8 +111,12 @@
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="Border" Background="Transparent" CornerRadius="3">
-                                        <TextBlock Text="✕" Foreground="#cccccc" FontSize="16" 
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <iconPacks:PackIconMaterial Kind="Close" 
+                                                                   Width="16" 
+                                                                   Height="16" 
+                                                                   Foreground="#cccccc"
+                                                                   HorizontalAlignment="Center" 
+                                                                   VerticalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
@@ -123,7 +133,7 @@
                 <!-- Content Area -->
                 <Border Grid.Row="1" Background="#2d2d30" Padding="15">
                     <StackPanel x:Name="ContentPanel">
-                        <!-- Dynamic content will be added here -->
+                        <!-- content will be added here -->
                     </StackPanel>
                 </Border>
 
@@ -133,7 +143,7 @@
                         CornerRadius="3"
                         Padding="15,5">
                     <StackPanel x:Name="ButtonsPanel" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <!-- Dynamic buttons will be added here -->
+                        <!-- buttons will be added here -->
                     </StackPanel>
                 </Border>
             </Grid>

@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Animation;
+using MahApps.Metro.IconPacks;
 
 using Color = System.Windows.Media.Color;
 using Brushes = System.Windows.Media.Brushes;
@@ -73,12 +74,12 @@ namespace Conda
             {
                 string version = PythonService.GetPythonVersion();
 
-                PythonStatusText.Text = $"✓ {version}";
+                PythonStatusText.Text = version;
                 PythonStatusText.Foreground = System.Windows.Media.Brushes.LightGreen;
             }
             else
             {
-                PythonStatusText.Text = "✗ Python not found. Please install Python and add to PATH.";
+                PythonStatusText.Text = "Python not found. Please install Python and add to PATH.";
                 PythonStatusText.Foreground = System.Windows.Media.Brushes.Red;
             }
             await System.Threading.Tasks.Task.CompletedTask;
@@ -371,7 +372,7 @@ namespace Conda
 
             var browseOtherBtn = new Button
             {
-                Content = "📁 Browse Other Location...",
+                Content = "Browse Other Location...",
                 Margin = new Thickness(0, 15, 0, 0),
                 Height = 35,
                 Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
@@ -552,7 +553,7 @@ namespace Conda
         private void ShowToast(string message, bool isSuccess = true)
         {
             ToastMessage.Text = message;
-            ToastIcon.Text = isSuccess ? "✅" : "❌";
+            ToastIcon.Kind = isSuccess ? PackIconMaterialKind.CheckCircle : PackIconMaterialKind.CloseCircle;
             ToastOverlay.Visibility = Visibility.Visible;
 
             DoubleAnimation slideUp = new()
