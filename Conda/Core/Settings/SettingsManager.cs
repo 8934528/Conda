@@ -16,10 +16,16 @@ namespace Conda.Core.Settings
         );
 
         public SettingsModel CurrentSettings { get; private set; }
+        public event EventHandler? SettingsUpdated;
 
         private SettingsManager()
         {
             CurrentSettings = Load();
+        }
+
+        public void NotifySettingsUpdated()
+        {
+            SettingsUpdated?.Invoke(this, EventArgs.Empty);
         }
 
         public SettingsModel Load()

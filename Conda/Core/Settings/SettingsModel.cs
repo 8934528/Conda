@@ -157,5 +157,78 @@ namespace Conda.Core.Settings
             get => _linting;
             set { if (_linting != value) { _linting = value; OnPropertyChanged(); } }
         }
+
+        // --- Game Engine Settings ---
+        private string _defaultResolution = "800x600";
+        public string DefaultResolution
+        {
+            get => _defaultResolution;
+            set { if (_defaultResolution != value) { _defaultResolution = value; OnPropertyChanged(); } }
+        }
+
+        private bool _fullscreenDefault = false;
+        public bool FullscreenDefault
+        {
+            get => _fullscreenDefault;
+            set { if (_fullscreenDefault != value) { _fullscreenDefault = value; OnPropertyChanged(); } }
+        }
+
+        private bool _vSync = true;
+        public bool VSync
+        {
+            get => _vSync;
+            set { if (_vSync != value) { _vSync = value; OnPropertyChanged(); } }
+        }
+
+        private double _frameRateLimit = 60;
+        public double FrameRateLimit
+        {
+            get => _frameRateLimit;
+            set { if (_frameRateLimit != value) { _frameRateLimit = value; OnPropertyChanged(); } }
+        }
+
+        private string _physicsEngine = "Pymunk";
+        public string PhysicsEngine
+        {
+            get => _physicsEngine;
+            set { if (_physicsEngine != value) { _physicsEngine = value; OnPropertyChanged(); } }
+        }
+
+        // --- Tools Settings ---
+        private string _terminalPath = "cmd.exe";
+        public string TerminalPath
+        {
+            get => _terminalPath;
+            set { if (_terminalPath != value) { _terminalPath = value; OnPropertyChanged(); } }
+        }
+
+        private string _externalEditor = "notepad.exe";
+        public string ExternalEditor
+        {
+            get => _externalEditor;
+            set { if (_externalEditor != value) { _externalEditor = value; OnPropertyChanged(); } }
+        }
+
+        private string _buildTool = "PyInstaller";
+        public string BuildTool
+        {
+            get => _buildTool;
+            set { if (_buildTool != value) { _buildTool = value; OnPropertyChanged(); } }
+        }
+
+        // --- Keymap Settings ---
+        private string _keymapPreset = "Conda Default";
+        public string KeymapPreset
+        {
+            get => _keymapPreset;
+            set { if (_keymapPreset != value) { _keymapPreset = value; OnPropertyChanged(); } }
+        }
+
+        private string _translationApiKey = string.Empty;
+        public string TranslationApiKey
+        {
+            get => _translationApiKey;
+            set { if (_translationApiKey != value) { _translationApiKey = value; OnPropertyChanged(); } }
+        }
     }
 }

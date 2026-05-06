@@ -48,6 +48,23 @@ namespace Conda
             DataContext = this;
 
             Loaded += MainWindow_Loaded;
+            SettingsManager.Instance.SettingsUpdated += (s, e) => ApplySettings();
+            ApplySettings();
+        }
+
+        private void ApplySettings()
+        {
+            var settings = SettingsManager.Instance.CurrentSettings;
+            
+            // Apply Theme colors
+            if (settings.Theme == "Light")
+            {
+                this.Background = new SolidColorBrush(Color.FromRgb(240, 240, 240));
+            }
+            else
+            {
+                this.Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
+            }
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)

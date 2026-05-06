@@ -115,6 +115,29 @@ namespace Conda.UI.Views
             currentGraph.Nodes = nodes;
             SceneCanvas.Loaded += (s, e) => DrawGrid();
             currentSelectedNav = (Border)FindName("NavCodeEditor");
+
+            SettingsManager.Instance.SettingsUpdated += (s, e) => ApplySettings();
+        }
+
+        private async void ApplySettings()
+        {
+            if (!isWebViewReady || CodeWebView?.CoreWebView2 == null) return;
+
+            var settings = SettingsManager.Instance.CurrentSettings;
+            
+            // Update Monaco Editor
+            string script = $@"
+                if (editor) {{
+                    editor.updateOptions({{
+                        fontSize: {settings.FontSize},
+                        lineHeight: {settings.FontSize * settings.LineSpacing},
+                        fontFamily: '{settings.FontFamily}',
+                        minimap: {{ enabled: {(settings.ShowMinimap ? "true" : "false")} }},
+                        wordWrap: '{(settings.WordWrap ? "on" : "off")}',
+                        lineNumbers: '{(settings.ShowLineNumbers ? "on" : "off")}'
+                    }});
+                }}";
+            await CodeWebView.CoreWebView2.ExecuteScriptAsync(script);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

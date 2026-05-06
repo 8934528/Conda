@@ -559,8 +559,8 @@
                                         </StackPanel>
                                         <TextBlock Text="Automatically save files" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding AutoSave, Mode=TwoWay}"/>
-                                    <ComboBox Grid.Column="2" Width="150" Margin="15,0,0,0" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding AutoSaveInterval, Mode=TwoWay}" SelectedValuePath="Content">
+                                    <ToggleButton Grid.Column="1" x:Name="AutoSaveToggle" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding AutoSave, Mode=TwoWay}" Checked="AutoSaveToggle_Checked" Unchecked="AutoSaveToggle_Unchecked"/>
+                                    <ComboBox Grid.Column="2" x:Name="AutoSaveIntervalCombo" Width="150" Margin="15,0,0,0" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding AutoSaveInterval, Mode=TwoWay}" SelectedValuePath="Content" SelectionChanged="AutoSaveIntervalCombo_SelectionChanged">
                                         <ComboBoxItem>Every 30 seconds</ComboBoxItem>
                                         <ComboBoxItem>Every 1 minute</ComboBoxItem>
                                         <ComboBoxItem>Every 5 minutes</ComboBoxItem>
@@ -584,7 +584,7 @@
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding CheckForUpdates, Mode=TwoWay}"/>
                                     <Button Grid.Column="2" Content="Check Now" Width="100" Margin="15,0,0,0" 
-                                            Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left"/>
+                                            Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left" Click="CheckNowButton_Click"/>
                                 </Grid>
 
                                 <!-- Telemetry -->
@@ -601,6 +601,22 @@
                                         <TextBlock Text="Send anonymous usage data" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding Telemetry, Mode=TwoWay}"/>
+                                </Grid>
+                                
+                                <!-- Translation API Key -->
+                                <Grid Style="{StaticResource SettingRowStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <iconPacks:PackIconMaterial Kind="Translate" Width="14" Height="14" Foreground="#888888" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Translation API Key" Style="{StaticResource SettingLabelStyle}"/>
+                                        </StackPanel>
+                                        <TextBlock Text="API Key for language translation services" Style="{StaticResource SettingDescriptionStyle}"/>
+                                    </StackPanel>
+                                    <TextBox Grid.Column="1" x:Name="TranslationKeyText" Text="{Binding TranslationApiKey, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" TextChanged="GenericSetting_Changed"/>
                                 </Grid>
                             </StackPanel>
                         </Border>
@@ -625,7 +641,7 @@
                                         </StackPanel>
                                         <TextBlock Text="Choose your preferred theme" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding Theme, Mode=TwoWay}" SelectedValuePath="Content">
+                                    <ComboBox Grid.Column="1" x:Name="ThemeCombo" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding Theme, Mode=TwoWay}" SelectedValuePath="Content" SelectionChanged="ThemeCombo_SelectionChanged">
                                         <ComboBoxItem>Dark (Default)</ComboBoxItem>
                                         <ComboBoxItem>Light</ComboBoxItem>
                                         <ComboBoxItem>High Contrast</ComboBoxItem>
@@ -648,27 +664,27 @@
                                         <TextBlock Text="Primary UI accent color" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Border Width="30" Height="30" CornerRadius="3" Background="#007acc" Margin="0,0,5,0" Cursor="Hand">
+                                        <Border Width="30" Height="30" CornerRadius="3" Background="#007acc" Margin="0,0,5,0" Cursor="Hand" Tag="Blue" MouseLeftButtonDown="AccentColor_MouseLeftButtonDown">
                                             <Border.ToolTip>
                                                 <ToolTip>Blue (Default)</ToolTip>
                                             </Border.ToolTip>
                                         </Border>
-                                        <Border Width="30" Height="30" CornerRadius="3" Background="#28a745" Margin="0,0,5,0" Cursor="Hand">
+                                        <Border Width="30" Height="30" CornerRadius="3" Background="#28a745" Margin="0,0,5,0" Cursor="Hand" Tag="Green" MouseLeftButtonDown="AccentColor_MouseLeftButtonDown">
                                             <Border.ToolTip>
                                                 <ToolTip>Green</ToolTip>
                                             </Border.ToolTip>
                                         </Border>
-                                        <Border Width="30" Height="30" CornerRadius="3" Background="#dc3545" Margin="0,0,5,0" Cursor="Hand">
+                                        <Border Width="30" Height="30" CornerRadius="3" Background="#dc3545" Margin="0,0,5,0" Cursor="Hand" Tag="Red" MouseLeftButtonDown="AccentColor_MouseLeftButtonDown">
                                             <Border.ToolTip>
                                                 <ToolTip>Red</ToolTip>
                                             </Border.ToolTip>
                                         </Border>
-                                        <Border Width="30" Height="30" CornerRadius="3" Background="#fd7e14" Margin="0,0,5,0" Cursor="Hand">
+                                        <Border Width="30" Height="30" CornerRadius="3" Background="#fd7e14" Margin="0,0,5,0" Cursor="Hand" Tag="Orange" MouseLeftButtonDown="AccentColor_MouseLeftButtonDown">
                                             <Border.ToolTip>
                                                 <ToolTip>Orange</ToolTip>
                                             </Border.ToolTip>
                                         </Border>
-                                        <Border Width="30" Height="30" CornerRadius="3" Background="#6f42c1" Margin="0,0,5,0" Cursor="Hand">
+                                        <Border Width="30" Height="30" CornerRadius="3" Background="#6f42c1" Margin="0,0,5,0" Cursor="Hand" Tag="Purple" MouseLeftButtonDown="AccentColor_MouseLeftButtonDown">
                                             <Border.ToolTip>
                                                 <ToolTip>Purple</ToolTip>
                                             </Border.ToolTip>
@@ -689,7 +705,7 @@
                                         </StackPanel>
                                         <TextBlock Text="Editor font family" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding FontFamily, Mode=TwoWay}" SelectedValuePath="Content">
+                                    <ComboBox Grid.Column="1" x:Name="FontFamilyCombo" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding FontFamily, Mode=TwoWay}" SelectedValuePath="Content" SelectionChanged="FontFamilyCombo_SelectionChanged">
                                         <ComboBoxItem>Consolas</ComboBoxItem>
                                         <ComboBoxItem>Cascadia Code</ComboBoxItem>
                                         <ComboBoxItem>Fira Code</ComboBoxItem>
@@ -714,7 +730,7 @@
                                         <TextBlock Text="Editor font size in pixels" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Slider Width="200" Minimum="10" Maximum="24" Value="{Binding FontSize, Mode=TwoWay}" Style="{StaticResource ModernSliderStyle}"/>
+                                        <Slider x:Name="FontSizeSlider" Width="200" Minimum="10" Maximum="24" Value="{Binding FontSize, Mode=TwoWay}" Style="{StaticResource ModernSliderStyle}" ValueChanged="FontSizeSlider_ValueChanged"/>
                                         <TextBlock Text="{Binding FontSize}" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="12"/>
                                     </StackPanel>
                                 </Grid>
@@ -733,7 +749,7 @@
                                         <TextBlock Text="Line height multiplier" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Slider Width="200" Minimum="1" Maximum="2" Value="{Binding LineSpacing, Mode=TwoWay}" Style="{StaticResource ModernSliderStyle}"/>
+                                        <Slider x:Name="LineSpacingSlider" Width="200" Minimum="1" Maximum="2" Value="{Binding LineSpacing, Mode=TwoWay}" Style="{StaticResource ModernSliderStyle}" ValueChanged="LineSpacingSlider_ValueChanged"/>
                                         <TextBlock Text="{Binding LineSpacing, StringFormat=N1}" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="12"/>
                                     </StackPanel>
                                 </Grid>
@@ -751,7 +767,7 @@
                                         </StackPanel>
                                         <TextBlock Text="Show code minimap" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding ShowMinimap, Mode=TwoWay}"/>
+                                    <ToggleButton Grid.Column="1" x:Name="MinimapToggle" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding ShowMinimap, Mode=TwoWay}" Checked="MinimapToggle_Checked" Unchecked="MinimapToggle_Unchecked"/>
                                 </Grid>
 
                                 <!-- Word Wrap -->
@@ -767,7 +783,7 @@
                                         </StackPanel>
                                         <TextBlock Text="Wrap long lines" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding WordWrap, Mode=TwoWay}"/>
+                                    <ToggleButton Grid.Column="1" x:Name="WordWrapToggle" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding WordWrap, Mode=TwoWay}" Checked="WordWrapToggle_Checked" Unchecked="WordWrapToggle_Unchecked"/>
                                 </Grid>
 
                                 <!-- Line Numbers -->
@@ -783,7 +799,7 @@
                                         </StackPanel>
                                         <TextBlock Text="Show line numbers in editor" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding ShowLineNumbers, Mode=TwoWay}"/>
+                                    <ToggleButton Grid.Column="1" x:Name="LineNumbersToggle" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding ShowLineNumbers, Mode=TwoWay}" Checked="LineNumbersToggle_Checked" Unchecked="LineNumbersToggle_Unchecked"/>
                                 </Grid>
                             </StackPanel>
                         </Border>
@@ -929,11 +945,11 @@
                                         </StackPanel>
                                         <TextBlock Text="Number of spaces per tab" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
-                                        <ComboBoxItem IsSelected="True">2</ComboBoxItem>
-                                        <ComboBoxItem>4</ComboBoxItem>
-                                        <ComboBoxItem>6</ComboBoxItem>
-                                        <ComboBoxItem>8</ComboBoxItem>
+                                    <ComboBox Grid.Column="1" x:Name="TabSizeCombo" Style="{StaticResource ModernComboBoxStyle}" SelectionChanged="GenericSetting_Changed">
+                                        <ComboBoxItem Content="2" IsSelected="True"/>
+                                        <ComboBoxItem Content="4"/>
+                                        <ComboBoxItem Content="6"/>
+                                        <ComboBoxItem Content="8"/>
                                     </ComboBox>
                                 </Grid>
                             </StackPanel>
@@ -959,11 +975,11 @@
                                         </StackPanel>
                                         <TextBlock Text="Default game window size" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
-                                        <ComboBoxItem IsSelected="True">800x600</ComboBoxItem>
-                                        <ComboBoxItem>1024x768</ComboBoxItem>
-                                        <ComboBoxItem>1280x720</ComboBoxItem>
-                                        <ComboBoxItem>1920x1080</ComboBoxItem>
+                                    <ComboBox Grid.Column="1" x:Name="ResolutionCombo" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding DefaultResolution, Mode=TwoWay}" SelectedValuePath="Content" SelectionChanged="GenericSetting_Changed">
+                                        <ComboBoxItem Content="800x600"/>
+                                        <ComboBoxItem Content="1024x768"/>
+                                        <ComboBoxItem Content="1280x720"/>
+                                        <ComboBoxItem Content="1920x1080"/>
                                     </ComboBox>
                                 </Grid>
 
@@ -980,7 +996,7 @@
                                         </StackPanel>
                                         <TextBlock Text="Start games in fullscreen" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="False"/>
+                                    <ToggleButton Grid.Column="1" x:Name="FullscreenToggle" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding FullscreenDefault, Mode=TwoWay}" Checked="GenericSetting_Changed" Unchecked="GenericSetting_Changed"/>
                                 </Grid>
 
                                 <!-- VSync -->
@@ -996,7 +1012,7 @@
                                         </StackPanel>
                                         <TextBlock Text="Enable vertical sync" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ToggleButton Grid.Column="1" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                    <ToggleButton Grid.Column="1" x:Name="VSyncToggle" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding VSync, Mode=TwoWay}" Checked="GenericSetting_Changed" Unchecked="GenericSetting_Changed"/>
                                 </Grid>
 
                                 <!-- Frame Rate -->
@@ -1013,8 +1029,8 @@
                                         <TextBlock Text="Maximum FPS (0 = unlimited)" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Slider Width="200" Minimum="0" Maximum="240" Value="60" Style="{StaticResource ModernSliderStyle}"/>
-                                        <TextBlock Text="60 FPS" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                                        <Slider x:Name="FrameRateSlider" Width="200" Minimum="0" Maximum="240" Value="{Binding FrameRateLimit, Mode=TwoWay}" Style="{StaticResource ModernSliderStyle}" ValueChanged="GenericSetting_Changed"/>
+                                        <TextBlock Text="{Binding FrameRateLimit, StringFormat={}{0} FPS}" Foreground="#e0e0e0" Margin="15,0,0,0" VerticalAlignment="Center" FontSize="12"/>
                                     </StackPanel>
                                 </Grid>
 
@@ -1031,10 +1047,10 @@
                                         </StackPanel>
                                         <TextBlock Text="Choose physics backend" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
-                                        <ComboBoxItem IsSelected="True">Pymunk</ComboBoxItem>
-                                        <ComboBoxItem>Box2D</ComboBoxItem>
-                                        <ComboBoxItem>None</ComboBoxItem>
+                                    <ComboBox Grid.Column="1" x:Name="PhysicsCombo" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding PhysicsEngine, Mode=TwoWay}" SelectedValuePath="Content" SelectionChanged="GenericSetting_Changed">
+                                        <ComboBoxItem Content="Pymunk"/>
+                                        <ComboBoxItem Content="Box2D"/>
+                                        <ComboBoxItem Content="None"/>
                                     </ComboBox>
                                 </Grid>
                             </StackPanel>
@@ -1061,8 +1077,8 @@
                                         </StackPanel>
                                         <TextBlock Text="Path to terminal emulator" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <TextBox Grid.Column="1" Text="cmd.exe" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
-                                    <Button Grid.Column="2" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
+                                    <TextBox Grid.Column="1" x:Name="TerminalPathText" Text="{Binding TerminalPath, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0" TextChanged="GenericSetting_Changed"/>
+                                    <Button Grid.Column="2" x:Name="BrowseTerminalButton" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90" Click="BrowseTerminalButton_Click"/>
                                 </Grid>
 
                                 <!-- External Editor -->
@@ -1079,8 +1095,8 @@
                                         </StackPanel>
                                         <TextBlock Text="Fallback external editor" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <TextBox Grid.Column="1" Text="notepad.exe" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0"/>
-                                    <Button Grid.Column="2" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90"/>
+                                    <TextBox Grid.Column="1" x:Name="ExternalEditorText" Text="{Binding ExternalEditor, Mode=TwoWay}" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,10,0" TextChanged="GenericSetting_Changed"/>
+                                    <Button Grid.Column="2" x:Name="BrowseExternalEditorButton" Content="Browse..." Style="{StaticResource SecondaryButtonStyle}" Width="90" Click="BrowseExternalEditorButton_Click"/>
                                 </Grid>
 
                                 <!-- Build Tool -->
@@ -1096,11 +1112,11 @@
                                         </StackPanel>
                                         <TextBlock Text="Default build tool" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
-                                        <ComboBoxItem IsSelected="True">PyInstaller</ComboBoxItem>
-                                        <ComboBoxItem>cx_Freeze</ComboBoxItem>
-                                        <ComboBoxItem>Nuitka</ComboBoxItem>
-                                        <ComboBoxItem>Py2exe</ComboBoxItem>
+                                    <ComboBox Grid.Column="1" x:Name="BuildToolCombo" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding BuildTool, Mode=TwoWay}" SelectedValuePath="Content" SelectionChanged="GenericSetting_Changed">
+                                        <ComboBoxItem Content="PyInstaller"/>
+                                        <ComboBoxItem Content="cx_Freeze"/>
+                                        <ComboBoxItem Content="Nuitka"/>
+                                        <ComboBoxItem Content="Py2exe"/>
                                     </ComboBox>
                                 </Grid>
                             </StackPanel>
@@ -1174,13 +1190,13 @@
                                         </StackPanel>
                                         <TextBlock Text="Keyboard shortcut scheme" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
-                                    <ComboBox Grid.Column="1" Style="{StaticResource ModernComboBoxStyle}">
-                                        <ComboBoxItem IsSelected="True">Conda Default</ComboBoxItem>
-                                        <ComboBoxItem>VS Code</ComboBoxItem>
-                                        <ComboBoxItem>Sublime Text</ComboBoxItem>
-                                        <ComboBoxItem>Visual Studio</ComboBoxItem>
-                                        <ComboBoxItem>Emacs</ComboBoxItem>
-                                        <ComboBoxItem>Vim</ComboBoxItem>
+                                    <ComboBox Grid.Column="1" x:Name="KeymapCombo" Style="{StaticResource ModernComboBoxStyle}" SelectedValue="{Binding KeymapPreset, Mode=TwoWay}" SelectedValuePath="Content" SelectionChanged="GenericSetting_Changed">
+                                        <ComboBoxItem Content="Conda Default"/>
+                                        <ComboBoxItem Content="VS Code"/>
+                                        <ComboBoxItem Content="Sublime Text"/>
+                                        <ComboBoxItem Content="Visual Studio"/>
+                                        <ComboBoxItem Content="Emacs"/>
+                                        <ComboBoxItem Content="Vim"/>
                                     </ComboBox>
                                 </Grid>
 
