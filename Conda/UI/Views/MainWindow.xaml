@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         d:DesignHeight="900" d:DesignWidth="1400"
         Background="#1e1e1e"
+        Icon="/Assets/AppIcon.png"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -153,7 +154,7 @@
                 </Grid.Resources>
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
-                    <Image Source="/Assets/logo/FirstIcon.png" Width="28" Height="28" Margin="0,0,10,0"/>
+                    <Image Source="/Assets/AppIcon.png" Width="28" Height="28" Margin="0,0,10,0"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="450,0,0,0">

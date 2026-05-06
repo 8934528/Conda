@@ -115,7 +115,7 @@
     <Border Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
         <Grid>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
-                <Image Source="/Assets/logo/FirstIcon.png" Width="28" Height="28" Margin="0,0,10,0"/>
+                <Image Source="/Assets/AppIcon.png" Width="28" Height="28" Margin="0,0,10,0"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="450,0,0,0">
