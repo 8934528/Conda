@@ -22,36 +22,12 @@
                         <Border x:Name="Border" 
                                 Background="{TemplateBinding Background}" 
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="3"
-                                Margin="2,0">
+                                CornerRadius="3">
                             <Grid>
-                                <ContentPresenter x:Name="HeaderHost" 
-                                                  ContentSource="Header" 
-                                                  RecognizesAccessKey="True"
-                                                  VerticalAlignment="Center"
-                                                  Margin="{TemplateBinding Padding}"/>
-                                <Popup x:Name="Popup" 
-                                       Placement="Bottom" 
-                                       IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                       AllowsTransparency="True"
-                                       Focusable="False"
-                                       PopupAnimation="Slide">
-                                    <Border x:Name="SubmenuBorder" 
-                                            Background="#252526" 
-                                            BorderBrush="#3c3c3c" 
-                                            BorderThickness="1"
-                                            CornerRadius="3"
-                                            Margin="0,2,0,0"
-                                            Padding="4">
-                                        <Border.Effect>
-                                            <DropShadowEffect BlurRadius="15" 
-                                                              Opacity="0.3" 
-                                                              ShadowDepth="2"
-                                                              Color="Black"/>
-                                        </Border.Effect>
-                                        <StackPanel IsItemsHost="True" 
-                                                    KeyboardNavigation.DirectionalNavigation="Cycle"
-                                                    Margin="0,4"/>
+                                <ContentPresenter ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
+                                    <Border Background="#252526" BorderBrush="#3c3c3c" BorderThickness="1" CornerRadius="3" Padding="2" Margin="0,2,0,0">
+                                        <ItemsPresenter />
                                     </Border>
                                 </Popup>
                             </Grid>
@@ -86,13 +62,7 @@
                                 Background="{TemplateBinding Background}" 
                                 CornerRadius="3"
                                 Margin="2">
-                            <Grid>
-                                <ContentPresenter x:Name="HeaderHost" 
-                                                  ContentSource="Header" 
-                                                  RecognizesAccessKey="True"
-                                                  VerticalAlignment="Center"
-                                                  Margin="{TemplateBinding Padding}"/>
-                            </Grid>
+                            <ContentPresenter ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -110,17 +80,62 @@
             <Setter Property="Height" Value="1"/>
             <Setter Property="Margin" Value="8,4,8,4"/>
         </Style>
+
+        <Style x:Key="WindowButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#cccccc"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#3c3c3c"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="WindowCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource WindowButtonStyle}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#e81123"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Border Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
-        <Grid>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0">
-                <Image Source="/Assets/AppIcon.png" Width="28" Height="28" Margin="0,0,10,0"/>
+        <Grid Height="35">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0,20,0">
+                <Image Source="/Assets/AppIcon.png" Width="22" Height="22" Margin="0,0,10,0"/>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="450,0,0,0">
-                <!-- File Menu -->
-                <Menu Background="Transparent" BorderThickness="0">
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+<!-- File Menu -->
+                <Menu WindowChrome.IsHitTestVisibleInChrome="True" Background="Transparent" BorderThickness="0">
                     <MenuItem Style="{StaticResource ModernMenuItemStyle}">
                         <MenuItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -174,7 +189,7 @@
                 </Menu>
 
                 <!-- Edit Menu -->
-                <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                <Menu WindowChrome.IsHitTestVisibleInChrome="True" Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
                     <MenuItem Style="{StaticResource ModernMenuItemStyle}">
                         <MenuItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -227,7 +242,7 @@
                 </Menu>
 
                 <!-- View Menu -->
-                <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                <Menu WindowChrome.IsHitTestVisibleInChrome="True" Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
                     <MenuItem Style="{StaticResource ModernMenuItemStyle}">
                         <MenuItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -280,7 +295,7 @@
                 </Menu>
 
                 <!-- Project Menu -->
-                <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                <Menu WindowChrome.IsHitTestVisibleInChrome="True" Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
                     <MenuItem Style="{StaticResource ModernMenuItemStyle}">
                         <MenuItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -333,7 +348,7 @@
                 </Menu>
 
                 <!-- Build Menu -->
-                <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                <Menu WindowChrome.IsHitTestVisibleInChrome="True" Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
                     <MenuItem Style="{StaticResource ModernMenuItemStyle}">
                         <MenuItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -386,7 +401,7 @@
                 </Menu>
 
                 <!-- Tools Menu -->
-                <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                <Menu WindowChrome.IsHitTestVisibleInChrome="True" Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
                     <MenuItem Style="{StaticResource ModernMenuItemStyle}">
                         <MenuItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -431,7 +446,7 @@
                 </Menu>
 
                 <!-- Terminal Menu -->
-                <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                <Menu WindowChrome.IsHitTestVisibleInChrome="True" Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
                     <MenuItem Style="{StaticResource ModernMenuItemStyle}">
                         <MenuItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -476,7 +491,7 @@
                 </Menu>
 
                 <!-- Help Menu -->
-                <Menu Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
+                <Menu WindowChrome.IsHitTestVisibleInChrome="True" Background="Transparent" BorderThickness="0" Margin="5,0,0,0">
                     <MenuItem Style="{StaticResource ModernMenuItemStyle}">
                         <MenuItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -521,34 +536,25 @@
                 </Menu>
             </StackPanel>
 
-            <!-- Settings Button -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0">
-                <Button x:Name="SettingsButton"
-                        Background="Transparent" 
-                        BorderThickness="0" 
-                        Cursor="Hand"
-                        Click="OnSettingsIconClicked"
-                        Width="32"
-                        Height="32"
-                        Margin="0,0,10,0">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="Border" 
-                                    Background="{TemplateBinding Background}" 
-                                    CornerRadius="3">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="#3c3c3c"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                    <iconPacks:PackIconMaterial Kind="Cog" Width="14" Height="14" Foreground="#cccccc"/>
+            <!-- Settings & Window Controls -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+                <Button x:Name="SettingsButton" Style="{StaticResource WindowButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand" Click="OnSettingsIconClicked" Width="40" Height="35">
+                    <iconPacks:PackIconMaterial Kind="Cog" Width="14" Height="14" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                </Button>
+
+                <!-- Window Controls -->
+                <Button x:Name="MinimizeButton" Style="{StaticResource WindowButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Width="45" Height="35" Click="OnMinimizeClicked">
+                    <iconPacks:PackIconMaterial Kind="Minus" Width="12" Height="12" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                </Button>
+
+                <Button x:Name="MaximizeButton" Style="{StaticResource WindowButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Width="45" Height="35" Click="OnMaximizeRestoreClicked">
+                    <iconPacks:PackIconMaterial x:Name="MaximizeIcon" Kind="WindowMaximize" Width="12" Height="12" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                </Button>
+
+                <Button x:Name="CloseButton" Style="{StaticResource WindowCloseButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" Width="45" Height="35" Click="OnCloseClicked">
+                    <iconPacks:PackIconMaterial Kind="Close" Width="12" Height="12" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
                 </Button>
             </StackPanel>
         </Grid>
     </Border>
 </UserControl>
-    

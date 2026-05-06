@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,6 +31,36 @@ namespace Conda.UI.Views
         public TitleBarControl()
         {
             InitializeComponent();
+            Loaded += TitleBarControl_Loaded;
+        }
+
+        
+        private void TitleBarControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            if (window != null)
+            {
+                window.StateChanged += Window_StateChanged;
+                UpdateMaximizeIcon(window.WindowState);
+            }
+        }
+
+        private void Window_StateChanged(object? sender, EventArgs e)
+        {
+            if (sender is Window window)
+            {
+                UpdateMaximizeIcon(window.WindowState);
+            }
+        }
+
+        private void UpdateMaximizeIcon(WindowState state)
+        {
+            if (MaximizeIcon != null)
+            {
+                MaximizeIcon.Kind = state == WindowState.Maximized 
+                    ? MahApps.Metro.IconPacks.PackIconMaterialKind.WindowRestore 
+                    : MahApps.Metro.IconPacks.PackIconMaterialKind.WindowMaximize;
+            }
         }
 
         private void OnNewProjectClicked(object sender, RoutedEventArgs e)
@@ -84,7 +114,31 @@ namespace Conda.UI.Views
         private void OnAboutClicked(object sender, RoutedEventArgs e)
             => AboutClicked?.Invoke(sender, e);
 
+
         private void OnSettingsIconClicked(object sender, RoutedEventArgs e)
             => SettingsIconClicked?.Invoke(sender, e);
+
+        private void OnMinimizeClicked(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            if (window != null) window.WindowState = WindowState.Minimized;
+        }
+
+        private void OnMaximizeRestoreClicked(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            if (window != null)
+            {
+                window.WindowState = window.WindowState == WindowState.Maximized 
+                    ? WindowState.Normal 
+                    : WindowState.Maximized;
+            }
+        }
+
+        private void OnCloseClicked(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            if (window != null) window.Close();
+        }
     }
 }

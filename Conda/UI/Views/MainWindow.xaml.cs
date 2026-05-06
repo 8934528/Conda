@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Shell;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -448,8 +449,10 @@ namespace Conda
                     Width = 1200,
                     Height = 800,
                     WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                    Background = new SolidColorBrush(Color.FromRgb(30, 30, 30))
+                    Background = new SolidColorBrush(Color.FromRgb(30, 30, 30)),
+                    WindowStyle = WindowStyle.None
                 };
+                WindowChrome.SetWindowChrome(settingsWindow, new WindowChrome { CaptionHeight = 35, ResizeBorderThickness = new Thickness(5), GlassFrameThickness = new Thickness(0), CornerRadius = new CornerRadius(0) });
                 settingsWindow.ShowDialog();
             }
             else
@@ -474,8 +477,10 @@ namespace Conda
                 Width = 1200,
                 Height = 800,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30))
+                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30)),
+                WindowStyle = WindowStyle.None
             };
+            WindowChrome.SetWindowChrome(settingsWindow, new WindowChrome { CaptionHeight = 35, ResizeBorderThickness = new Thickness(5), GlassFrameThickness = new Thickness(0), CornerRadius = new CornerRadius(0) });
             settingsWindow.ShowDialog();
         }
 
@@ -610,8 +615,10 @@ namespace Conda
                 Width = 1400,
                 Height = 900,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                WindowState = WindowState.Maximized
+                WindowState = WindowState.Maximized,
+                WindowStyle = WindowStyle.None
             };
+            WindowChrome.SetWindowChrome(editorWindow, new WindowChrome { CaptionHeight = 35, ResizeBorderThickness = new Thickness(5), GlassFrameThickness = new Thickness(0), CornerRadius = new CornerRadius(0) });
             editorWindow.Show();
             this.Hide();
             editorWindow.Closed += (s, args) => this.Show();
