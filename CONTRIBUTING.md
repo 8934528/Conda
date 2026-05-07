@@ -1,6 +1,6 @@
 # Contributing to Conda IDE
 
-Thank you for your interest in contributing to Conda IDE! I welcome contributions from the community to help make this the best Python game development environment.
+Thank you for your interest in contributing to Conda IDE! I welcome contributions from the community to help make this the best game development environment.
 
 ## How to Contribute
 
