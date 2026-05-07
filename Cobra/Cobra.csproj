@@ -10,6 +10,7 @@
     <RootNamespace>Cobra</RootNamespace>
     <AssemblyName>Cobra</AssemblyName>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+    <NuGetAudit>false</NuGetAudit>
   </PropertyGroup>
 
   <ItemGroup>
