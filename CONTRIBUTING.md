@@ -1,6 +1,6 @@
 # Contributing to Conda IDE
 
-Thank you for your interest in contributing to Conda IDE! We welcome contributions from the community to help make this the best Python game development environment.
+Thank you for your interest in contributing to Conda IDE! I welcome contributions from the community to help make this the best Python game development environment.
 
 ## How to Contribute
 
@@ -15,7 +15,7 @@ If you find a bug, please report it by creating an issue. Include:
 
 ### Suggesting Features
 
-We love new ideas! To suggest a feature:
+I love new ideas! To suggest a feature:
 
 - Check if the feature has already been requested.
 - Provide a clear explanation of how the feature would work and its benefits.
