@@ -370,7 +370,7 @@ namespace Conda.UI.Views
         {
             return extension.ToLower() switch
             {
-                ".py" => "FilePython",
+                ".py" => "LanguagePython",
                 ".txt" => "FileDocument",
                 ".md" => "FileDocument",
                 ".json" => "FileCode",
@@ -435,7 +435,7 @@ namespace Conda.UI.Views
             if (currentContextItem?.DataContext is FileNode node)
             {
                 string parentPath = node.IsDirectory ? node.FullPath : System.IO.Path.GetDirectoryName(node.FullPath)!;
-                string folderName = Microsoft.VisualBasic.Interaction.InputBox("Enter folder name:", "New Folder", "NewFolder");
+                string? folderName = await AnimatedModal.ShowInputModalAsync(Window.GetWindow(this), "New Folder", "Enter folder name:", "NewFolder");
                 if (!string.IsNullOrWhiteSpace(folderName))
                 {
                     string folderPath = System.IO.Path.Combine(parentPath, folderName);
@@ -445,14 +445,13 @@ namespace Conda.UI.Views
                     OutputConsole.Text += $"Created folder: {folderName}\n";
                 }
             }
-            await Task.CompletedTask;
         }
 
         private async void OnRenameClick(object sender, RoutedEventArgs e)
         {
             if (currentContextItem?.DataContext is FileNode node)
             {
-                string newName = Microsoft.VisualBasic.Interaction.InputBox("Enter new name:", "Rename", node.Name);
+                string? newName = await AnimatedModal.ShowInputModalAsync(Window.GetWindow(this), "Rename", "Enter new name:", node.Name);
                 if (!string.IsNullOrWhiteSpace(newName) && newName != node.Name)
                 {
                     string newPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(node.FullPath)!, newName);
@@ -558,7 +557,7 @@ namespace Conda.UI.Views
 
         private async Task CreateNewFileAsync(string parentPath)
         {
-            string fileName = Microsoft.VisualBasic.Interaction.InputBox("Enter file name:", "New File", "newfile.py");
+            string? fileName = await AnimatedModal.ShowInputModalAsync(Window.GetWindow(this), "New File", "Enter file name:", "newfile.py");
             if (!string.IsNullOrWhiteSpace(fileName))
             {
                 string filePath = System.IO.Path.Combine(parentPath, fileName);
@@ -568,7 +567,6 @@ namespace Conda.UI.Views
                 ShowToast($"Created file: {fileName}");
                 OutputConsole.Text += $"Created file: {fileName}\n";
             }
-            await Task.CompletedTask;
         }
 
         private void OnFileTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -1030,15 +1028,15 @@ namespace Conda.UI.Views
 
         private async void OnNewFolderToolbarClick(object sender, RoutedEventArgs e)
         {
-            string folderName = Microsoft.VisualBasic.Interaction.InputBox("Enter folder name:", "New Folder", "NewFolder");
+            string? folderName = await AnimatedModal.ShowInputModalAsync(Window.GetWindow(this), "New Folder", "Enter folder name:", "NewFolder");
             if (!string.IsNullOrWhiteSpace(folderName))
             {
                 string folderPath = System.IO.Path.Combine(projectPath, folderName);
                 Directory.CreateDirectory(folderPath);
                 LoadFiles();
+                ShowToast($"Created folder: {folderName}");
                 OutputConsole.Text += $"Created folder: {folderName}\n";
             }
-            await Task.CompletedTask;
         }
 
         private void OnRefreshClicked(object sender, RoutedEventArgs e)

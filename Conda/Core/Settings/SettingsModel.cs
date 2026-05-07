@@ -65,7 +65,7 @@ namespace Conda.Core.Settings
             set { if (_theme != value) { _theme = value; OnPropertyChanged(); } }
         }
 
-        private string _accentColor = "#007acc";
+        private string _accentColor = "#ff8c00";
         public string AccentColor
         {
             get => _accentColor;

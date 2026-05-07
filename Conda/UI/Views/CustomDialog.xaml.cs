@@ -71,7 +71,7 @@ namespace Conda.UI.Views
                 {
                     case DialogIcon.Info:
                         iconControl.Kind = PackIconMaterialKind.Information;
-                        iconControl.Foreground = new SolidColorBrush(MediaColor.FromRgb(0, 122, 204)); // #007acc
+                        iconControl.Foreground = new SolidColorBrush(MediaColor.FromRgb(255, 140, 0)); // #e67e00
                         break;
                     case DialogIcon.Success:
                         iconControl.Kind = PackIconMaterialKind.CheckCircle;
@@ -87,7 +87,7 @@ namespace Conda.UI.Views
                         break;
                     case DialogIcon.Question:
                         iconControl.Kind = PackIconMaterialKind.HelpCircle;
-                        iconControl.Foreground = new SolidColorBrush(MediaColor.FromRgb(0, 122, 204)); // #007acc
+                        iconControl.Foreground = new SolidColorBrush(MediaColor.FromRgb(255, 140, 0)); // #e67e00
                         break;
                 }
             }
@@ -127,7 +127,7 @@ namespace Conda.UI.Views
             if (dialog.TitleIcon is PackIconMaterial customIconControl)
             {
                 customIconControl.Kind = PackIconMaterialKind.Cog;
-                customIconControl.Foreground = new SolidColorBrush(MediaColor.FromRgb(0, 122, 204)); // #007acc
+                customIconControl.Foreground = new SolidColorBrush(MediaColor.FromRgb(255, 140, 0)); // #007acc
             }
 
             // Add custom content

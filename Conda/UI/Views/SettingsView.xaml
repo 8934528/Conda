@@ -177,7 +177,7 @@
                                                             Kind="Check" 
                                                             Width="12" 
                                                             Height="12" 
-                                                            Foreground="#007acc"
+                                                            Foreground="#ff8c00"
                                                             HorizontalAlignment="Center"
                                                             VerticalAlignment="Center"
                                                             Visibility="Collapsed"/>
@@ -199,7 +199,7 @@
 
         <!-- Button Style -->
         <Style x:Key="PrimaryButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#007acc"/>
+            <Setter Property="Background" Value="#ff8c00"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="15,8"/>
@@ -258,7 +258,7 @@
 
         <!-- Slider Style -->
         <Style x:Key="ModernSliderStyle" TargetType="Slider">
-            <Setter Property="Foreground" Value="#007acc"/>
+            <Setter Property="Foreground" Value="#ff8c00"/>
             <Setter Property="Background" Value="#3c3c3c"/>
             <Setter Property="Height" Value="4"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -292,7 +292,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#007acc"/>
+                                <Setter TargetName="Border" Property="Background" Value="#ff8c00"/>
                                 <Setter TargetName="Thumb" Property="Background" Value="White"/>
                                 <Trigger.EnterActions>
                                     <BeginStoryboard>
@@ -664,7 +664,7 @@
                                         <TextBlock Text="Primary UI accent color" Style="{StaticResource SettingDescriptionStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <Border Width="30" Height="30" CornerRadius="3" Background="#007acc" Margin="0,0,5,0" Cursor="Hand" Tag="Blue" MouseLeftButtonDown="AccentColor_MouseLeftButtonDown">
+                                        <Border Width="30" Height="30" CornerRadius="3" Background="#ff8c00" Margin="0,0,5,0" Cursor="Hand" Tag="Orange" MouseLeftButtonDown="AccentColor_MouseLeftButtonDown">
                                             <Border.ToolTip>
                                                 <ToolTip>Blue (Default)</ToolTip>
                                             </Border.ToolTip>

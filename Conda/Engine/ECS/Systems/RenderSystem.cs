@@ -20,7 +20,7 @@ namespace Conda.Engine.ECS.Systems
                     Width = sprite.Width,
                     Height = sprite.Height,
                     Fill = WpfBrushes.White,
-                    Stroke = WpfBrushes.DeepSkyBlue,
+                    Stroke = WpfBrushes.DarkOrange,
                     StrokeThickness = 1,
                     RenderTransform = new RotateTransform(
                         transform.Rotation,

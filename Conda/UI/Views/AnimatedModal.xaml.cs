@@ -12,6 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Media.Animation;
+using Color = System.Windows.Media.Color;
+using Brushes = System.Windows.Media.Brushes;
+using TextBox = System.Windows.Controls.TextBox;
+using TextBlock = System.Windows.Controls.TextBlock;
 
 namespace Conda.UI.Views
 {
@@ -58,8 +62,8 @@ namespace Conda.UI.Views
                 Width = 100,
                 Height = 32,
                 Margin = new Thickness(5, 0, 0, 0),
-                Background = System.Windows.Media.Brushes.DodgerBlue,
-                Foreground = System.Windows.Media.Brushes.White,
+                Background = new SolidColorBrush(Color.FromRgb(255, 140, 0)), // DarkOrange
+                Foreground = Brushes.White,
                 FontSize = 13,
                 Cursor = System.Windows.Input.Cursors.Hand
             };
@@ -72,8 +76,8 @@ namespace Conda.UI.Views
                 Width = 100,
                 Height = 32,
                 Margin = new Thickness(5, 0, 0, 0),
-                Background = System.Windows.Media.Brushes.Gray,
-                Foreground = System.Windows.Media.Brushes.White,
+                Background = Brushes.Gray,
+                Foreground = Brushes.White,
                 FontSize = 14,
                 Cursor = System.Windows.Input.Cursors.Hand
             };
@@ -86,6 +90,43 @@ namespace Conda.UI.Views
             modal.ShowDialog();
             await Task.Delay(10);
             return (modal.isConfirmed, modal.result);
+        }
+
+        public static async Task<string?> ShowInputModalAsync(
+            Window owner,
+            string title,
+            string message,
+            string defaultValue = "")
+        {
+            var stack = new StackPanel();
+            stack.Children.Add(new TextBlock 
+            { 
+                Text = message, 
+                Foreground = Brushes.White, 
+                Margin = new Thickness(0, 0, 0, 10),
+                FontSize = 14
+            });
+            
+            var textBox = new TextBox 
+            { 
+                Text = defaultValue,
+                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30)),
+                Foreground = Brushes.White,
+                BorderBrush = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
+                Padding = new Thickness(5),
+                FontSize = 14,
+                CaretBrush = Brushes.White
+            };
+            stack.Children.Add(textBox);
+
+            // Focus the textbox when loaded
+            textBox.Loaded += (s, e) => {
+                textBox.Focus();
+                textBox.SelectAll();
+            };
+
+            var (confirmed, _) = await ShowCustomModalAsync(owner, title, stack, "OK", "Cancel");
+            return confirmed ? textBox.Text : null;
         }
 
         private async void Confirm()
