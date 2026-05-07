@@ -131,11 +131,12 @@ namespace Conda
         {
             // Create custom content for the modal
             var contentGrid = new Grid();
-            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Name Label
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Name Input
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Location Label
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Location Input
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Default Checkbox
+            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Venv Section
 
             // Project Name
             var nameLabel = new TextBlock
@@ -215,13 +216,65 @@ namespace Conda
             var useDefaultCheck = new CheckBox
             {
                 Content = "Use default location (CondaProjects folder in user home directory)",
-                Margin = new Thickness(0, 15, 0, 0),
+                Margin = new Thickness(0, 15, 0, 15),
                 Foreground = Brushes.White,
-                FontSize = 14,
+                FontSize = 13,
                 IsChecked = true
             };
             Grid.SetRow(useDefaultCheck, 4);
             contentGrid.Children.Add(useDefaultCheck);
+
+            // Venv Section
+            var venvPanel = new Border
+            {
+                Background = new SolidColorBrush(Color.FromRgb(45, 45, 48)),
+                Padding = new Thickness(15),
+                CornerRadius = new CornerRadius(5),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(63, 63, 70)),
+                BorderThickness = new Thickness(1),
+                Margin = new Thickness(0, 5, 0, 0)
+            };
+            Grid.SetRow(venvPanel, 5);
+            
+            var venvContent = new Grid();
+            venvContent.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            venvContent.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            
+            var venvText = new TextBlock
+            {
+                Text = "Add a virtual environment",
+                Foreground = Brushes.White,
+                FontSize = 14,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontWeight = FontWeights.Medium
+            };
+            Grid.SetColumn(venvText, 0);
+            
+            bool addVenv = true; // Default to true as it was in the checkbox
+            var venvBtn = new Button
+            {
+                Content = "Add Venv",
+                Padding = new Thickness(15, 5, 15, 5),
+                Background = Brushes.Transparent,
+                Foreground = Brushes.White,
+                FontSize = 13,
+                VerticalAlignment = VerticalAlignment.Center,
+                Cursor = System.Windows.Input.Cursors.Hand,
+                Style = (Style)FindResource("CommonRoundedButtonStyle")
+            };
+            Grid.SetColumn(venvBtn, 1);
+            
+            venvBtn.Click += (s, args) =>
+            {
+                addVenv = !addVenv;
+                venvBtn.Foreground = addVenv ? Brushes.White : new SolidColorBrush(Color.FromRgb(150, 150, 150));
+                venvBtn.Opacity = addVenv ? 1.0 : 0.6;
+            };
+            
+            venvContent.Children.Add(venvText);
+            venvContent.Children.Add(venvBtn);
+            venvPanel.Child = venvContent;
+            contentGrid.Children.Add(venvPanel);
 
             browseBtn.Click += (s, args) =>
             {
@@ -245,6 +298,11 @@ namespace Conda
                     locationTextBox.IsEnabled = true;
                 }
             };
+            
+            useDefaultCheck.Unchecked += (s, args) =>
+            {
+                locationTextBox.IsEnabled = true;
+            };
 
             useDefaultCheck.IsChecked = true;
             locationTextBox.IsEnabled = false;
@@ -256,6 +314,7 @@ namespace Conda
             {
                 string projectName = textBox.Text.Trim();
                 string location = locationTextBox.Text.Trim();
+
 
                 if (string.IsNullOrWhiteSpace(projectName))
                 {
@@ -277,72 +336,111 @@ namespace Conda
                     return;
                 }
 
-                // Show progress dialog - Fixed version without CornerRadius on Window
+                // Show progress dialog
                 var progressDialog = new Window
                 {
                     Title = "Creating Project",
-                    Width = 400,
-                    Height = 150,
+                    Width = 450,
+                    Height = 180,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner,
                     Owner = this,
                     WindowStyle = WindowStyle.None,
                     AllowsTransparency = true,
-                    Background = System.Windows.Media.Brushes.Transparent
+                    Background = Brushes.Transparent
                 };
 
-                // Create a border for the rounded corners
                 var mainBorder = new Border
                 {
-                    Background = new SolidColorBrush(Color.FromRgb(45, 45, 45)),
-                    CornerRadius = new CornerRadius(8),
-                    Padding = new Thickness(0)
+                    Background = new SolidColorBrush(Color.FromRgb(30, 30, 30)),
+                    CornerRadius = new CornerRadius(10),
+                    BorderBrush = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
+                    BorderThickness = new Thickness(1),
+                    Effect = new System.Windows.Media.Effects.DropShadowEffect { BlurRadius = 15, Opacity = 0.3 }
                 };
 
                 var progressGrid = new Grid();
                 progressGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                 progressGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                progressGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
                 var progressText = new TextBlock
                 {
-                    Text = "Creating project...",
+                    Text = "Preparing project setup...",
                     Foreground = Brushes.White,
-                    FontSize = 14,
-                    Margin = new Thickness(20, 20, 20, 10),
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center
+                    FontSize = 15,
+                    Margin = new Thickness(25, 25, 25, 10),
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Left
                 };
                 Grid.SetRow(progressText, 0);
                 progressGrid.Children.Add(progressText);
 
                 var progressBar = new ProgressBar
                 {
-                    Height = 4,
-                    Margin = new Thickness(20, 0, 20, 20),
-                    IsIndeterminate = true,
-                    Foreground = new SolidColorBrush(Color.FromRgb(0, 122, 204))
+                    Height = 10,
+                    Margin = new Thickness(25, 10, 25, 10),
+                    Minimum = 0,
+                    Maximum = 100,
+                    Value = 0,
+                    Background = new SolidColorBrush(Color.FromRgb(45, 45, 48)),
+                    BorderThickness = new Thickness(0),
+                    Foreground = new LinearGradientBrush(
+                        Color.FromRgb(255, 140, 0), // DarkOrange
+                        Color.FromRgb(255, 165, 0), // Orange
+                        0)
                 };
                 Grid.SetRow(progressBar, 1);
                 progressGrid.Children.Add(progressBar);
+                
+                var statusText = new TextBlock
+                {
+                    Text = "Starting...",
+                    Foreground = new SolidColorBrush(Color.FromRgb(150, 150, 150)),
+                    FontSize = 12,
+                    Margin = new Thickness(25, 0, 25, 25),
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Left
+                };
+                Grid.SetRow(statusText, 2);
+                progressGrid.Children.Add(statusText);
 
                 mainBorder.Child = progressGrid;
                 progressDialog.Content = mainBorder;
                 progressDialog.Show();
 
-                var progress = new Progress<string>(msg =>
+                // Animate progress bar
+                var animation = new DoubleAnimation
                 {
-                    progressText.Text = msg;
+                    From = 0,
+                    To = 100,
+                    Duration = TimeSpan.FromSeconds(addVenv ? 3 : 2),
+                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
+                };
+                progressBar.BeginAnimation(ProgressBar.ValueProperty, animation);
+
+                var progressReporter = new Progress<string>(msg =>
+                {
+                    statusText.Text = msg;
                 });
 
-                string creationResult = await ProjectCreator.CreateProjectWithVenvAtPathAsync(projectPath, progress);
-
-                progressDialog.Close();
-
-                if (creationResult.StartsWith("Error"))
+                string result;
+                if (addVenv)
                 {
-                    await CustomDialog.ShowAsync(this, creationResult, "Error", DialogIcon.Error);
+                    result = await ProjectCreator.CreateProjectWithVenvAtPathAsync(projectPath, progressReporter);
                 }
                 else
                 {
-                    await CustomDialog.ShowAsync(this, "Project created successfully!", "Success", DialogIcon.Success);
+                    result = await Task.Run(() => ProjectCreator.CreateProjectAtPath(projectPath));
+                }
+
+                // Wait for animation to finish if it's faster
+                await Task.Delay(500);
+                progressDialog.Close();
+
+                if (result.StartsWith("Error"))
+                {
+                    await CustomDialog.ShowAsync(this, result, "Error", DialogIcon.Error);
+                }
+                else
+                {
                     ShowToast("Project created successfully!");
                     OpenProjectEditor(projectPath, projectName);
                 }
@@ -529,14 +627,18 @@ namespace Conda
         private async void OnInstallDepsClicked(object sender, RoutedEventArgs e)
         {
             await CustomDialog.ShowAsync(this,
-                "To install dependencies:\n\n1. Open a project\n2. Navigate to the Editor\n3. Click 'Install Dependencies' button\n\nOr run: pip install -r requirements.txt in terminal",
+                "To install dependencies, please follow these steps:\n\n1. Open your project.\n2. In the explorer, click on the requirements.txt file.\n3. Click the 'Install Requirements' button that appears.",
                 "Install Dependencies",
                 DialogIcon.Info);
         }
 
-        private void OnCheckPythonClicked(object sender, RoutedEventArgs e)
+        private async void OnCheckPythonClicked(object sender, RoutedEventArgs e)
         {
-            _ = CheckPythonStatus();
+            string version = PythonService.GetPythonVersion();
+            await CustomDialog.ShowAsync(this,
+                $"Installed Python Version:\n\n{version}",
+                "Python Status",
+                DialogIcon.Info);
         }
 
         public void OnDocumentationClicked(object sender, RoutedEventArgs e)

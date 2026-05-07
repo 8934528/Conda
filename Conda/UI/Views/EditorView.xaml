@@ -183,6 +183,19 @@
                             </StackPanel>
                         </StackPanel>
                     </Border>
+
+                    <Border x:Name="NavAddVenv" 
+                            Style="{StaticResource NavButtonStyle}" 
+                            Background="Transparent" 
+                            MouseLeftButtonDown="OnAddVenvClicked" 
+                            Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="LanguagePython" Width="14" Height="14" Foreground="#ffca28" Margin="0,0,10,0"/>
+                            <StackPanel>
+                                <TextBlock Text="Add Venv" Foreground="#ffca28" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,2"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </Border>
 

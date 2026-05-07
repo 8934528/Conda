@@ -11,8 +11,8 @@
         AllowsTransparency="True"
         Background="Transparent"
         SizeToContent="WidthAndHeight"
-        MinWidth="400"
-        MaxWidth="600">
+        MinWidth="500"
+        MaxWidth="800">
 
     <Window.Resources>
         <Storyboard x:Key="ShowModalAnimation">
@@ -63,7 +63,7 @@
                 CornerRadius="3,3,0,0"
                 BorderBrush="#3c3c3c" 
                 BorderThickness="1"
-                Width="550"
+                Width="700"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
             <Border.Effect>
@@ -92,13 +92,15 @@
                                                         Width="14" 
                                                         Height="14" 
                                                         Margin="0,0,8,0"
+                                                        VerticalAlignment="Center"
                                                         Foreground="#cccccc"/>
                             <TextBlock x:Name="TitleText" 
-                                       Text="Create New Project" 
-                                       Foreground="White" 
-                                       FontSize="12" 
-                                       Margin="4"
-                                       FontWeight="SemiBold"/>
+                                    Text="Create New Project" 
+                                    Foreground="White" 
+                                    FontSize="12" 
+                                    Margin="4"
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiBold"/>
                         </StackPanel>
                         <Button x:Name="CloseButton"
                                 HorizontalAlignment="Right"

@@ -137,8 +137,7 @@ namespace Conda.UI.Views
 
         private void OnCloseClicked(object sender, RoutedEventArgs e)
         {
-            var window = Window.GetWindow(this);
-            if (window != null) window.Close();
+            Window.GetWindow(this)?.Close();
         }
     }
 }

@@ -9,6 +9,8 @@ namespace Conda.Core.Settings
         private const string SettingsFileName = "conda-settings.json";
         private const string CondaFolderName = ".conda";
 
+        private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+        
         public SettingsModel Settings { get; private set; }
         private readonly string _folderPath;
 
@@ -57,8 +59,7 @@ namespace Conda.Core.Settings
                     try { File.SetAttributes(directory, File.GetAttributes(directory) | FileAttributes.Hidden); } catch { }
                 }
 
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string json = JsonSerializer.Serialize(Settings, options);
+                string json = JsonSerializer.Serialize(Settings, JsonOptions);
                 File.WriteAllText(path, json);
             }
             catch (Exception ex)

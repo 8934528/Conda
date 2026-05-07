@@ -14,6 +14,7 @@ namespace Conda.Core.Settings
             "Conda",
             "settings.json"
         );
+        private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
         public SettingsModel CurrentSettings { get; private set; }
         public event EventHandler? SettingsUpdated;
@@ -28,7 +29,7 @@ namespace Conda.Core.Settings
             SettingsUpdated?.Invoke(this, EventArgs.Empty);
         }
 
-        public SettingsModel Load()
+        public static SettingsModel Load()
         {
             try
             {
@@ -57,8 +58,7 @@ namespace Conda.Core.Settings
                     Directory.CreateDirectory(directory);
                 }
 
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string json = JsonSerializer.Serialize(CurrentSettings, options);
+                string json = JsonSerializer.Serialize(CurrentSettings, JsonOptions);
                 File.WriteAllText(SettingsPath, json);
             }
             catch (Exception ex)

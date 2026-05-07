@@ -84,8 +84,7 @@ namespace Conda.Core.ProjectSystem
 
                 ProjectTemplate.ApplyPygameTemplate(projectPath);
 
-                progress?.Report("Creating virtual environment...");
-                await CreateVirtualEnvironmentAsync(projectPath);
+                await Conda.Core.Environment.VenvService.CopyVenvToProjectAsync(projectPath, progress);
 
                 progress?.Report("Installing dependencies...");
                 await InstallRequirementsAsync(projectPath);

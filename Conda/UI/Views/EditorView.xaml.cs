@@ -199,6 +199,45 @@ namespace Conda.UI.Views
         {
             string venvPath = System.IO.Path.Combine(projectPath, "venv");
             isVenvActive = Directory.Exists(venvPath);
+            
+            if (NavAddVenv != null)
+            {
+                NavAddVenv.Visibility = isVenvActive ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
+
+        private async void OnAddVenvClicked(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                var result = await CustomDialog.ShowAsync(
+                    Window.GetWindow(this),
+                    "Do you want to add a virtual environment to this project?",
+                    "Add Virtual Environment",
+                    DialogIcon.Question,
+                    "Yes",
+                    "No");
+
+                if (result)
+                {
+                    OutputConsole.Text += "Adding virtual environment...\n";
+                    
+                    var progress = new Progress<string>(msg =>
+                    {
+                        Dispatcher.Invoke(() => OutputConsole.Text += $"{msg}\n");
+                    });
+
+                    await Conda.Core.Environment.VenvService.CopyVenvToProjectAsync(projectPath, progress);
+                    
+                    CheckVenvStatus();
+                    ShowToast("Virtual environment added successfully!");
+                    OutputConsole.Text += "Virtual environment ready!\n";
+                }
+            }
+            catch (Exception ex)
+            {
+                await CustomDialog.ShowAsync(Window.GetWindow(this), $"Error adding venv: {ex.Message}", "Error", DialogIcon.Error);
+            }
         }
 
         private async System.Threading.Tasks.Task InitializeWebView()
