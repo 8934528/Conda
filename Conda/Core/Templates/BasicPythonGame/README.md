@@ -1,6 +1,6 @@
 # Conda – Core Collector
 
-A simple Python game built with **pygame**, where you control *Conda* (the snake) and collect points on a grid.
+A simple Python game built with **pygame-ce**, where you control *Conda* (the snake) and collect points on a grid.
 
 Unlike a basic snake game, scoring depends on how close you are to the **core** at the center of the screen.
 
@@ -19,7 +19,7 @@ The twist:
 ## Tech Stack
 
 * Python 3
-* pygame
+* pygame-ce
 
 ---
 
@@ -70,7 +70,7 @@ This project is great for beginners learning:
 * Game loops
 * Movement systems
 * Collision detection
-* Rendering with pygame
+* Rendering with pygame-ce
 * Basic math (distance-based scoring)
 
 ---

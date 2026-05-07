@@ -136,7 +136,7 @@ namespace Conda.Core.Settings
             set { if (_pipIndexUrl != value) { _pipIndexUrl = value; OnPropertyChanged(); } }
         }
 
-        private string _defaultPackages = "pygame, arcade, numpy";
+        private string _defaultPackages = "pygame-ce, arcade, numpy";
         public string DefaultPackages
         {
             get => _defaultPackages;

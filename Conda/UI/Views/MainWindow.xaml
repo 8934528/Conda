@@ -263,7 +263,7 @@
                         </StackPanel>
                         <StackPanel Margin="0,2" Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="PackageVariant" Width="14" Height="14" Foreground="#aaaaaa" Margin="0,0,8,0"/>
-                            <TextBlock Text="Install pygame using: pip install pygame" Foreground="#aaaaaa"/>
+                            <TextBlock Text="Install pygame-ce using: pip install pygame-ce" Foreground="#aaaaaa"/>
                         </StackPanel>
                         <StackPanel Margin="0,2" Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="HexagonOutline" Width="14" Height="14" Foreground="#aaaaaa" Margin="0,0,8,0"/>

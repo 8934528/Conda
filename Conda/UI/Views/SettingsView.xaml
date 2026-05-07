@@ -1161,7 +1161,7 @@
                                     <Border Grid.Column="1" Background="#1e1e1e" CornerRadius="3" Padding="10" Margin="0,0,0,0">
                                         <StackPanel>
                                             <CheckBox Content="Python Language Support" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
-                                            <CheckBox Content="Pygame Snippets" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
+                                            <CheckBox Content="Pygame-ce Snippets" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
                                             <CheckBox Content="Git Integration" IsChecked="False" Style="{StaticResource ModernCheckBoxStyle}"/>
                                             <CheckBox Content="Theme Pack - Monokai" IsChecked="True" Style="{StaticResource ModernCheckBoxStyle}"/>
                                         </StackPanel>

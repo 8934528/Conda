@@ -29,6 +29,7 @@ using Cursors = System.Windows.Input.Cursors;
 
 using Button = System.Windows.Controls.Button;
 using TextBox = System.Windows.Controls.TextBox;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using VerticalAlignment = System.Windows.VerticalAlignment;
 
@@ -57,6 +58,7 @@ namespace Conda.UI.Views
         private readonly NodeGraph currentGraph = new();
 
         private Border? currentSelectedNav;
+        private string? selectedRequirementsPath;
         private static readonly JsonSerializerOptions JsonIndentedOptions = new() { WriteIndented = true };
 
         // Gizmo & Camera Fields
@@ -299,7 +301,7 @@ namespace Conda.UI.Views
                 foreach (var dir in Directory.GetDirectories(path))
                 {
                     var dirName = Path.GetFileName(dir);
-                    if (dirName != "venv" && dirName != "__pycache__")
+                    if (!dirName.Equals("venv", StringComparison.OrdinalIgnoreCase) && !dirName.Equals("__pycache__", StringComparison.OrdinalIgnoreCase))
                     {
                         var dirNode = BuildFileTree(dir);
                         node.Children.Add(dirNode);
@@ -536,6 +538,18 @@ namespace Conda.UI.Views
             {
                 OnShowCodeEditor(null!, null!);
                 OpenFileInTab(node.FullPath);
+
+                // Check if requirements.txt is selected
+                if (node.Name.Equals("requirements.txt", StringComparison.OrdinalIgnoreCase))
+                {
+                    selectedRequirementsPath = node.FullPath;
+                    if (InstallReqButton != null) InstallReqButton.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    selectedRequirementsPath = null;
+                    if (InstallReqButton != null) InstallReqButton.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
@@ -676,8 +690,11 @@ namespace Conda.UI.Views
                 };
                 currentProcess.Exited += (s, args) =>
                 {
-                    Dispatcher.Invoke(() => OutputConsole.Text += $"\nProcess exited with code: {currentProcess.ExitCode}\n");
-                    Dispatcher.Invoke(() => OutputConsole.Text += "----------------------------------------------------------------------------------------\n\n");
+                    Dispatcher.Invoke(() => {
+                        OutputConsole.Text += $"\nProcess exited with code: {currentProcess.ExitCode}\n";
+                        OutputConsole.Text += "----------------------------------------------------------------------------------------\n\n";
+                        OutputConsole.ScrollToEnd();
+                    });
                 };
 
                 currentProcess.Start();
@@ -802,8 +819,149 @@ namespace Conda.UI.Views
 
         private void OnClearConsoleClicked(object sender, RoutedEventArgs e)
         {
-            OutputConsole.Clear();
-            OutputConsole.Text = "Console cleared.\n";
+            if (OutputConsole.Visibility == Visibility.Visible)
+            {
+                OutputConsole.Clear();
+                OutputConsole.Text = "Console cleared.\n";
+            }
+            else
+            {
+                TerminalConsole.Clear();
+                TerminalConsole.Text = "Terminal cleared.\n";
+            }
+        }
+
+        private void OnTabOutputClick(object sender, RoutedEventArgs e)
+        {
+            OutputConsole.Visibility = Visibility.Visible;
+            TerminalContainer.Visibility = Visibility.Collapsed;
+            
+            TabOutputBtn.Foreground = Brushes.White;
+            TabOutputBtn.BorderThickness = new Thickness(0, 0, 0, 2);
+            TabOutputBtn.Background = new SolidColorBrush(Color.FromRgb(45, 45, 48));
+
+            TabTerminalBtn.Foreground = new SolidColorBrush(Color.FromRgb(170, 170, 170));
+            TabTerminalBtn.BorderThickness = new Thickness(0);
+            TabTerminalBtn.Background = Brushes.Transparent;
+        }
+
+        private void OnTabTerminalClick(object sender, RoutedEventArgs e)
+        {
+            OutputConsole.Visibility = Visibility.Collapsed;
+            TerminalContainer.Visibility = Visibility.Visible;
+
+            TabTerminalBtn.Foreground = Brushes.White;
+            TabTerminalBtn.BorderThickness = new Thickness(0, 0, 0, 2);
+            TabTerminalBtn.Background = new SolidColorBrush(Color.FromRgb(45, 45, 48));
+
+            TabOutputBtn.Foreground = new SolidColorBrush(Color.FromRgb(170, 170, 170));
+            TabOutputBtn.BorderThickness = new Thickness(0);
+            TabOutputBtn.Background = Brushes.Transparent;
+            
+            TerminalInput.Focus();
+        }
+
+        private async void OnInstallRequirementsClicked(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(selectedRequirementsPath)) return;
+
+            OnTabTerminalClick(null!, null!);
+            TerminalConsole.Text += $"\n> Installing requirements from {Path.GetFileName(selectedRequirementsPath)}...\n";
+
+            string pythonPath = GetPythonPath() ?? "python";
+            string pipPath = Path.Combine(Path.GetDirectoryName(pythonPath) ?? "", "pip.exe");
+            
+            // If pip doesn't exist in same folder, use -m pip
+            string cmd = File.Exists(pipPath) ? $"\"{pipPath}\"" : $"\"{pythonPath}\" -m pip";
+            string args = $"install -r \"{selectedRequirementsPath}\"";
+
+            await RunTerminalCommandAsync(cmd, args);
+        }
+
+        private async void TerminalInput_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                string input = TerminalInput.Text.Trim();
+                if (string.IsNullOrEmpty(input)) return;
+
+                TerminalInput.Clear();
+                TerminalConsole.Text += $"$ {input}\n";
+
+                if (input.Equals("clear", StringComparison.OrdinalIgnoreCase))
+                {
+                    TerminalConsole.Clear();
+                    return;
+                }
+
+                // Parse command and args
+                string[] parts = input.Split(' ', 2);
+                string cmd = parts[0];
+                string args = parts.Length > 1 ? parts[1] : "";
+
+                // Special handling for common commands
+                if (cmd.Equals("python", StringComparison.OrdinalIgnoreCase) || cmd.Equals("py", StringComparison.OrdinalIgnoreCase))
+                {
+                    cmd = GetPythonPath() ?? "python";
+                }
+                else if (cmd.Equals("pip", StringComparison.OrdinalIgnoreCase))
+                {
+                    string pythonPath = GetPythonPath() ?? "python";
+                    cmd = pythonPath;
+                    args = "-m pip " + args;
+                }
+
+                await RunTerminalCommandAsync(cmd, args);
+            }
+        }
+
+        private async Task RunTerminalCommandAsync(string fileName, string arguments)
+        {
+            try
+            {
+                ProcessStartInfo psi = new()
+                {
+                    FileName = fileName,
+                    Arguments = arguments,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = projectPath
+                };
+
+                using Process process = new() { StartInfo = psi };
+                process.OutputDataReceived += (s, args) =>
+                {
+                    if (!string.IsNullOrEmpty(args.Data))
+                        Dispatcher.Invoke(() => {
+                            TerminalConsole.Text += args.Data + "\n";
+                            TerminalConsole.ScrollToEnd();
+                        });
+                };
+                process.ErrorDataReceived += (s, args) =>
+                {
+                    if (!string.IsNullOrEmpty(args.Data))
+                        Dispatcher.Invoke(() => {
+                            TerminalConsole.Text += "Error: " + args.Data + "\n";
+                            TerminalConsole.ScrollToEnd();
+                        });
+                };
+
+                process.Start();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+                await process.WaitForExitAsync();
+
+                Dispatcher.Invoke(() => {
+                    TerminalConsole.Text += $"\nCommand finished with exit code: {process.ExitCode}\n";
+                    TerminalConsole.ScrollToEnd();
+                });
+            }
+            catch (Exception ex)
+            {
+                TerminalConsole.Text += $"Error: {ex.Message}\n";
+            }
         }
 
         private void OnDocumentationClicked(object sender, RoutedEventArgs e)

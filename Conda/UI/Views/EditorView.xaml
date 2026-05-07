@@ -596,7 +596,7 @@
                 </Border>
             </Grid>
 
-            <!-- OUTPUT CONSOLE -->
+            <!-- BOTTOM PANEL (OUTPUT & TERMINAL) -->
             <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                     Background="#1e1e1e"
                     BorderBrush="#3c3c3c"
@@ -607,12 +607,35 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
+                    <!-- TAB HEADERS & TOOLBAR -->
                     <Border Grid.Row="0" Background="#2d2d30" BorderBrush="#3c3c3c" BorderThickness="0,0,0,1">
                         <Grid>
-                            <TextBlock Foreground="#aaaaaa" FontSize="12" FontWeight="Bold" Margin="10,8,0,8">
-                                OUTPUT
-                            </TextBlock>
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="TabOutputBtn" Click="OnTabOutputClick" Background="#2d2d30" Foreground="White" BorderThickness="0,0,0,2" BorderBrush="#007acc" Padding="15,8" FontSize="12" FontWeight="Bold" Cursor="Hand">
+                                    OUTPUT
+                                </Button>
+                                <Button x:Name="TabTerminalBtn" Click="OnTabTerminalClick" Background="Transparent" Foreground="#aaaaaa" BorderThickness="0" Padding="15,8" FontSize="12" FontWeight="Bold" Cursor="Hand">
+                                    TERMINAL
+                                </Button>
+                            </StackPanel>
+
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                <Button x:Name="InstallReqButton" 
+                                        Click="OnInstallRequirementsClicked" 
+                                        Background="#007acc" 
+                                        Foreground="White" 
+                                        BorderThickness="0" 
+                                        FontSize="11" 
+                                        Padding="8,4" 
+                                        Margin="0,0,10,0" 
+                                        Visibility="Collapsed"
+                                        Cursor="Hand">
+                                    <StackPanel Orientation="Horizontal">
+                                        <iconPacks:PackIconMaterial Kind="Download" Width="12" Height="12" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Install requirements.txt" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
                                 <Button Click="OnClearConsoleClicked" Background="Transparent" Foreground="#aaaaaa" BorderThickness="0" FontSize="12" Cursor="Hand" Margin="5,0">
                                     <StackPanel Orientation="Horizontal">
                                         <iconPacks:PackIconMaterial Kind="Eraser" Width="12" Height="12" Margin="0,0,4,0"/>
@@ -623,18 +646,61 @@
                         </Grid>
                     </Border>
 
-                    <TextBox x:Name="OutputConsole"
-                             Grid.Row="1"
-                             Background="#1e1e1e"
-                             Foreground="#4ec9b0"
-                             FontFamily="Consolas"
-                             FontSize="12"
-                             IsReadOnly="True"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             VerticalScrollBarVisibility="Auto"
-                             BorderThickness="0"
-                             Margin="10,5,10,10"/>
+                    <!-- TAB CONTENT -->
+                    <Grid Grid.Row="1">
+                        <!-- OUTPUT TAB CONTENT -->
+                        <TextBox x:Name="OutputConsole"
+                                 Visibility="Visible"
+                                 Background="#1e1e1e"
+                                 Foreground="#4ec9b0"
+                                 FontFamily="Consolas"
+                                 FontSize="12"
+                                 IsReadOnly="True"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 BorderThickness="0"
+                                 Margin="10,5,10,10"/>
+
+                        <!-- TERMINAL TAB CONTENT -->
+                        <Grid x:Name="TerminalContainer" Visibility="Collapsed">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBox x:Name="TerminalConsole"
+                                     Grid.Row="0"
+                                     Background="#1e1e1e"
+                                     Foreground="#cccccc"
+                                     FontFamily="Consolas"
+                                     FontSize="12"
+                                     IsReadOnly="True"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto"
+                                     BorderThickness="0"
+                                     Margin="10,5,10,5"/>
+
+                            <Grid Grid.Row="1" Margin="10,0,10,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="$ " Foreground="#007acc" VerticalAlignment="Center" FontFamily="Consolas" FontSize="12"/>
+                                <TextBox x:Name="TerminalInput"
+                                         Grid.Column="1"
+                                         Background="Transparent"
+                                         Foreground="White"
+                                         BorderThickness="0"
+                                         CaretBrush="White"
+                                         FontFamily="Consolas"
+                                         FontSize="12"
+                                         VerticalAlignment="Center"
+                                         KeyDown="TerminalInput_KeyDown"/>
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Border>
         </Grid>
