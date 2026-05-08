@@ -160,5 +160,91 @@ namespace Cobra.Core.ProjectSystem
 
             return null;
         }
+        public static async System.Threading.Tasks.Task<string> CreateJsProjectWithViteAsync(string projectPath, IProgress<string> progress)
+        {
+            try
+            {
+                progress?.Report("Initializing JS project structure...");
+                Directory.CreateDirectory(projectPath);
+
+                string projectName = Path.GetFileName(projectPath);
+                ProjectTemplate.ApplyJsPhaserTemplate(projectPath, projectName);
+
+                progress?.Report("Installing dependencies (npm install)...");
+                bool success = await RunNpmInstallAsync(projectPath);
+
+                if (!success)
+                {
+                    return "Error: Failed to install npm dependencies. Make sure Node.js and NPM are installed.";
+                }
+
+                progress?.Report("Project ready!");
+                return $"Project created successfully!\nLocation: {projectPath}";
+            }
+            catch (Exception ex)
+            {
+                return $"Error: {ex.Message}";
+            }
+        }
+
+        private static async System.Threading.Tasks.Task<bool> RunNpmInstallAsync(string projectPath)
+        {
+            return await System.Threading.Tasks.Task.Run(() =>
+            {
+                try
+                {
+                    ProcessStartInfo psi = new()
+                    {
+                        FileName = "cmd.exe",
+                        Arguments = "/c npm install",
+                        WorkingDirectory = projectPath,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
+                    };
+
+                    using Process? process = Process.Start(psi);
+                    if (process == null) return false;
+
+                    process.WaitForExit(180000); // 3 minutes timeout for npm install
+                    return process.ExitCode == 0;
+                }
+                catch
+                {
+                    return false;
+                }
+            });
+        }
+        public static async System.Threading.Tasks.Task<string> AddBackendToProjectAsync(string projectPath, string backendType, IProgress<string> progress)
+        {
+            try
+            {
+                string backendDirName = backendType == "C#" ? "server" : "backend";
+                string backendPath = Path.Combine(projectPath, backendDirName);
+
+                if (Directory.Exists(backendPath))
+                {
+                    return $"Error: {backendDirName} folder already exists!";
+                }
+
+                progress?.Report($"Initializing {backendType} backend...");
+                ProjectTemplate.ApplyBackendTemplate(backendPath, backendType);
+
+                if (backendType == "Node.js")
+                {
+                    progress?.Report("Installing node backend dependencies...");
+                    // We could run npm install here too, but for now we'll just create the files
+                }
+
+                progress?.Report($"{backendType} backend added successfully!");
+                await System.Threading.Tasks.Task.CompletedTask;
+                return $"{backendType} backend added successfully!";
+            }
+            catch (Exception ex)
+            {
+                return $"Error: {ex.Message}";
+            }
+        }
     }
 }

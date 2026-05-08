@@ -29,7 +29,8 @@ namespace Cobra.Core.ProjectSystem
             var dirs = Directory.GetDirectories(projectsPath);
             foreach (var dir in dirs)
             {
-                if (File.Exists(Path.Combine(dir, "main.py")))
+                // Detect Python (main.py) or JS/NPM (package.json) projects
+                if (File.Exists(Path.Combine(dir, "main.py")) || File.Exists(Path.Combine(dir, "package.json")))
                 {
                     projects.Add(new ProjectModel
                     {

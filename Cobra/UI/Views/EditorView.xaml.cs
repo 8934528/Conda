@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Web.WebView2.Core;
 using Cobra.Editor;
+using System.Windows.Shell;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using System.Linq;
@@ -18,6 +19,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Cobra.UI.Views;
 using MahApps.Metro.IconPacks;
+using Cobra.Core.ProjectSystem;
+using System.Text.RegularExpressions;
 
 using Point = System.Windows.Point;
 using Color = System.Windows.Media.Color;
@@ -44,6 +47,7 @@ namespace Cobra.UI.Views
 
         private bool isWebViewReady = false;
         private bool isVenvActive = false;
+        private bool isJsProject = false;
         private bool isFullScreen = false;
         private WindowState previousState;
         private Window? parentWindow;
@@ -55,6 +59,12 @@ namespace Cobra.UI.Views
         // Visual Scripting
         private readonly List<Node> nodes = [];
         private Node? selectedNode;
+
+        [GeneratedRegex(@"\x1B\[[^@-~]*[@-~]")]
+        private static partial Regex AnsiRegex();
+
+        [GeneratedRegex(@"http://localhost:\d+/?")]
+        private static partial Regex UrlRegex();
         private readonly NodeGraph currentGraph = new();
 
         private Border? currentSelectedNav;
@@ -163,11 +173,17 @@ namespace Cobra.UI.Views
         {
             await InitializeWebView();
             LoadFiles();
+            DetectProjectType();
             CheckVenvStatus();
+            CheckBackendStatus();
             OutputConsole.Text = "Cobra Editor Ready!\n";
             OutputConsole.Text += $"Project: {projectPath}\n";
             OutputConsole.Text += "Python virtual environment support enabled\n";
             OutputConsole.Text += "-----------------------------------------------------------------------------\n\n";
+
+            TerminalConsole.Text = "Cobra Terminal Ready!\n";
+            TerminalConsole.Text += $"Project: {projectPath}\n";
+            TerminalConsole.Text += "-----------------------------------------------------------------------------\n\n";
 
 
 
@@ -197,12 +213,164 @@ namespace Cobra.UI.Views
 
         private void CheckVenvStatus()
         {
+            // Only show Venv option for Python projects
+            if (isJsProject)
+            {
+                if (NavAddVenv != null) NavAddVenv.Visibility = Visibility.Collapsed;
+                return;
+            }
+
             string venvPath = System.IO.Path.Combine(projectPath, "venv");
             isVenvActive = Directory.Exists(venvPath);
             
             if (NavAddVenv != null)
             {
                 NavAddVenv.Visibility = isVenvActive ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
+
+        private void DetectProjectType()
+        {
+            isJsProject = File.Exists(Path.Combine(projectPath, "package.json"));
+        }
+
+        private void CheckBackendStatus()
+        {
+            if (FindName("NavAddBackend") is not Border navBackend) return;
+
+            if (!isJsProject)
+            {
+                navBackend.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            // Check if backend already exists (backend/ or server/ folder)
+            bool backendExists = Directory.Exists(Path.Combine(projectPath, "backend")) || 
+                               Directory.Exists(Path.Combine(projectPath, "server"));
+
+            navBackend.Visibility = backendExists ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+
+
+        private static string StripAnsi(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            return AnsiRegex().Replace(text, "");
+        }
+
+        private void DetectAndOpenUrl(string text)
+        {
+            var match = UrlRegex().Match(text);
+            if (match.Success)
+            {
+                string url = match.Value;
+                Dispatcher.Invoke(async () => {
+                    var openResult = await CustomDialog.ShowAsync(Window.GetWindow(this), 
+                        $"Dev server detected at {url}. Open in IDE?", "Dev Server", DialogIcon.Info, "Open", "Ignore");
+                    
+                    if (openResult)
+                    {
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = url,
+                            UseShellExecute = true
+                        });
+                    }
+                });
+            }
+        }
+
+        private async void OnAddBackendClicked(object sender, MouseButtonEventArgs e)
+        {
+            var backendGrid = new Grid();
+            backendGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            backendGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var infoText = new TextBlock
+            {
+                Text = "Select a backend technology for your game:",
+                Foreground = Brushes.White,
+                FontSize = 14,
+                Margin = new Thickness(0, 0, 0, 20),
+                TextWrapping = TextWrapping.Wrap
+            };
+            Grid.SetRow(infoText, 0);
+            backendGrid.Children.Add(infoText);
+
+            var optionsStack = new StackPanel();
+            Grid.SetRow(optionsStack, 1);
+            backendGrid.Children.Add(optionsStack);
+
+            string selectedBackend = "";
+            var backends = new[] { 
+                (Name: "Python (Flask)", Icon: "LanguagePython", Color: "#3776AB"),
+                (Name: "C# (.NET)", Icon: "LanguageCsharp", Color: "#512BD4"),
+                (Name: "Node.js (Express)", Icon: "Nodejs", Color: "#339933")
+            };
+
+            foreach (var b in backends)
+            {
+                var btn = new Button
+                {
+                    Height = 50,
+                    Margin = new Thickness(0, 0, 0, 10),
+                    Background = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(b.Color)),
+                    Foreground = Brushes.White,
+                    BorderThickness = new Thickness(0),
+                    Cursor = Cursors.Hand
+                };
+
+                var content = new StackPanel { Orientation = System.Windows.Controls.Orientation.Horizontal };
+                content.Children.Add(new PackIconMaterial { Kind = (PackIconMaterialKind)Enum.Parse(typeof(PackIconMaterialKind), b.Icon), Width = 18, Height = 18, Margin = new Thickness(0, 0, 10, 0), VerticalAlignment = VerticalAlignment.Center });
+                content.Children.Add(new TextBlock { Text = b.Name, FontSize = 14, FontWeight = FontWeights.Bold, VerticalAlignment = VerticalAlignment.Center });
+                
+                btn.Content = content;
+                btn.Click += (s, args) => {
+                    selectedBackend = b.Name.Split(' ')[0]; // Get Python, C#, or Node.js
+                };
+                optionsStack.Children.Add(btn);
+            }
+
+            var rbStack = new StackPanel();
+            var rbPython = new System.Windows.Controls.RadioButton { Content = "Python (Flask)", Foreground = Brushes.White, Margin = new Thickness(0, 5, 0, 5), IsChecked = true, Tag = "Python" };
+            var rbCSharp = new System.Windows.Controls.RadioButton { Content = "C# (.NET Minimal API)", Foreground = Brushes.White, Margin = new Thickness(0, 5, 0, 5), Tag = "C#" };
+            var rbNode = new System.Windows.Controls.RadioButton { Content = "Node.js (Express)", Foreground = Brushes.White, Margin = new Thickness(0, 5, 0, 5), Tag = "Node.js" };
+            
+            rbStack.Children.Add(rbPython);
+            rbStack.Children.Add(rbCSharp);
+            rbStack.Children.Add(rbNode);
+            Grid.SetRow(rbStack, 1);
+            backendGrid.Children.Remove(optionsStack);
+            backendGrid.Children.Add(rbStack);
+
+            var (confirmed, _) = await AnimatedModal.ShowCustomModalAsync(Window.GetWindow(this), "Add Backend", backendGrid, "Add Backend", "Cancel");
+
+            if (confirmed)
+            {
+                string type = "Python";
+                if (rbCSharp.IsChecked == true) type = "C#";
+                if (rbNode.IsChecked == true) type = "Node.js";
+
+                OutputConsole.Text += $"Adding {type} backend...\n";
+                
+                var progress = new Progress<string>(msg =>
+                {
+                    Dispatcher.Invoke(() => OutputConsole.Text += $"{msg}\n");
+                });
+
+                string result = await ProjectCreator.AddBackendToProjectAsync(projectPath, type, progress);
+                
+                if (result.StartsWith("Error"))
+                {
+                    await CustomDialog.ShowAsync(Window.GetWindow(this), result, "Error", DialogIcon.Error);
+                }
+                else
+                {
+                    ShowToast($"{type} backend added successfully!");
+                    CheckBackendStatus();
+                    LoadFiles();
+                }
             }
         }
 
@@ -587,6 +755,16 @@ namespace Cobra.UI.Views
                     selectedRequirementsPath = null;
                     if (InstallReqButton != null) InstallReqButton.Visibility = Visibility.Collapsed;
                 }
+
+                // Check if package.json is selected
+                if (node.Name.Equals("package.json", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (FindName("InstallNpmButton") is Button npmBtn) npmBtn.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    if (FindName("InstallNpmButton") is Button npmBtn) npmBtn.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
@@ -648,9 +826,17 @@ namespace Cobra.UI.Views
                 openTabs.Remove(tab);
                 OutputConsole.Text += $"Closed: {tab.Name}\n";
                 if (openTabs.Count > 0)
+                {
                     FileTabs.SelectedItem = openTabs.Last();
+                }
                 else
+                {
                     currentFilePath = string.Empty;
+                    if (isWebViewReady && CodeWebView?.CoreWebView2 != null)
+                    {
+                        await CodeWebView.CoreWebView2.ExecuteScriptAsync("setCode('')");
+                    }
+                }
             }
         }
 
@@ -693,20 +879,45 @@ namespace Cobra.UI.Views
                 // Save current file first
                 await SaveCurrentFile();
 
-                string mainFile = System.IO.Path.Combine(projectPath, "main.py");
-                if (!File.Exists(mainFile))
+                // Check for JS/NPM project first
+                string packageJsonPath = System.IO.Path.Combine(projectPath, "package.json");
+                if (System.IO.File.Exists(packageJsonPath))
                 {
-                    await CustomDialog.ShowAsync(Window.GetWindow(this), "main.py not found.", "Error", DialogIcon.Error);
+                    OutputConsole.Text += "\nDetected JS/NPM project. Running 'npm run dev' in Terminal...\n";
+                    // Focus terminal
+                    OnTabTerminalClick(null!, null!);
+                    
+                    string cmd = "cmd.exe";
+                    string args = "/c npm run dev";
+                    
+                    // Run in terminal so user can see the dev server output
+                    _ = RunTerminalCommandAsync(cmd, args);
                     return;
                 }
 
-                OutputConsole.Text += "\nRunning game...\n";
+                string runFile = "";
+                if (FileTabs.SelectedItem is OpenTab tab && tab.FilePath.EndsWith(".py"))
+                {
+                    runFile = tab.FilePath;
+                }
+                else
+                {
+                    runFile = System.IO.Path.Combine(projectPath, "main.py");
+                }
+
+                if (!File.Exists(runFile))
+                {
+                    await CustomDialog.ShowAsync(Window.GetWindow(this), "No project file detected. Ensure main.py or package.json exists.", "Error", DialogIcon.Error);
+                    return;
+                }
+
+                OutputConsole.Text += $"\nRunning {System.IO.Path.GetFileName(runFile)}...\n";
                 string pythonPath = GetPythonPath() ?? "python";
 
                 ProcessStartInfo psi = new()
                 {
                     FileName = pythonPath,
-                    Arguments = $"\"{mainFile}\"",
+                    Arguments = $"\"{runFile}\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -914,6 +1125,18 @@ namespace Cobra.UI.Views
 
             await RunTerminalCommandAsync(cmd, args);
         }
+        
+        private async void OnInstallNpmClicked(object sender, RoutedEventArgs e)
+        {
+            OnTabTerminalClick(null!, null!);
+            TerminalConsole.Text += "\n> Running 'npm install'...\n";
+
+            string cmd = "cmd.exe";
+            string args = "/c npm install";
+
+            await RunTerminalCommandAsync(cmd, args);
+            ShowToast("Dependencies installation finished");
+        }
 
         private async void TerminalInput_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -948,6 +1171,17 @@ namespace Cobra.UI.Views
                     args = "-m pip " + args;
                 }
 
+                // Handle Windows shell built-ins and ensuring commands run correctly
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+                {
+                    // Check if it's a known exe, if not wrap in cmd /c
+                    string originalCmd = cmd;
+                    string originalArgs = args;
+                    
+                    cmd = "cmd.exe";
+                    args = $"/c \"{originalCmd} {originalArgs}\"";
+                }
+
                 await RunTerminalCommandAsync(cmd, args);
             }
         }
@@ -971,18 +1205,30 @@ namespace Cobra.UI.Views
                 process.OutputDataReceived += (s, args) =>
                 {
                     if (!string.IsNullOrEmpty(args.Data))
+                    {
+                        string cleanData = StripAnsi(args.Data);
                         Dispatcher.Invoke(() => {
-                            TerminalConsole.Text += args.Data + "\n";
+                            TerminalConsole.Text += cleanData + "\n";
                             TerminalConsole.ScrollToEnd();
+                            
+                            // Detect Vite/Dev server URL
+                            if (cleanData.Contains("http://localhost:"))
+                            {
+                                DetectAndOpenUrl(cleanData);
+                            }
                         });
+                    }
                 };
                 process.ErrorDataReceived += (s, args) =>
                 {
                     if (!string.IsNullOrEmpty(args.Data))
+                    {
+                        string cleanData = StripAnsi(args.Data);
                         Dispatcher.Invoke(() => {
-                            TerminalConsole.Text += "Error: " + args.Data + "\n";
+                            TerminalConsole.Text += "Error: " + cleanData + "\n";
                             TerminalConsole.ScrollToEnd();
                         });
+                    }
                 };
 
                 process.Start();
@@ -1074,8 +1320,10 @@ namespace Cobra.UI.Views
                 Width = 1200,
                 Height = 800,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30))
+                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30)),
+                WindowStyle = WindowStyle.None
             };
+            WindowChrome.SetWindowChrome(settingsWindow, new WindowChrome { CaptionHeight = 35, ResizeBorderThickness = new Thickness(5), GlassFrameThickness = new Thickness(0), CornerRadius = new CornerRadius(0) });
             settingsWindow.ShowDialog();
         }
 
@@ -1109,8 +1357,10 @@ namespace Cobra.UI.Views
                 Width = 1200,
                 Height = 800,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30))
+                Background = new SolidColorBrush(Color.FromRgb(30, 30, 30)),
+                WindowStyle = WindowStyle.None
             };
+            WindowChrome.SetWindowChrome(settingsWindow, new WindowChrome { CaptionHeight = 35, ResizeBorderThickness = new Thickness(5), GlassFrameThickness = new Thickness(0), CornerRadius = new CornerRadius(0) });
             settingsWindow.ShowDialog();
         }
 

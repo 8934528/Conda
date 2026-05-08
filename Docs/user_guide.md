@@ -5,30 +5,33 @@ This guide will walk you through the primary workflows in the Cobra IDE.
 ## 1. Creating a New Project
 
 - Launch Cobra and click **New Project** on the Dashboard.
-- Choose a name and location. Cobra will automatically set up a basic `main.py` and a virtual environment if configured.
+- Choose a project type: **Python (Pygame)** or **JavaScript (Phaser/NPM)**.
+- Cobra will automatically set up the appropriate structure, including `.gitignore` and template files.
 
-## 2. Using the Code Editor
+## 2. Dependency Management
 
-- Open files from the **Explorer** on the right.
-- The editor supports standard shortcuts (Ctrl+S to save, Ctrl+F to find).
-- You can customize fonts and themes in **Settings > Theme and Editor**.
+- **Python**: When `requirements.txt` is selected in the explorer, click the **Download** icon in the console toolbar to install dependencies.
+- **JavaScript/NPM**: When `package.json` is selected, click the **NPM** icon to run `npm install` automatically.
 
-## 3. Designing Scenes
+## 3. Running Your Game
 
-- Click the **Scene** icon in the left sidebar to switch to the Visual Editor.
-- Drag image assets from the Explorer onto the canvas to create sprites.
-- Use the **Inspector** (appearing when an object is selected) to modify position, scale, and rotation.
-- Click **Play** to test your scene.
+- Click the **Run** (Play) button in the editor.
+- **Python**: Launches the game window immediately.
+- **JS/NPM**: Starts a Vite dev server. Cobra will detect the server URL and prompt you to launch the game in your browser.
 
-## 4. Running Your Game
+## 4. Expanding with Backends
 
-- Use the **Run** button (Play icon) in the Code Editor to execute `main.py`.
-- View logs and errors in the **Output** console at the bottom.
-- Use the **Integrated Terminal** for manual commands like `pip install`.
+- If your project needs a server, click the **Add Backend** button in the left sidebar.
+- Select from **Python (Flask)**, **Node.js (Express)**, or **C# (.NET)**.
+- Cobra will generate a `backend/` folder with starter code and matching configuration.
 
-## 5. Configuring the IDE
+## 5. Visual Editor & Scripting
+
+- Switch to the **Scene** tab for drag-and-drop level design.
+- Use the **Inspector** to modify object properties.
+- Use **Visual Scripting** (Scripting tab) for node-based logic.
+
+## 6. Configuring the IDE
 
 - Access **Settings** via the gear icon.
-- **General**: Language, Auto-save, and API keys.
-- **Theme**: Accent colors, fonts, and editor behavior.
-- **Game Engine**: Resolution, FPS limits, and physics settings.
+- Customize **Themes**, **Editor Fonts**, and **Game Engine** parameters like resolution and FPS.

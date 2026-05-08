@@ -17,7 +17,13 @@ namespace Cobra.Core.ProjectSystem
 __pycache__/
 *.pyc
 .env
-.DS_Store");
+.DS_Store
+bin/
+obj/
+.vscode/
+.idea/
+*.log
+");
 
             // Create main.py
             File.WriteAllText(Path.Combine(projectPath, "main.py"),
@@ -338,6 +344,284 @@ Built with Cobra IDE");
             // Create requirements.txt
             File.WriteAllText(Path.Combine(projectPath, "requirements.txt"),
 @"pygame-ce");
+        }
+        public static void ApplyJsPhaserTemplate(string projectPath, string projectName)
+        {
+            // Create directories
+            Directory.CreateDirectory(Path.Combine(projectPath, "public", "assets"));
+            Directory.CreateDirectory(Path.Combine(projectPath, "src", "scenes"));
+            Directory.CreateDirectory(Path.Combine(projectPath, "src", "entities"));
+            Directory.CreateDirectory(Path.Combine(projectPath, "src", "systems"));
+            Directory.CreateDirectory(Path.Combine(projectPath, "src", "ui"));
+            Directory.CreateDirectory(Path.Combine(projectPath, "src", "physics"));
+            Directory.CreateDirectory(Path.Combine(projectPath, "src", "multiplayer"));
+
+            // package.json
+            File.WriteAllText(Path.Combine(projectPath, "package.json"),
+$@"{{
+  ""name"": ""{projectName.ToLower().Replace(" ", "-")}"",
+  ""private"": true,
+  ""version"": ""0.0.0"",
+  ""type"": ""module"",
+  ""scripts"": {{
+    ""dev"": ""vite"",
+    ""build"": ""vite build"",
+    ""preview"": ""vite preview""
+  }},
+  ""dependencies"": {{
+    ""phaser"": ""^3.60.0""
+  }},
+  ""devDependencies"": {{
+    ""vite"": ""^4.4.5""
+  }}
+}}");
+
+            // vite.config.js
+            File.WriteAllText(Path.Combine(projectPath, "vite.config.js"),
+@"import { defineConfig } from 'vite'
+
+export default defineConfig({
+  base: './',
+  build: {
+    chunkSizeWarningLimit: 1500,
+  },
+})");
+
+            // .gitignore
+            File.WriteAllText(Path.Combine(projectPath, ".gitignore"),
+@"node_modules/
+dist/
+.env
+.DS_Store
+package-lock.json
+bin/
+obj/
+.vscode/
+.idea/
+*.log
+");
+
+            // src/main.js
+            File.WriteAllText(Path.Combine(projectPath, "src", "main.js"),
+@"import Phaser from 'phaser';
+import MainScene from './scenes/MainScene';
+
+const config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
+    parent: 'game-container',
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 0 },
+            debug: false
+        }
+    },
+    scene: [MainScene]
+};
+
+const game = new Phaser.Game(config);
+");
+
+            // src/scenes/MainScene.js
+            File.WriteAllText(Path.Combine(projectPath, "src", "scenes", "MainScene.js"),
+@"import Phaser from 'phaser';
+
+export default class MainScene extends Phaser.Scene {
+    constructor() {
+        super('MainScene');
+    }
+
+    preload() {
+        // Load assets here
+        this.load.setBaseURL('https://labs.phaser.io');
+        this.load.image('sky', 'assets/skies/space3.png');
+        this.load.image('logo', 'assets/sprites/phaser3-logo.png');
+        this.load.image('red', 'assets/particles/red.png');
+    }
+
+    create() {
+        this.add.image(400, 300, 'sky');
+
+        const particles = this.add.particles(0, 0, 'red', {
+            speed: 100,
+            scale: { start: 1, end: 0 },
+            blendMode: 'ADD'
+        });
+
+        const logo = this.physics.add.image(400, 100, 'logo');
+
+        logo.setVelocity(100, 200);
+        logo.setBounce(1, 1);
+        logo.setCollideWorldBounds(true);
+
+        particles.startFollow(logo);
+
+        this.add.text(10, 10, 'Cobra JS+NPM Template', { font: '16px Courier', fill: '#00ff00' });
+    }
+
+    update() {
+        // Game loop logic
+    }
+}
+");
+
+            // index.html (Required for Vite)
+            File.WriteAllText(Path.Combine(projectPath, "index.html"),
+$@"<!DOCTYPE html>
+<html lang=""en"">
+  <head>
+    <meta charset=""UTF-8"" />
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"" />
+    <title>{projectName}</title>
+    <style>
+      body {{
+        margin: 0;
+        background-color: #000;
+        overflow: hidden;
+      }}
+      #game-container {{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }}
+    </style>
+  </head>
+  <body>
+    <div id=""game-container""></div>
+    <script type=""module"" src=""/src/main.js""></script>
+  </body>
+</html>");
+
+            // README.md
+            File.WriteAllText(Path.Combine(projectPath, "README.md"),
+$@"# {projectName}
+
+JS+NPM Game Project built with Cobra IDE and Phaser engine.
+
+## Scalable Architecture
+- `src/scenes/`: Manage different game states/levels.
+- `src/entities/`: Reusable game objects and behaviors.
+- `src/systems/`: Core game logic and processing.
+- `src/ui/`: User interface components.
+- `src/physics/`: Custom physics configurations.
+- `src/multiplayer/`: Networking and synchronization logic.
+
+## Workflow
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Run development server:
+   ```bash
+   npm run dev
+   ```
+3. Build for production:
+   ```bash
+   npm run build
+   ```
+
+Built with Cobra IDE");
+        }
+
+        public static void ApplyBackendTemplate(string backendPath, string backendType)
+        {
+            Directory.CreateDirectory(backendPath);
+
+            switch (backendType)
+            {
+                case "Python":
+                    ApplyPythonBackend(backendPath);
+                    break;
+                case "C#":
+                    ApplyCSharpBackend(backendPath);
+                    break;
+                case "Node.js":
+                    ApplyNodeBackend(backendPath);
+                    break;
+            }
+        }
+
+        private static void ApplyPythonBackend(string path)
+        {
+            File.WriteAllText(Path.Combine(path, "app.py"),
+@"from flask import Flask, jsonify
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/api/status')
+def status():
+    return jsonify({""status"": ""Backend is running"", ""engine"": ""Python/Flask""})
+
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)");
+
+            File.WriteAllText(Path.Combine(path, "requirements.txt"),
+@"flask
+flask-cors");
+        }
+
+        private static void ApplyCSharpBackend(string path)
+        {
+            string projectName = "Backend";
+            File.WriteAllText(Path.Combine(path, $"{projectName}.csproj"),
+@"<Project Sdk=""Microsoft.NET.Sdk.Web"">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+</Project>");
+
+            File.WriteAllText(Path.Combine(path, "Program.cs"),
+@"var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors();
+var app = builder.Build();
+
+app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+app.MapGet(""/api/status"", () => new { status = ""Backend is running"", engine = ""C#/.NET Minimal API"" });
+
+app.Run();");
+        }
+
+        private static void ApplyNodeBackend(string path)
+        {
+            File.WriteAllText(Path.Combine(path, "package.json"),
+@"{
+  ""name"": ""backend"",
+  ""version"": ""1.0.0"",
+  ""main"": ""index.js"",
+  ""scripts"": {
+    ""start"": ""node index.js"",
+    ""dev"": ""nodemon index.js""
+  },
+  ""dependencies"": {
+    ""express"": ""^4.18.2"",
+    ""cors"": ""^2.8.5""
+  }
+}");
+
+            File.WriteAllText(Path.Combine(path, "index.js"),
+@"const express = require('express');
+const cors = require('cors');
+const app = express();
+const port = 5000;
+
+app.use(cors());
+app.use(express.json());
+
+app.get('/api/status', (req, res) => {
+  res.json({ status: 'Backend is running', engine: 'Node.js/Express' });
+});
+
+app.listen(port, () => {
+  console.log(`Backend listening at http://localhost:${port}`);
+});");
         }
     }
 }

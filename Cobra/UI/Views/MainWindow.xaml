@@ -116,9 +116,31 @@
                                 Foreground="White"
                                 Width="35"
                                 Height="35"
+                                Margin="0,0,10,0"
                                 Style="{StaticResource CommonRoundedButtonStyle}"
                                 ToolTip="Check Python">
                             <iconPacks:PackIconMaterial Kind="LanguagePython" Width="16" Height="16"/>
+                        </Button>
+
+                        <Button Click="OnCheckNodeClicked"
+                                Background="#339933"
+                                Foreground="White"
+                                Width="35"
+                                Height="35"
+                                Margin="0,0,10,0"
+                                Style="{StaticResource CommonRoundedButtonStyle}"
+                                ToolTip="Check Node.js">
+                            <iconPacks:PackIconMaterial Kind="Nodejs" Width="16" Height="16"/>
+                        </Button>
+
+                        <Button Click="OnCheckNpmClicked"
+                                Background="#CB3837"
+                                Foreground="White"
+                                Width="35"
+                                Height="35"
+                                Style="{StaticResource CommonRoundedButtonStyle}"
+                                ToolTip="Check NPM">
+                            <iconPacks:PackIconMaterial Kind="Npm" Width="18" Height="18"/>
                         </Button>
                     </StackPanel>
                 </Grid>
@@ -177,6 +199,7 @@
                              Background="Transparent"
                              BorderThickness="0"
                              FontSize="12"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
                              SelectionChanged="OnProjectSelected">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -237,16 +260,24 @@
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="25"/>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="25"/>
                             </Grid.RowDefinitions>
                             
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Python:" Foreground="#aaaaaa"/>
                             <TextBlock x:Name="PythonStatusText" Grid.Row="0" Grid.Column="1" Text="Checking..." Foreground="White"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Node.js:" Foreground="#aaaaaa"/>
+                            <TextBlock x:Name="NodeStatusText" Grid.Row="1" Grid.Column="1" Text="Checking..." Foreground="White"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="NPM:" Foreground="#aaaaaa"/>
+                            <TextBlock x:Name="NpmStatusText" Grid.Row="2" Grid.Column="1" Text="Checking..." Foreground="White"/>
                             
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Projects Path:" Foreground="#aaaaaa"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ProjectsPath}" Foreground="White"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Projects Path:" Foreground="#aaaaaa"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ProjectsPath}" Foreground="White"/>
                             
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Total Projects:" Foreground="#aaaaaa"/>
-                            <TextBlock x:Name="ProjectCountText" Grid.Row="2" Grid.Column="1" Text="0" Foreground="White"/>
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Total Projects:" Foreground="#aaaaaa"/>
+                            <TextBlock x:Name="ProjectCountText" Grid.Row="4" Grid.Column="1" Text="0" Foreground="White"/>
                         </Grid>
                     </StackPanel>
                 </Border>

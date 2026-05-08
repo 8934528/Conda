@@ -8,9 +8,10 @@ To provide a seamless, all-in-one environment where developers can write code, d
 
 ## Core Features
 
-- **Multi-Tab Code Editor**: Powered by Monaco (the same engine as VS Code), featuring Python syntax highlighting, autocompletion, and configurable themes.
-- **Visual Scene Editor**: A drag-and-drop canvas for level design, allowing developers to place sprites, adjust transforms, and see changes in real-time.
-- **Integrated Terminal**: Run Python scripts and manage dependencies directly within the IDE.
-- **Entity Component System (ECS)**: A robust engine core that allows for decoupled, high-performance game logic.
-- **Visual Scripting**: A node-based logic system for those who prefer visual workflows or rapid prototyping.
-- **Dynamic Settings**: Real-time configuration of the IDE's appearance, editor behavior, and game engine parameters.
+- **Multi-Tab Code Editor**: Powered by Monaco, featuring syntax highlighting for Python, JavaScript, HTML, CSS, and more.
+- **Cross-Platform Game Support**: Native support for Python (Pygame) and JavaScript (Phaser.js) game development.
+- **Visual Scene Editor**: A drag-and-drop canvas for level design, allowing developers to place sprites and adjust transforms.
+- **Integrated Terminal**: High-performance terminal with ANSI stripping and automatic dev-server detection for web-based games.
+- **One-Click Dependency Management**: Instant installation for `requirements.txt` (Python) and `package.json` (NPM).
+- **Backend Integration**: Easily add Python (Flask), Node.js (Express), or C# (.NET) backends to your game projects with automated template generation.
+- **Visual Scripting & ECS**: A robust node-based logic system and Entity Component System for high-performance game architecture.

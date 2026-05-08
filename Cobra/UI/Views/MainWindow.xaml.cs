@@ -72,6 +72,8 @@ namespace Cobra
             await CheckPython();
             await LoadProjects();
             await CheckPythonStatus();
+            await CheckNodeStatus();
+            await CheckNpmStatus();
         }
 
         private async System.Threading.Tasks.Task LoadProjects()
@@ -103,6 +105,42 @@ namespace Cobra
             await System.Threading.Tasks.Task.CompletedTask;
         }
 
+        private async System.Threading.Tasks.Task CheckNodeStatus()
+        {
+            if (FindName("NodeStatusText") is not TextBlock nodeText) return;
+
+            if (NodeService.IsNodeInstalled())
+            {
+                string version = NodeService.GetNodeVersion();
+                nodeText.Text = version;
+                nodeText.Foreground = System.Windows.Media.Brushes.LightGreen;
+            }
+            else
+            {
+                nodeText.Text = "Node.js not found. Please install Node.js.";
+                nodeText.Foreground = System.Windows.Media.Brushes.Red;
+            }
+            await System.Threading.Tasks.Task.CompletedTask;
+        }
+
+        private async System.Threading.Tasks.Task CheckNpmStatus()
+        {
+            if (FindName("NpmStatusText") is not TextBlock npmText) return;
+
+            if (NodeService.IsNpmInstalled())
+            {
+                string version = NodeService.GetNpmVersion();
+                npmText.Text = version;
+                npmText.Foreground = System.Windows.Media.Brushes.LightGreen;
+            }
+            else
+            {
+                npmText.Text = "NPM not found. Please install NPM.";
+                npmText.Foreground = System.Windows.Media.Brushes.Red;
+            }
+            await System.Threading.Tasks.Task.CompletedTask;
+        }
+
         private static async System.Threading.Tasks.Task CheckPython()
         {
             if (!PythonService.IsPythonInstalled())
@@ -130,13 +168,50 @@ namespace Cobra
         public async void OnNewProjectClicked(object sender, RoutedEventArgs e)
         {
             // Create custom content for the modal
-            var contentGrid = new Grid();
-            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Name Label
-            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Name Input
-            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Location Label
-            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Location Input
-            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Default Checkbox
-            contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Venv Section
+            var mainContentGrid = new Grid();
+            mainContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Language Tabs
+            mainContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Name Label
+            mainContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Name Input
+            mainContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Location Label
+            mainContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Location Input
+            mainContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Default Checkbox
+            mainContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Config Section (Venv or JS)
+
+            // Custom Style for TabItems to make them look premium
+            var tabItemStyle = new Style(typeof(System.Windows.Controls.TabItem));
+            tabItemStyle.Setters.Add(new Setter(System.Windows.Controls.TabItem.BackgroundProperty, Brushes.Transparent));
+            tabItemStyle.Setters.Add(new Setter(System.Windows.Controls.TabItem.BorderThicknessProperty, new Thickness(0)));
+            tabItemStyle.Setters.Add(new Setter(System.Windows.Controls.TabItem.ForegroundProperty, new SolidColorBrush(Color.FromRgb(170, 170, 170))));
+            tabItemStyle.Setters.Add(new Setter(System.Windows.Controls.TabItem.TemplateProperty, CreateTabItemTemplate()));
+
+            var langTabControl = new System.Windows.Controls.TabControl
+            {
+                Background = Brushes.Transparent,
+                BorderThickness = new Thickness(0),
+                Margin = new Thickness(0, 0, 0, 20),
+                ItemContainerStyle = tabItemStyle
+            };
+            Grid.SetRow(langTabControl, 0);
+
+            var pythonTab = new System.Windows.Controls.TabItem
+            {
+                Header = "PYTHON",
+                Padding = new Thickness(20, 10, 20, 10),
+                FontSize = 12,
+                FontWeight = FontWeights.Bold
+            };
+            
+            var jsTab = new System.Windows.Controls.TabItem
+            {
+                Header = "JS + NPM",
+                Padding = new Thickness(20, 10, 20, 10),
+                FontSize = 12,
+                FontWeight = FontWeights.Bold
+            };
+
+            langTabControl.Items.Add(pythonTab);
+            langTabControl.Items.Add(jsTab);
+            mainContentGrid.Children.Add(langTabControl);
 
             // Project Name
             var nameLabel = new TextBlock
@@ -147,8 +222,8 @@ namespace Cobra
                 FontSize = 14,
                 FontWeight = FontWeights.SemiBold
             };
-            Grid.SetRow(nameLabel, 0);
-            contentGrid.Children.Add(nameLabel);
+            Grid.SetRow(nameLabel, 1);
+            mainContentGrid.Children.Add(nameLabel);
 
             var textBox = new TextBox
             {
@@ -162,8 +237,8 @@ namespace Cobra
                 BorderThickness = new Thickness(1),
                 Padding = new Thickness(10, 0, 10, 0)
             };
-            Grid.SetRow(textBox, 1);
-            contentGrid.Children.Add(textBox);
+            Grid.SetRow(textBox, 2);
+            mainContentGrid.Children.Add(textBox);
 
             // Location
             var locationLabel = new TextBlock
@@ -174,13 +249,13 @@ namespace Cobra
                 FontSize = 14,
                 FontWeight = FontWeights.SemiBold
             };
-            Grid.SetRow(locationLabel, 2);
-            contentGrid.Children.Add(locationLabel);
+            Grid.SetRow(locationLabel, 3);
+            mainContentGrid.Children.Add(locationLabel);
 
             var locationPanel = new Grid();
             locationPanel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             locationPanel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            Grid.SetRow(locationPanel, 3);
+            Grid.SetRow(locationPanel, 4);
 
             var locationTextBox = new TextBox
             {
@@ -204,13 +279,14 @@ namespace Cobra
                 Background = new SolidColorBrush(Color.FromRgb(60, 60, 60)),
                 Foreground = Brushes.White,
                 FontSize = 14,
-                Cursor = System.Windows.Input.Cursors.Hand
+                Cursor = System.Windows.Input.Cursors.Hand,
+                Style = (Style)FindResource("CommonRoundedButtonStyle")
             };
             Grid.SetColumn(browseBtn, 1);
 
             locationPanel.Children.Add(locationTextBox);
             locationPanel.Children.Add(browseBtn);
-            contentGrid.Children.Add(locationPanel);
+            mainContentGrid.Children.Add(locationPanel);
 
             // Use default checkbox
             var useDefaultCheck = new CheckBox
@@ -221,10 +297,10 @@ namespace Cobra
                 FontSize = 13,
                 IsChecked = true
             };
-            Grid.SetRow(useDefaultCheck, 4);
-            contentGrid.Children.Add(useDefaultCheck);
+            Grid.SetRow(useDefaultCheck, 5);
+            mainContentGrid.Children.Add(useDefaultCheck);
 
-            // Venv Section
+            // Venv Section (For Python)
             var venvPanel = new Border
             {
                 Background = new SolidColorBrush(Color.FromRgb(45, 45, 48)),
@@ -232,9 +308,10 @@ namespace Cobra
                 CornerRadius = new CornerRadius(5),
                 BorderBrush = new SolidColorBrush(Color.FromRgb(63, 63, 70)),
                 BorderThickness = new Thickness(1),
-                Margin = new Thickness(0, 5, 0, 0)
+                Margin = new Thickness(0, 5, 0, 0),
+                Visibility = Visibility.Visible
             };
-            Grid.SetRow(venvPanel, 5);
+            Grid.SetRow(venvPanel, 6);
             
             var venvContent = new Grid();
             venvContent.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -250,17 +327,18 @@ namespace Cobra
             };
             Grid.SetColumn(venvText, 0);
             
-            bool addVenv = true; // Default to true as it was in the checkbox
+            bool addVenv = false;
             var venvBtn = new Button
             {
                 Content = "Add Venv",
-                Padding = new Thickness(15, 5, 15, 5),
+                Padding = new Thickness(25, 10, 25, 10),
                 Background = Brushes.Transparent,
-                Foreground = Brushes.White,
+                Foreground = new SolidColorBrush(Color.FromRgb(150, 150, 150)),
                 FontSize = 13,
                 VerticalAlignment = VerticalAlignment.Center,
                 Cursor = System.Windows.Input.Cursors.Hand,
-                Style = (Style)FindResource("CommonRoundedButtonStyle")
+                Style = (Style)FindResource("CommonRoundedButtonStyle"),
+                Opacity = 0.6
             };
             Grid.SetColumn(venvBtn, 1);
             
@@ -269,12 +347,51 @@ namespace Cobra
                 addVenv = !addVenv;
                 venvBtn.Foreground = addVenv ? Brushes.White : new SolidColorBrush(Color.FromRgb(150, 150, 150));
                 venvBtn.Opacity = addVenv ? 1.0 : 0.6;
+                venvBtn.Background = addVenv ? new SolidColorBrush(Color.FromRgb(255, 140, 0)) : Brushes.Transparent;
             };
             
             venvContent.Children.Add(venvText);
             venvContent.Children.Add(venvBtn);
             venvPanel.Child = venvContent;
-            contentGrid.Children.Add(venvPanel);
+            mainContentGrid.Children.Add(venvPanel);
+
+            // JS Config Section (For JS+NPM)
+            var jsConfigPanel = new Border
+            {
+                Background = new SolidColorBrush(Color.FromRgb(45, 45, 48)),
+                Padding = new Thickness(15),
+                CornerRadius = new CornerRadius(5),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(63, 63, 70)),
+                BorderThickness = new Thickness(1),
+                Margin = new Thickness(0, 5, 0, 0),
+                Visibility = Visibility.Collapsed
+            };
+            Grid.SetRow(jsConfigPanel, 6);
+
+            var jsInfoText = new TextBlock
+            {
+                Text = "Project will be initialized with Vite and Phaser engine.\nScalable architecture with scenes, systems, and entities.",
+                Foreground = new SolidColorBrush(Color.FromRgb(200, 200, 200)),
+                FontSize = 12,
+                TextWrapping = TextWrapping.Wrap
+            };
+            jsConfigPanel.Child = jsInfoText;
+            mainContentGrid.Children.Add(jsConfigPanel);
+
+            // Tab selection logic
+            langTabControl.SelectionChanged += (s, args) =>
+            {
+                if (langTabControl.SelectedItem == pythonTab)
+                {
+                    venvPanel.Visibility = Visibility.Visible;
+                    jsConfigPanel.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    venvPanel.Visibility = Visibility.Collapsed;
+                    jsConfigPanel.Visibility = Visibility.Visible;
+                }
+            };
 
             browseBtn.Click += (s, args) =>
             {
@@ -308,13 +425,13 @@ namespace Cobra
             locationTextBox.IsEnabled = false;
 
             // Show the modal
-            var (confirmed, _) = await AnimatedModal.ShowCustomModalAsync(this, "Create New Project", contentGrid, "Create", "Cancel");
+            var (confirmed, _) = await AnimatedModal.ShowCustomModalAsync(this, "Create New Project", mainContentGrid, "Create", "Cancel");
 
             if (confirmed)
             {
                 string projectName = textBox.Text.Trim();
                 string location = locationTextBox.Text.Trim();
-
+                bool isJsProject = langTabControl.SelectedItem == jsTab;
 
                 if (string.IsNullOrWhiteSpace(projectName))
                 {
@@ -365,7 +482,7 @@ namespace Cobra
 
                 var progressText = new TextBlock
                 {
-                    Text = "Preparing project setup...",
+                    Text = isJsProject ? "Setting up JS+NPM Project..." : "Preparing project setup...",
                     Foreground = Brushes.White,
                     FontSize = 15,
                     Margin = new Thickness(25, 25, 25, 10),
@@ -384,8 +501,8 @@ namespace Cobra
                     Background = new SolidColorBrush(Color.FromRgb(45, 45, 48)),
                     BorderThickness = new Thickness(0),
                     Foreground = new LinearGradientBrush(
-                        Color.FromRgb(255, 140, 0), // DarkOrange
-                        Color.FromRgb(255, 165, 0), // Orange
+                        isJsProject ? Color.FromRgb(203, 56, 55) : Color.FromRgb(255, 140, 0), // NPM Red or Cobra Orange
+                        isJsProject ? Color.FromRgb(255, 100, 100) : Color.FromRgb(255, 165, 0),
                         0)
                 };
                 Grid.SetRow(progressBar, 1);
@@ -411,7 +528,7 @@ namespace Cobra
                 {
                     From = 0,
                     To = 100,
-                    Duration = TimeSpan.FromSeconds(addVenv ? 3 : 2),
+                    Duration = TimeSpan.FromSeconds(isJsProject ? 5 : (addVenv ? 3 : 2)),
                     EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
                 };
                 progressBar.BeginAnimation(ProgressBar.ValueProperty, animation);
@@ -422,7 +539,11 @@ namespace Cobra
                 });
 
                 string result;
-                if (addVenv)
+                if (isJsProject)
+                {
+                    result = await ProjectCreator.CreateJsProjectWithViteAsync(projectPath, progressReporter);
+                }
+                else if (addVenv)
                 {
                     result = await ProjectCreator.CreateProjectWithVenvAtPathAsync(projectPath, progressReporter);
                 }
@@ -641,6 +762,24 @@ namespace Cobra
                 DialogIcon.Info);
         }
 
+        private async void OnCheckNodeClicked(object sender, RoutedEventArgs e)
+        {
+            string version = NodeService.GetNodeVersion();
+            await CustomDialog.ShowAsync(this,
+                $"Installed Node.js Version:\n\n{version}",
+                "Node.js Status",
+                DialogIcon.Info);
+        }
+
+        private async void OnCheckNpmClicked(object sender, RoutedEventArgs e)
+        {
+            string version = NodeService.GetNpmVersion();
+            await CustomDialog.ShowAsync(this,
+                $"Installed NPM Version:\n\n{version}",
+                "NPM Status",
+                DialogIcon.Info);
+        }
+
         public void OnDocumentationClicked(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo
@@ -741,6 +880,36 @@ namespace Cobra
             editorWindow.Show();
             this.Hide();
             editorWindow.Closed += (s, args) => this.Show();
+        }
+        private static ControlTemplate CreateTabItemTemplate()
+        {
+            var template = new ControlTemplate(typeof(System.Windows.Controls.TabItem));
+            
+            var border = new FrameworkElementFactory(typeof(Border)) { Name = "Border" };
+            border.SetValue(Border.BackgroundProperty, new TemplateBindingExtension(System.Windows.Controls.TabItem.BackgroundProperty));
+            border.SetValue(Border.BorderThicknessProperty, new Thickness(0, 0, 0, 2));
+            border.SetValue(Border.BorderBrushProperty, Brushes.Transparent);
+            border.SetValue(Border.PaddingProperty, new TemplateBindingExtension(System.Windows.Controls.TabItem.PaddingProperty));
+
+            var contentPresenter = new FrameworkElementFactory(typeof(ContentPresenter));
+            contentPresenter.SetValue(ContentPresenter.HorizontalAlignmentProperty, System.Windows.HorizontalAlignment.Center);
+            contentPresenter.SetValue(ContentPresenter.VerticalAlignmentProperty, System.Windows.VerticalAlignment.Center);
+            contentPresenter.SetValue(ContentPresenter.ContentSourceProperty, "Header");
+            
+            border.AppendChild(contentPresenter);
+            template.VisualTree = border;
+
+            // Triggers
+            var selectedTrigger = new Trigger { Property = System.Windows.Controls.TabItem.IsSelectedProperty, Value = true };
+            selectedTrigger.Setters.Add(new Setter(System.Windows.Controls.TabItem.ForegroundProperty, Brushes.White));
+            selectedTrigger.Setters.Add(new Setter(Border.BorderBrushProperty, new SolidColorBrush(Color.FromRgb(255, 140, 0)), "Border"));
+            template.Triggers.Add(selectedTrigger);
+
+            var mouseOverTrigger = new Trigger { Property = System.Windows.Controls.TabItem.IsMouseOverProperty, Value = true };
+            mouseOverTrigger.Setters.Add(new Setter(System.Windows.Controls.TabItem.ForegroundProperty, Brushes.White));
+            template.Triggers.Add(mouseOverTrigger);
+
+            return template;
         }
     }
 }
